@@ -1,0 +1,105 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    @*<div> 
+
+
+@using (Html.BeginForm("Index2", "Phantom", FormMethod.Post, 
+                                      new { enctype = "multipart/form-data" }))
+{
+
+
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div>
+        <fieldset>
+            Param1 : <input id="Param1" name="Param1" type="text" />
+            Param2 : <input id="Param2" name="Param2" type="text" />
+            Param3 : <input id="Param3" name="Param3" type="text" />
+
+            <button type="submit" value="Print" class="btn btn-xs" style="color: red">
+                <span class="glyphicon"></span> ToPdf
+            </button>
+            </fieldset>
+</div>
+
+
+}
+
+    </div>*@
+
+
+
+
+
+            <style type="text/css">
+                body, td {
+                    font-family: 'Helvetica Neue',Arial;
+                    font-size: 14px;
+                }
+
+                body {
+                    background-color: #EFECCA;
+                    margin: 0;
+                    padding: 0;
+                }
+            </style>
+
+
+
+            <table width="100%" cellpadding="10" cellspacing="10" border="0" style="background-color:#EFECCA">
+                <tbody>
+                    <tr>
+                        <td align="center">
+                            <table width="640" cellpadding="5" cellspacing="0" border="0" style="background-color:#FBF9F5">
+                                <tr><td colspan="2" bgcolor="#FF5900" height="80"><p align="center" style="color:#ffffff;font-size:30px">MODIFICATION OT MUTUALISE<br />N° ${CodeOT}</p></td></tr>
+                                <tr><td colspan="2" bgcolor="#EFECCA"><p style="color:#FF5900; font-size:25px">Références</p></td></tr>
+                                <tr><td width="220" bgcolor="#DDDEDD"><p><b>N°OT</p></td><td width="370" bgcolor="#DDDEDD"><p>${CodeOT}</p></td></tr>
+                                <tr><td><p><b>N°CDE SAP</p></td><td><p>${LISTECDESAP}</p></td></tr>
+                                <tr><td width="220" bgcolor="#DDDEDD"><p><b>N°CDE CLIENT</p></td><td bgcolor="#DDDEDD"><p>${LISTECDECLIENT}</p></td></tr>
+                                <tr><td><p><b>N°CDE FINAL</p></td><td><p>${LISTECDEFINAL}</p></td></tr>
+                                <tr><td bgcolor="#DDDEDD"><p><b>Nombre de commandes</p></td><td bgcolor="#DDDEDD"><p>${NBCDESAP}</p></td></tr>
+                                <tr><td colspan="2" bgcolor="#EFECCA"><p style="color:#FF5900; font-size:25px">Chargement</p></td></tr>
+                                <tr><td bgcolor="#DDDEDD"><p><b>Date de chargement</p></td><td bgcolor="#DDDEDD"><p>${DATEEXP}</p></td></tr>
+                                <tr><td><p><b>Lieu(x) de chargement</p></td><td><p>${LIEUCHG}</p></td></tr>
+                                <tr><td bgcolor="#DDDEDD"><p><b>Adresse(s) de chargement</p></td><td bgcolor="#DDDEDD"><p>${ADRCHG}</p></td></tr>
+                                <tr><td><p><b>Consigne(s) de chargement</p></td><td><p>${CONS_CHG}</p></td></tr>
+                                <tr><td colspan="2" bgcolor="#EFECCA"><p style="color:#FF5900; font-size:25px">Livraison</h2></td></tr>
+                                <tr><td bgcolor="#DDDEDD"><p><b>Date de livraison</p></td><td bgcolor="#DDDEDD"><p>${DATELIV}</p></td></tr>
+                                <tr><td><p><b>Client(s) livré(s)</p></td><td><p>${CLILIV}</p></td></tr>
+                                <tr><td bgcolor="#DDDEDD"><p><b>Adresse(s) de livraison</p></td><td bgcolor="#DDDEDD"><p>${ADRLIV}</p></td></tr>
+                                <tr><td><p><b>Consigne(s) de livraison</p></td><td><p>${CONS_EXP}</p></td></tr>
+                    </tr>
+            </table>
+            <table width="640" cellpadding="5" cellspacing="0" border="0" style="background-color:#FBF9F5">
+                <tr><td colspan="3" bgcolor="#EFECCA"><p style="color:#FF5900; font-size:25px">Caractéristiques</h2></td></tr>
+                <tr><td bgcolor="#DDDEDD"><p><b>Nombre de palette(s) total</p></td><td bgcolor="#DDDEDD" colspan="2"><p>${NBPALETTE}</p></td></td></tr>
+                <tr><td><p><b>Nombre et format de palette(s)</p></td><td colspan="2"><p>Nv 1 : ${TYPTEM}<br />Nv 2 : ${TYPTEM2}</p></td></tr>
+                <tr><td bgcolor="#DDDEDD"><p><b>Poids brut total</p></td><td bgcolor="#DDDEDD" colspan="2"><p>${POIDS}</p></td></td></tr>
+                <tr><td bgcolor="#EFECCA" width="220"><td bgcolor="#EFECCA" width="185"><b><p>Refresco</p></td><td bgcolor="#EFECCA" width="185"><b><p>Partenaire</p></td></tr>
+                <tr><td bgcolor="#DDDEDD"><p><b>Nombre de palette(s)</p></td><td bgcolor="#DDDEDD"><p>${NBPAL_MUT_FC}</p></td><td bgcolor="#DDDEDD"><p>${NBPAL_MUT_EC}</p></td></tr>
+                <tr><td><p><b>Poids brut</p></td><td><p>${POIDS_CDE_MUT_FC}</p></td><td><p>${POIDS_CDE_MUT_EC}</p></td></tr>
+                <tr><td colspan="3" bgcolor="#EFECCA"><p></p></td></tr>
+                <tr><td colspan="3" bgcolor="#FF5900" ;align="center" height="80"><a style="color:#FFFFFF" ;href="http://refresco-tms.generix.biz/TMSClientWeb/index"><span style="color:#FFFFFF; font-size:25px;">Prendre RDV sur le portail TMS Refresco</span></a></td></tr>
+                <tr><td colspan="3" bgcolor="#EFECCA"><p></p></td></tr>
+                <tr><td colspan="3"<p>Transporteur : ${TPT}</p></td></tr>
+                <tr><td colspan="3"<p>Date et heure d'envoi de l'email : ${DATE_TIME}</p></td></tr>
+                <tr><td colspan="3"<p>Modifié par : ${USERMODIFY}</p></td></tr>
+                </tr>
+            </table></td></td></tr></tbody></table>
+
+
+
+
+</body>
+</html>

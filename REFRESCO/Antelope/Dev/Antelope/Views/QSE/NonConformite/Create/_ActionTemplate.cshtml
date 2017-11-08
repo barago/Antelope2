@@ -1,0 +1,374 @@
+﻿@model string
+<script type="text/template" id="@Model">
+
+    <% if (nonConformiteModel.has('Id')) { %>
+
+    <div class="panel-group" id="accordion">
+
+        <div id="NonConformitePanel" class="panel panel-primary" style="border-color: #006573;">
+
+            <div class="panel-heading" style="background-color: #006573; color: white">
+
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" href="#collapseTwo" data-target="#collapseTwo">
+                                ACTIONS
+                            </a>
+                        </h4>
+                    </div>
+
+                    <div class="col-md-8">
+
+                        <button id="BtnAddAction" type="submit" class="btn pull-right btn-xs" style="color: green">
+                            <span class="glyphicon glyphicon-plus"></span> Nouvelle Action
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse in">
+                <div class="panel-body">
+
+
+
+                    <div class="accordion-group">
+                        <div class="row">
+
+                            <div class="col-md-12">
+
+                                <div class="accordian-body collapse AjoutActionCollapse" id="FormAjoutAction">
+
+
+                                    <div class="panel-group">
+
+                                        <div id="NonConformitePanel" class="panel panel-default" style="">
+
+                                            <div class="panel-heading" style="background-color: #808181; color: white">
+                                                NOUVELLE ACTION
+                                                <button id="BtnAddActionEnregistrer" type="submit" class="btn pull-right btn-xs" style="color: green">
+                                                    <span class="glyphicon glyphicon-floppy-disk"></span> Enregistrer
+                                                </button>
+                                                &nbsp;&nbsp;
+                                                <button id="BtnAddActionDiffuser" type="submit" class="btn pull-right btn-xs" style="color: green;margin-right:5px;">
+                                                    <span class="glyphicon glyphicon-envelope"></span> Diffuser
+                                                </button>
+
+                                            </div>
+                                            @*----------------------------NOUVELLE ACTION ACCORDION---------------------------------*@
+                                            <div class="panel-body">
+
+
+                                                <div class="row">
+                                                    <div class="col-md-6" style="border-right:solid #808181;">
+                                                        <div class="row">
+                                                            <div class=" col-md-6">
+                                                                <div class="col-md-12">
+                                                                    <label for="AddActionTitre" class="label-xs">Titre&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                                    <input type='text' name="AddActionTitre" class="form-control input-xs" id="AddActionTitre" />
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <label for="AddActionDateButoireInitiale" class="label-xs">Date&nbsp;butoir&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                                    <div class='input-group date' id="AddActionDateButoireInitiale">
+                                                                        <input type='text' name="ActionDate" class="form-control input-xs" id="AddActionDateButoireInitialeInput" />
+                                                                        <div class="input-group-addon input-xs">
+                                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+
+                                                                <div class="col-md-12">
+                                                                    <label for="AddActionResponsableNom" class="label-xs">Nom responsable action&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                                    <div class="input-group input-group-xs">
+                                                                        <input type="text" class="form-control input-xs" id="AddActionResponsableNom">
+                                                                        @*<span class="input-group-addon" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></span></span>*@
+                                                                        <span class="input-group-btn">
+                                                                            <button id="ActiveDirectoryAddActionResponsableRecherche" class="btn btn-default" type="button" data-toggle="modal" data-sourceutilisateurfield="AddActionResponsable">
+                                                                                <span class="glyphicon glyphicon-user">
+                                                                            </button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <label for="<%= 'AddActionResponsablePrenom' %>" class="label-xs">Prénom responsable action&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                                        <input type="text" class="form-control input-xs AddActionResponsablePrenom" id="AddActionResponsablePrenom">
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="AddActionDescription" class="label-xs"> Description de l'Action&nbsp;<span style="color:red">*</span></label>
+                                                                    <textarea id="AddActionDescription" class="form-control" rows="4" style="max-width: 100%; "></textarea>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="AddActionVerificateurNom" class="label-xs">Nom vérificateur action&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                                <div class="input-group input-group-xs">
+                                                                    <input type="text" class="form-control input-xs" id="AddActionVerificateurNom" @*value="<%= actionModel.get('Responsable').get('Nom') %>"*@>
+                                                                    @*<span class="input-group-addon" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></span></span>*@
+                                                                    <span class="input-group-btn">
+                                                                        <button id="ActiveDirectoryAddActionVerificateurRecherche" class="btn btn-default" type="button" data-toggle="modal" data-sourceutilisateurfield="AddActionVerificateur">
+                                                                            <span class="glyphicon glyphicon-user">
+                                                                        </button>
+                                                                    </span>
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="AddActionVerificateurPrenom" class="label-xs">Prénom&nbsp;vérificateur&nbsp;action:&nbsp;<span style="color:red">*</span></label>
+                                                                    <input type="text" class="form-control input-xs AddActionVerificateurPrenom" id="AddActionVerificateurPrenom">
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="AddActionCritere" class="label-xs"> Critère de vérification&nbsp;<span style="color:red">*</span></label>
+                                                                    <textarea id="AddActionCritere" class="form-control" rows="4" style="max-width: 100%; "></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    @*-------------------------------------------------------ACTIONS DE LA NON-CONFORMITE-------------------------------------------------------------*@
+                    <div class="row">
+
+                        <% nonConformiteModel.get('actionCollection').each(function(action){ %>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row" style="border-width:1px;padding:5px;margin:5px;border-style:solid;border-color:#DDDDDD;background-color:#3E4A59;">
+                                    <div class="col-md-10" style="color:white;">
+                                        <%= action.get('Titre') %>
+                                    </div>
+                                    <div class="col-md-2" style="padding:0px;">
+                                        <button id="<%= 'BtnEditActionDelete'+action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" type="button" class="btn btn-xs pull-right BtnEditActionDelete"><span class="glyphicon glyphicon-remove"></span></button>
+                                        <button id="<%= 'BtnEditActionSave'+action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" type="button" class="btn btn-xs pull-right BtnEditActionSave" style="margin-right:5px;"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+                                        <button id="<%= 'BtnEditActionOpenForm'+action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" type="button" class="btn btn-xs accordion-toggle BtnEditActionOpenForm pull-right" data-toggle="collapse" data-target="<%= '#FormEditAction'+action.get('ActionQSEId') %>" data-parent="#ActionCollapse" style="margin-right:5px;"><span class="glyphicon glyphicon-pencil"></span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="accordian-body collapse EditActionCollapse" id="<%= 'FormEditAction'+action.get('ActionQSEId') %>">
+                            <div class="col-md-12">
+
+                                <div class="row">
+
+                                    <div class="col-md-6" style="border-right:solid #808181;">
+
+
+                                        <div class="panel panel-default" style="margin-bottom:5px;">
+                                            <div class="panel-heading" style="color:#3E4A59; background-color:#F4D4AD; text-align:center;">REALISATION</div>
+
+                                        </div>
+
+                                        <div class="row">
+                                            <div class=" col-md-6">
+                                                <label for="<%= 'EditActionTitre' + action.get('ActionQSEId') %>" class="label-xs">Titre&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                <input type='text' name="<%= 'EditActionTitre' + action.get('ActionQSEId') %>" class="form-control input-xs EditActionTitre" id="<%= 'EditActionTitre' + action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" value="<%= action.get('Titre')%>" />
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row">
+                                            <div class=" col-md-6">
+
+                                                <label for="<%= 'EditActionDateButoireInitiale' + action.get('ActionQSEId') %>" class="label-xs">Date&nbsp;butoir&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                <div class='input-group date EditActionDateButoireInitiale' id="<%= 'EditActionDateButoireInitiale' + action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>">
+                                                    <input type='text' name="ActionDate" class="form-control input-xs EditActionDateButoireInitiale" id="<%= 'InputEditActionDateButoireInitiale' + action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" value="<%= action.get('DateButoireInitialeJavascript')%>" />
+                                                    <div class="input-group-addon input-xs">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </div>
+                                                </div>
+
+                                                <label for="<%= 'EditActionDateButoireNouvelle' + action.get('ActionQSEId') %>" class="label-xs">Nouvelle&nbsp;date&nbsp;butoir&nbsp;:&nbsp;</label>
+                                                <div class='input-group date EditActionDateButoireNouvelle' id="<%= 'EditActionDateButoireNouvelle' + action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>">
+                                                    <input type='text' name="ActionDate" class="form-control input-xs InputEditActionDateButoireNouvelle" id="<%= 'InputEditActionDateButoireNouvelle' + action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" value="<%= action.get('DateButoireNouvelleJavascript')%>" />
+                                                    <div class="input-group-addon input-xs">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="col-md-6">
+
+
+                                                <label for="<%= 'EditActionResponsableNom' + action.get('ActionQSEId') %>" class="label-xs">Nom responsable action&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                <div class="input-group input-group-xs">
+                                                    <input type="text" class="form-control input-xs EditActionResponsableNom" id="<%= 'EditActionResponsableNom' + action.get('ActionQSEId') %>" value="<%= action.get('Responsable').get('Nom')%>" data-actionid="<%=action.get('ActionQSEId') %>">
+                                                    @*<span class="input-group-addon" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></span></span>*@
+                                                    <span class="input-group-btn">
+
+                                                        <button id="<% 'BtnEditActionResponsableRecherche' + action.get('ActionQSEId') %>" class="btn btn-default ActiveDirectoryEditActionResponsableRecherche" type="button" data-toggle="modal" data-sourceutilisateurfield="EditActionResponsable" data-actionid="<%=action.get('ActionQSEId') %>">
+                                                            <span class="glyphicon glyphicon-user">
+                                                        </button>
+                                                    </span>
+                                                </div>
+
+
+                                                <div class="form-group">
+                                                    <label for="<%= 'EditActionResponsablePrenom'+ action.get('ActionQSEId') %>" class="label-xs">Prénom responsable action&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                    <input type="text" class="form-control input-xs EditActionResponsablePrenom" id="<%= 'EditActionResponsablePrenom' + action.get('ActionQSEId') %>" value="<%= action.get('Responsable').get('Prenom')%>" data-actionid="<%=action.get('ActionQSEId') %>">
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="<%= 'EditActionDescription'+ action.get('ActionQSEId') %>" class="label-xs"> Description de l'Action :&nbsp;<span style="color:red">*</span></label>
+                                                    <textarea id="<%= 'EditActionDescription'+ action.get('ActionQSEId') %>" class="form-control EditActionDescription" rows="4" style="max-width: 100%;" data-actionid="<%=action.get('ActionQSEId') %>"><%= action.get('Description')%></textarea>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="<%= 'EditActionAvancement'+ action.get('ActionQSEId') %>" class="label-xs"> Avancement de l'Action</label>
+                                                    <textarea id="<%= 'EditActionAvancement'+ action.get('ActionQSEId') %>" class="form-control EditActionAvancement" rows="4" style="max-width: 100%;" data-actionid="<%=action.get('ActionQSEId') %>"><%= action.get('Avancement')%></textarea>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="<%= 'InputEditActionRealiseDate'+ action.get('ActionQSEId') %>" class="label-xs">Date&nbsp;de&nbsp;réalisation&nbsp;:</label>
+                                                <div class='input-group date EditActionRealiseDate' id="<%= 'EditActionRealiseDate'+ action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>">
+                                                    <input type='text' name="ActionDate" class="form-control input-xs InputEditActionRealiseDate" id="<%= 'InputEditActionRealiseDate'+ action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" value="<%= action.get('RealiseDateJavascript')%>" />
+                                                    <div class="input-group-addon input-xs">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+
+                                        <div class="panel panel-default" style="margin-bottom:5px;">
+                                            <div class="panel-heading" style="color:#3E4A59; background-color:#F4D4AD; text-align:center;">VERIFICATION</div>
+
+                                        </div>
+                                        <div class="row" style="height:44px;">
+
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                            </div>
+                                            <div class="col-md-6">
+
+                                                <label for="<%= 'EditActionVerificateurNom' + action.get('ActionQSEId') %>" class="label-xs">Nom vérificateur action&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                <div class="input-group input-group-xs">
+                                                    <input type="text" class="form-control input-xs EditActionVerificateurNom" id="<%= 'EditActionVerificateurNom' + action.get('ActionQSEId') %>" value="<%= action.get('Verificateur').get('Nom')%>" data-actionid="<%=action.get('ActionQSEId') %>">
+                                                    @*<span class="input-group-addon" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></span></span>*@
+                                                    <span class="input-group-btn">
+
+                                                        <button id="<% 'BtnEditActionVerificateurRecherche' + action.get('ActionQSEId') %>" class="btn btn-default ActiveDirectoryEditActionVerificateurRecherche" type="button" data-toggle="modal" data-sourceutilisateurfield="EditActionVerificateur" data-actionid="<%=action.get('ActionQSEId') %>">
+                                                            <span class="glyphicon glyphicon-user">
+                                                        </button>
+                                                    </span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="<%= 'EditActionVerificateurPrenom'+ action.get('ActionQSEId') %>" class="label-xs">Prénom vérificateur action&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                    <input type="text" class="form-control input-xs EditActionVerificateurPrenom" id="<%= 'EditActionVerificateurPrenom' + action.get('ActionQSEId') %>" value="<%= action.get('Verificateur').get('Prenom')%>">
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <div class="form-group">
+                                                        <label for="<%= 'EditActionCritere'+ action.get('ActionQSEId') %>" class="label-xs">Critère vérification efficacité :&nbsp;<span style="color:red">*</span></label>
+                                                        <textarea id="<%= 'EditActionCritere'+ action.get('ActionQSEId') %>" class="form-control EditActionCritere" rows="4" style="max-width: 100%;" data-actionid="<%=action.get('ActionQSEId') %>"><%= action.get('CritereEfficaciteVerification')%></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <div class="form-group">
+                                                        <label for="<%= 'EditActionCommentaire'+ action.get('ActionQSEId') %>" class="label-xs">Commentaires</label>
+                                                        <textarea id="<%= 'EditActionCommentaire'+ action.get('ActionQSEId') %>" class="form-control EditActionCommentaire" rows="4" style="max-width: 100%;" data-actionid="<%=action.get('ActionQSEId') %>"><%= action.get('CommentaireEfficaciteVerification')%></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+
+                                            <div class="col-md-6">
+                                                <label for="EditActionDateVerification" class="label-xs">Date&nbsp;de&nbsp;vérification&nbsp;:</label>
+                                                <div class='input-group date EditActionDateVerification' id="<%= 'EditActionDateVerification' + action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>">
+                                                    <input type='text' name="ActionDate" class="form-control input-xs EditActionDateVerificationInput" id="<%= 'EditActionDateVerificationInput' + action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" value="<%= action.get('VerifieDateJavascript')%>" />
+                                                    <div class="input-group-addon input-xs">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <% }) %>
+
+
+
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <% } %>
+
+</script>

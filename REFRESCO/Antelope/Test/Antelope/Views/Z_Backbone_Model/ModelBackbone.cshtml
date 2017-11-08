@@ -1,0 +1,65 @@
+﻿@{
+    ViewBag.Title = "Alimentation";
+}
+
+<script type="text/javascript" src="/Scripts/underscore.js"></script>
+<script type="text/javascript" src="/Scripts/backbone.js"></script>
+
+<h2>Alimentation</h2>
+
+<h3>
+    Attention ! Ces boutons sont temporaires, et seront masqués dans la version finale
+    Ils alimentent la base de données.
+    Seul l'administrateur doit opérer sur cette page. Merci.
+</h3>
+
+
+<script type="text/template" id="AlimentationTemplate">
+
+
+
+
+
+
+</script>
+
+<div id="PrincipalDiv">
+</div>
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+        AlimentationView = Backbone.View.extend({
+            id: 'AlimentationDiv',
+            template : _.template($('AlimentationTemplate').html()),
+            render: function () {
+
+                return this;
+            },
+            initialize : function(){
+
+
+            },
+            events: {
+
+
+            }
+
+
+
+        });
+
+
+
+
+
+
+
+    });
+
+
+</script>
+

@@ -1,0 +1,440 @@
+﻿@model string
+<script type="text/template" id="@Model">
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="panel panel-primary" style="border-color: #C42031;">
+                <div class="panel-heading" style="background-color :#C42031; color: white">
+
+                    <div class="row">
+
+                        <div class="col-md-7">
+                            FILTRES&nbsp;:
+                        </div>
+                        <div class="col-md-5">
+
+                            <button id="RechercheActionBouton" type="submit" class="btn btn-default btn-xs pull-right">
+                                <span class="glyphicon glyphicon-search"></span> Chercher les Actions
+                            </button>
+
+                            <button id="RechercheBouton" type="submit" class="btn btn-default btn-xs pull-right" style="margin-right:10px">
+                                <span class="glyphicon glyphicon-search"></span> Chercher les Fiches Sécurité
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body" style="padding:0px;">
+
+                    <ul id="myTab" class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#FicheSecurite" id="FicheSecurite-tab" role="tab" data-toggle="tab" aria-controls="FicheSecurite" aria-expanded="true">Fiches Sécurité</a></li>
+                        <li role="presentation"><a href="#Action" role="tab" id="Action-tab" data-toggle="tab" aria-controls="Action">Actions</a></li>
+                    </ul>
+                    <div id="myTabContent" class="tab-content">
+                        <div role="tabpanel" class="tab-pane fade in active" id="FicheSecurite" aria-labelledby="FicheSecurite-tab">
+                            <div class="col-md-4" style="margin-top:5px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="Site" class="label-xs">Site&nbsp;:</label>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <select id="Site" class="form-control input-xs">
+                                            <option value="0" <% if (paramModel.get('SiteId') == 0){ %> selected <% } %> ></option>
+                                            <% siteCollection.each( function(site){ %>
+                                            <option value="<%= site.get('SiteID') %>"
+                                            <% if (paramModel.get('SiteId') == site.get('SiteID')){ %> selected <% } %> >
+                                            <%= site.get('Trigramme') %>
+                                        </option>
+                                            <% }); %>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Zone" class="col-sm-4 label-xs">Zone&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="Zone">
+                                                <option value="0" <% if (paramModel.get('ZoneId') == 0){ %> selected <% } %> ></option>
+                                                <% zoneCollection.each( function(zone){ %>
+                                                <option value="<%= zone.get('ZoneID') %>"
+                                                    <% if (paramModel.get('ZoneId') == zone.get('ZoneID')){ %> selected <% } %> >
+                                                <%= zone.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Lieu" class="col-sm-4 label-xs">Lieu&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="Lieu">
+                                                <option value="0" <% if (paramModel.get('LieuId') == 0){ %> selected <% } %> ></option>
+                                                <% lieuCollection.each( function(lieu){ %>
+                                                <option value="<%= lieu.get('LieuID') %>"
+                                                    <% if (paramModel.get('LieuId') == lieu.get('LieuID')){ %> selected <% } %> >
+                                                <%= lieu.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="PosteDeTravail" class="col-sm-4 label-xs">Poste&nbsp;de&nbsp;travail&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="PosteDeTravail">
+                                                <option value="0" <% if (paramModel.get('PosteDeTravailId') == 0){ %> selected <% } %> ></option>
+                                                <% posteDeTravailCollection.each( function(posteDeTravail){ %>
+                                                <option value="<%= posteDeTravail.get('PosteDeTravailId') %>"
+                                                    <% if (paramModel.get('PosteDeTravailId') == posteDeTravail.get('PosteDeTravailId')){ %> selected <% } %> >
+                                                <%= posteDeTravail.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Service" class="col-sm-4 label-xs">Service&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="Service">
+                                                <option value="0" <% if (paramModel.get('ServiceId') == 0){ %> selected <% } %> ></option>
+                                                <% serviceCollection.each( function(service){ %>
+                                                <option value="<%= service.get('ServiceID') %>"
+                                                    <% if (paramModel.get('ServiceId') == service.get('ServiceID')){ %> selected <% } %> >
+                                                <%= service.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="Code" class="label-xs">Numéro FS&nbsp;:</label>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="Code" class="form-control input-xs" value="<%= paramModel.get('Code') %>" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="Age" class="label-xs">Age&nbsp;:</label>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="Age" class="form-control input-xs" value="<%= paramModel.get('Age') %>" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4" style="margin-top:5px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="Type" class="label-xs">Type&nbsp;:</label>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <select id="Type" class="form-control input-xs">
+                                            <option value="0" <% if (paramModel.get('FicheSecuriteTypeId') == 0){ %> selected <% } %> ></option>
+                                            <% ficheSecuriteTypeCollection.each( function(type){ %>
+                                            <option value="<%= type.get('FicheSecuriteTypeID') %>"
+                                                <% if (paramModel.get('FicheSecuriteTypeId') == type.get('FicheSecuriteTypeID')){ %> selected <% } %> >
+                                                <%= type.get('Nom') %>
+                                            </option>
+                                            <% }); %>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="DateEvenementDebut" class="label-xs">Date&nbsp;Evnmt&nbsp;Début&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        <div class='input-group date' id='DateEvenementDebut'>
+                                            <input type='text' name="DateEvenementDebut" id="DateEvenementDebutInput" class="form-control input-xs" value="<%= paramModel.get('DateEvenementDebutJavascript') %>" />
+                                            <div class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="label-xs">Date&nbsp;Evnmt&nbsp;Fin&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        <div class='input-group date' id='DateEvenementFin'>
+                                            <input type='text' name="DateEvenementFin" id="DateEvenementFinInput" class="form-control input-xs" value="<%= paramModel.get('DateEvenementFinJavascript') %>" />
+                                            <span class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label for="PersonnesConcerneeNom" class="label-xs">Nom&nbsp;pers.&nbsp;concern.&nbsp;:&nbsp;&nbsp;</label>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <div class="input-group input-group-xs">
+                                                <input type="text" class="form-control input-xs" id="PersonnesConcerneeNom" value="<%= paramModel.get('PersonneConcerneeNom') %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label for="ResponsableNom" class="label-xs">Nom&nbsp;Resp.&nbsp;Fiche&nbsp;:</label>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <div class="input-group input-group-xs">
+                                                <input type="text" class="form-control input-xs" id="ResponsableNom" value="<%= paramModel.get('ResponsableNom') %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="PlageHoraire" class="col-sm-4 label-xs">Plage&nbsp;horaire&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="PlageHoraire">
+                                                <option value="0" <% if (paramModel.get('PlageHoraireId') == 0){ %> selected <% } %> ></option>
+                                                <% plageHoraireCollection.each( function(plageHoraire){ %>
+                                                <option value="<%= plageHoraire.get('PlageHoraireID') %>"
+                                                <% if (paramModel.get('PlageHoraireId') == plageHoraire.get('PlageHoraireID')){ %> selected <% } %>
+                                                >
+                                                <%= plageHoraire.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Danger" class="col-sm-4 label-xs">Danger&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="Danger">
+                                                <option value="0" <% if (paramModel.get('DangerId') == 0){ %> selected <% } %> ></option>
+                                                <% dangerCollection.each( function(danger){ %>
+                                                <option value="<%= danger.get('DangerID') %>"
+                                                    <% if (paramModel.get('DangerId') == danger.get('DangerID')){ %> selected <% } %> >
+                                                <%= danger.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4" style="margin-top:5px;">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Risque" class="col-sm-4 label-xs">Risque&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="Risque">
+                                                <option value="0" <% if (paramModel.get('RisqueId') == 0){ %> selected <% } %> ></option>
+                                                <% risqueTypeCollection.each( function(risqueType){ %>
+                                                <optgroup label="<%= risqueType.get('Nom') %>">
+                                                    @*La fonction Where renvoie un array et non pas une collection, on utilise donc _.each et non pas each de Backbone*@
+                                                    <% _.each(risqueCollection.where({'RisqueTypeId': risqueType.get('RisqueTypeId')}), function(risque){ %>
+                                                    <option value="<%= risque.get('RisqueId') %>"
+                                                    <% if (paramModel.get('RisqueId') == risque.get('RisqueId')){ %> selected <% } %> >
+                                                    <%= risque.get('Nom') %>
+                                                <% }); %>
+                                                </optgroup>
+                                                <% }); %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Frequence" class="col-sm-4 label-xs">Fréquence&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control input-xs" id="Frequence" value="<%= paramModel.get('CotationFrequence') %>">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Gravite" class="col-sm-4 label-xs">Gravité&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control input-xs" id="Gravite" value="<%= paramModel.get('CotationGravite') %>">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="CorpsHumainZone" class="col-sm-4 label-xs">Zone Corps Humain&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="CorpsHumainZone">
+                                                <option value="0" <% if (paramModel.get('CorpsHumainZoneId') == 0){ %> selected <% } %> ></option>
+                                                <% corpsHumainZoneCollection.each( function(corpsHumainZone){ %>
+                                                <option value="<%= corpsHumainZone.get('Id') %>"
+                                                    <% if (paramModel.get('CorpsHumainZoneId') == corpsHumainZone.get('Id')){ %> selected <% } %> >
+                                                <%= corpsHumainZone.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Criticite" class="col-sm-4 label-xs">Criticité&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control input-xs" id="Criticite" value="<%= paramModel.get('CotationCriticite') %>">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Risque" class="col-sm-4 label-xs">Niveau criticité&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="CriticiteNiveau">
+                                                <option value="NULL" <% if (paramModel.get('CriticiteNiveau') == ""){ %> selected <% } %> ></option>
+                                                <option value="BAS" <% if (paramModel.get('CriticiteNiveau') == "BAS"){ %> selected <% } %> >BAS ( < 8 )</option>
+                                                <option value="MOYEN" <% if (paramModel.get('CriticiteNiveau') == "MOYEN"){ %> selected <% } %> >MOYEN ( 8 à 20 )</option>
+                                                <option value="HAUT" <% if (paramModel.get('CriticiteNiveau') == "HAUT"){ %> selected <% } %> >HAUT ( > 20 )</option> 
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            @*------------------------------------------------------------------------------ACTIONS-------------------------------------------------------------------------------------*@
+
+
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="Action" aria-labelledby="Action-tab">
+
+
+                            <div class="col-md-4" style="margin-top:5px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="label-xs">Date&nbsp;Butoir&nbsp;Début&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        <div class='input-group date' id='DateButoirDebut'>
+                                            <input type='text' name="DateButoirDebut" id="DateButoirDebutInput" class="form-control input-xs" value="<%= paramModel.get('DateButoirDebutJavascript') %>" />
+                                            <span class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="label-xs">Date&nbsp;Butoir&nbsp;Fin&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        <div class='input-group date' id='DateButoirFin'>
+                                            <input type='text' name="DateButoirFin" id="DateButoirFinInput" class="form-control input-xs" value="<%= paramModel.get('DateButoirFinJavascript') %>" />
+                                            <span class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <div class="col-md-4" style="margin-top:5px;">
+
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="label-xs">Date&nbsp;Clôture&nbsp;Début&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        <div class='input-group date' id='DateClotureDebut'>
+                                            <input type='text' name="DateClotureDebut" id="DateClotureDebutInput" class="form-control input-xs" value="<%= paramModel.get('DateClotureDebutJavascript') %>" />
+                                            <span class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="label-xs">Date&nbsp;Clôture&nbsp;Fin&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        <div class='input-group date' id='DateClotureFin'>
+                                            <input type='text' name="DateClotureFin" id="DateClotureFinInput" class="form-control input-xs" value="<%= paramModel.get('DateClotureFinJavascript') %>" />
+                                            <span class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+                            <div class="col-md-4" style="margin-top:5px;">
+
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label for="ResponsableNomAction" class="label-xs">Nom&nbsp;Resp.&nbsp;Action&nbsp;:&nbsp;&nbsp;</label>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <div class="input-group input-group-xs">
+                                                <input type="text" class="form-control input-xs" id="ResponsableNomAction" @*value="<%= paramModel.get('PersonneConcerneeNom') %>"*@>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="panel-footer" style="background-color :white; color: black">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="IsNouvelleFiche" style="font-weight:normal"> <span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:white;height:10px;">&nbsp;Nouvelle Fiche&nbsp;</span></label>
+                            <input type="checkbox" id="IsNouvelleFiche"<% if(paramModel.get('IsNouvelleFiche')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsPlanActionAttente" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#BFBFBF;height:10px;">&nbsp;Plan d'action en attente de validation&nbsp;</span></label>
+                            <input type="checkbox" id="IsPlanActionAttente"<% if(paramModel.get('IsPlanActionAttente')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsPlanActionValide" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#FFC000;height:10px;">&nbsp;Plan d'action validé&nbsp;</span></label>
+                            <input type="checkbox" id="IsPlanActionValide"<% if(paramModel.get('IsPlanActionValide')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsPlanActionRejete" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#FF0000;height:10px;">&nbsp;Plan d'action rejeté&nbsp;</span></label>
+                            <input type="checkbox" id="IsPlanActionRejete"<% if(paramModel.get('IsPlanActionRejete')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsPlanActionCloture" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#00B0F0;height:10px;">&nbsp;Plan d'action clôturé&nbsp;</span></label>
+                            <input type="checkbox" id="IsPlanActionCloture"<% if(paramModel.get('IsPlanActionCloture')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsFicheSecuriteCloture" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#00FF00;height:10px;">&nbsp;Fiche Sécurité clôturée&nbsp;</span></label>
+                            <input type="checkbox" id="IsFicheSecuriteCloture"<% if(paramModel.get('IsFicheSecuriteCloture')===true) { %> checked <% } %> >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+</script>

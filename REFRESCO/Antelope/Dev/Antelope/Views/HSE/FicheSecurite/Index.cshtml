@@ -1,0 +1,884 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Scripts/DataTables-1.10.10/datatables.min.css" />
+<script type="text/javascript" src="~/Scripts/DataTables-1.10.10/datatables.min.js"></script>
+<link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/Scripts/bootstrap-datetimepicker.min.js"></script>
+
+<script type="text/javascript" src="/Scripts/Application/Socle/SiteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/ActionModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/FicheSecuriteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/PersonneConcerneeModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/Recherche/ViewModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/Recherche/ParamModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/ZoneModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/LieuModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/ServiceModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/PosteDeTravailModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/FicheSecuriteTypeModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/PlageHoraireModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/DangerModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/CorpsHumainZoneModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/RisqueModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/RisqueTypeModel.js"></script>
+
+@Html.Partial("~/Views/HSE/FicheSecurite/Index/_TableFiltre.cshtml", "TableFiltre")
+@Html.Partial("~/Views/HSE/FicheSecurite/Index/_TableRecherche.cshtml", "TableRecherche")
+
+<div id="TableFiltreDiv"></div>
+<div id="TableRechercheDiv"></div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var currentHSERole = "@ViewBag.CurrentHSERole";
+
+        $(function () {
+            $(document).tooltip({ show: 1500 });
+        });
+
+        var viewModel = new ViewModel();
+
+        viewModel.fetch({
+            async: false
+        });
+
+        viewModel.set({ 'currentHSERole': currentHSERole });
+
+        viewModel.set({ 'paramModel': new ParamModel(viewModel.get('RechercheFicheSecuriteParamModel')) });
+
+        viewModel.get('paramModel').set({ 'DateEvenementDebutJavascript': dateTimeUtils.dateFormatJS(viewModel.get('paramModel').get('DateEvenementDebut')) });
+        viewModel.get('paramModel').set({ 'DateEvenementFinJavascript': dateTimeUtils.dateFormatJS(viewModel.get('paramModel').get('DateEvenementFin')) });
+        viewModel.get('paramModel').set({ 'DateButoirDebutJavascript': dateTimeUtils.dateFormatJS(viewModel.get('paramModel').get('DateButoirDebut')) });
+        viewModel.get('paramModel').set({ 'DateButoirFinJavascript': dateTimeUtils.dateFormatJS(viewModel.get('paramModel').get('DateButoirFin')) });
+        viewModel.get('paramModel').set({ 'DateClotureDebutJavascript': dateTimeUtils.dateFormatJS(viewModel.get('paramModel').get('DateClotureDebut')) });
+        viewModel.get('paramModel').set({ 'DateClotureFinJavascript': dateTimeUtils.dateFormatJS(viewModel.get('paramModel').get('DateClotureFin')) });
+
+        viewModel.get('paramModel').set({ 'typeRecherche': 'FICHESECURITE' });
+
+        viewModel.set({ 'siteCollection': new SiteCollection(viewModel.get('AllSite')) });
+        viewModel.set({ 'zoneCollection': new ZoneCollection(viewModel.get('AllZone')) });
+        viewModel.get('zoneCollection').each(function (zone, index) {
+            zone.set({ 'Nom': zone.get('ZoneType').Nom });
+        });
+
+        viewModel.set({ 'lieuCollection': new LieuCollection(viewModel.get('AllLieu')) });
+        viewModel.set({ 'serviceCollection': new ServiceCollection(viewModel.get('AllService')) });
+        viewModel.get('serviceCollection').each(function (service, index) {
+            service.set({ 'Nom': service.get('ServiceType').Nom });
+        });
+        viewModel.set({ 'posteDeTravailCollection': new PosteDeTravailCollection(viewModel.get('AllPosteDeTravail')) });
+
+        viewModel.set({ 'ficheSecuriteTypeCollection': new FicheSecuriteTypeCollection(viewModel.get('AllFicheSecuriteType')) });
+        viewModel.set({ 'plageHoraireCollection': new PlageHoraireCollection(viewModel.get('AllPlageHoraire')) });
+        viewModel.set({ 'dangerCollection': new DangerCollection(viewModel.get('AllDanger')) });
+        viewModel.set({ 'corpsHumainZoneCollection': new CorpsHumainZoneCollection(viewModel.get('AllCorpsHumainZone')) });
+        viewModel.set({ 'risqueCollection': new RisqueCollection(viewModel.get('AllRisque')) });
+        viewModel.set({ 'risqueTypeCollection': new RisqueTypeCollection(viewModel.get('AllRisqueType')) });
+
+        Backbone.applicationEvents = _.extend({}, Backbone.Events);
+
+        var FiltreTableView = Backbone.View.extend({
+            id: 'RechercheTableFicheSecurite',
+            template: _.template($('#TableFiltre').html()),
+            render: function () {
+                this.$el.html(this.template(this.model.toJSON()));
+
+                $('#DateEvenementDebut').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateEvenementFin').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateButoirDebut').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateButoirFin').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateClotureDebut').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateClotureFin').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+
+                //On écoute les changements sur le DatePicker pour les passer à la fonction Backbone
+                $('#DateEvenementDebut').on("dp.change", $.proxy(this.changeDateEvenementDebut, this));
+                // TODO : Mettre des dp.hide sur tous les DateTimePickers ! >> Si on ne selectionne rien, il choisit date et heure du jour.
+                $('#DateEvenementDebut').on("dp.hide", $.proxy(this.changeDateEvenementDebut, this));
+                $('#DateEvenementFin').on("dp.change", $.proxy(this.changeDateEvenementFin, this));
+                $('#DateEvenementFin').on("dp.hide", $.proxy(this.changeDateEvenementFin, this));
+
+                $('#DateButoirDebut').on("dp.change", $.proxy(this.changeDateButoirDebut, this));
+                $('#DateButoirDebut').on("dp.hide", $.proxy(this.changeDateButoirDebut, this));
+                $('#DateButoirFin').on("dp.change", $.proxy(this.changeDateButoirFin, this));
+                $('#DateButoirFin').on("dp.hide", $.proxy(this.changeDateButoirFin, this));
+
+                $('#DateClotureDebut').on("dp.change", $.proxy(this.changeDateClotureDebut, this));
+                $('#DateClotureDebut').on("dp.hide", $.proxy(this.changeDateClotureDebut, this));
+                $('#DateClotureFin').on("dp.change", $.proxy(this.changeDateClotureFin, this));
+                $('#DateClotureFin').on("dp.hide", $.proxy(this.changeDateClotureFin, this));
+
+                return this;
+            },
+            initialize: function () {
+                this.render();
+
+            },
+            events: {
+                "change #Site": "changeSite",
+                "change #Zone": "changeZone",
+                "change #Lieu": "changeLieu",
+                "change #Service": "changeService",
+                "change #PosteDeTravail": "changePosteDeTravail",
+                "keyup #Age": "changeAge",
+                "change #Type": "changeType",
+                "keyup #Code": "changeCode",
+                "keyup #DateEvenementDebutInput": "changeDateEvenementDebut",
+                "keyup #DateEvenementFinInput": "changeDateEvenementFin",
+                "keyup #DateButoirDebutInput": "changeDateButoirDebut",
+                "keyup #DateButoirFinInput": "changeDateButoirFin",
+                "keyup #DateClotureDebutInput": "changeDateClotureDebut",
+                "keyup #DateClotureFinInput": "changeDateClotureFin",
+                "keyup #PersonnesConcerneeNom": "changePersonneConcerneeNom",
+                "keyup #ResponsableNom": "changeResponsableNom",
+                "change #PlageHoraire": "changePlageHoraire",
+                "change #Danger": "changeDanger",
+                "change #Risque": "changeRisque",
+                "keyup #Gravite": "changeGravite",
+                "keyup #Frequence": "changeFrequence",
+                "keyup #Criticite": "changeCriticite",
+                "change #CriticiteNiveau": "changeCriticiteNiveau",
+                "change #CorpsHumainZone": "changeCorpsHumainZone",
+                "click #RechercheBouton": "recherche",
+                "click #RechercheActionBouton": "rechercheAction",
+                "click #IsNouvelleFiche": "changeIsNouvelleFiche",
+                "click #IsPlanActionValide": "changeIsPlanActionValide",
+                "click #IsPlanActionAttente": "changeIsPlanActionAttente",
+                "click #IsPlanActionRejete": "changeIsPlanActionRejete",
+                "click #IsPlanActionCloture": "changeIsPlanActionCloture",
+                "click #IsFicheSecuriteCloture":"changeIsFicheSecuriteCloture",
+                "keyup #ResponsableNomAction": "changeResponsableNomAction",
+
+            },
+            triggerRechercheSurEntree : function(e){
+                if ( e.which === 13 ) {
+                    if(viewModel.get('paramModel').get('typeRecherche') === 'FICHESECURITE'){
+                        Backbone.applicationEvents.trigger('recherche');
+                    }
+                    if(viewModel.get('paramModel').get('typeRecherche') === 'ACTION'){
+                        Backbone.applicationEvents.trigger('rechercheAction');
+                    }
+                }
+            },
+            recherche: function () {
+                console.log('RECHERCHE');
+                viewModel.get('paramModel').set({ 'typeRecherche': 'FICHESECURITE' });
+                Backbone.applicationEvents.trigger('recherche');
+            },
+            rechercheAction: function () {
+                console.log('RECHERCHEACTION');
+                viewModel.get('paramModel').set({ 'typeRecherche': 'ACTION' });
+                Backbone.applicationEvents.trigger('rechercheAction');
+            },
+            changeSite: function () {
+                this.model.get('paramModel').set({ 'SiteId': parseInt($('#Site').val()) });
+
+                // Ajout de l'ID de l'URL, voir si il n'y a pas moyen de l'ajouter directement dans le fetch d'une collection Backbone ...
+                this.model.get('zoneCollection').url = '/api/action/zone/getZonesBySiteId/' + this.model.get('paramModel').get('SiteId');
+
+                // /!\ ASYNC : FALSE >>> Si true, la page se raffraichie sans attendre la mise à jour du model (anciennes données affichées)
+                this.model.get('zoneCollection').fetch({ async: false });
+
+                this.model.get('zoneCollection').each(function (zone, index) {
+                    zone.set({ 'Nom': zone.get('ZoneType').Nom });
+                });
+
+                // Ajout de l'ID de l'URL, voir si il n'y a pas moyen de l'ajouter directement dans le fetch d'une collection Backbone ...
+                this.model.get('serviceCollection').url = '/api/action/service/getServicesBySiteId/' + this.model.get('paramModel').get('SiteId');
+
+                // /!\ ASYNC : FALSE >>> Si true, la page se raffraichie sans attendre la mise à jour du model (anciennes données affichées)
+                this.model.get('serviceCollection').fetch({ async: false });
+
+                this.model.get('serviceCollection').each(function (service, index) {
+                    service.set({ 'Nom': service.get('ServiceType').Nom });
+                });
+
+                // TODO : Mettre à Zéro les lieux
+
+                this.render();
+            },
+            changeZone: function () {
+                this.model.get('paramModel').set({ 'ZoneId': parseInt($('#Zone').val()) });
+
+                this.model.get('lieuCollection').url = '/api/action/lieu/getLieuxByZoneId/' + this.model.get('paramModel').get('ZoneId');
+                this.model.get('posteDeTravailCollection').url = '/api/action/posteDeTravail/getPosteDeTravailsByZoneId/' + this.model.get('paramModel').get('ZoneId');
+
+                // /!\ ASYNC : FALSE >>> Si true, la page se raffraichie sans attendre la mise à jour du model (anciennes données affichées)
+                this.model.get('lieuCollection').fetch({ async: false });
+                this.model.get('posteDeTravailCollection').fetch({ async: false });
+
+                this.render();
+
+            },
+            changeLieu: function () {
+                this.model.get('paramModel').set({ 'LieuId': $('#Lieu').val() });
+            },
+            changeService: function () {
+                this.model.get('paramModel').set({ 'ServiceId': $('#Service').val() });
+            },
+            changePosteDeTravail: function () {
+                this.model.get('paramModel').set({ 'PosteDeTravailId': $('#PosteDeTravail').val() });
+            },
+            changeAge: function () {
+                this.model.get('paramModel').set({ 'Age': $('#Age').val() });
+            },
+            changeType: function () {
+                this.model.get('paramModel').set({ 'FicheSecuriteTypeId': $('#Type').val() });
+            },
+            changeCode: function (e) {
+                this.model.get('paramModel').set({ 'Code': $('#Code').val() });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changePersonneConcerneeNom: function (e) {
+                this.model.get('paramModel').set({ 'PersonneConcerneeNom': $('#PersonnesConcerneeNom').val() });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changeResponsableNom: function (e) {
+                this.model.get('paramModel').set({ 'ResponsableNom': $('#ResponsableNom').val() });
+                this.model.get('paramModel').set({ 'ResponsableGuid': null });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changePlageHoraire: function () {
+                this.model.get('paramModel').set({ 'PlageHoraireId': $('#PlageHoraire').val() });
+            },
+            changeDanger: function () {
+                this.model.get('paramModel').set({ 'DangerId': $('#Danger').val() });
+            },
+            changeRisque: function () {
+                this.model.get('paramModel').set({ 'RisqueId': $('#Risque').val() });
+            },
+            changeGravite: function (e) {
+                this.model.get('paramModel').set({ 'CotationGravite': $('#Gravite').val() });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changeFrequence: function (e) {
+                this.model.get('paramModel').set({ 'CotationFrequence': $('#Frequence').val() });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changeCriticite: function (e) {
+                switch($('#Criticite').val()){
+                    case "" :
+                        this.model.get('paramModel').set({ 'Criticite': 0 });
+                        break;
+                    default :
+                        this.model.get('paramModel').set({ 'Criticite': $('#Criticite').val() });
+                        break;
+                }
+
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changeCriticiteNiveau: function (e) {
+                this.model.get('paramModel').set({ 'CriticiteNiveau': $('#CriticiteNiveau').val() });
+                console.log($('#CriticiteNiveau').val());
+            },
+            changeCorpsHumainZone: function (data) {
+                this.model.get('paramModel').set({ 'CorpsHumainZoneId': $('#CorpsHumainZone').val() });
+            },
+            changeDateEvenementDebut: function (e) {
+                setDateTime('#DateEvenementDebutInput', 'DateEvenementDebut', 'DateEvenementDebutJavascript', this, e);
+            },
+            changeDateEvenementFin: function (e) {
+                setDateTime('#DateEvenementFinInput', 'DateEvenementFin', 'DateEvenementFinJavascript', this, e);
+            },
+            changeDateButoirDebut: function (e) {
+                setDateTime('#DateButoirDebutInput', 'DateButoirDebut', 'DateButoirDebutJavascript', this, e);
+            },
+            changeDateButoirFin: function (e) {
+                setDateTime('#DateButoirFinInput', 'DateButoirFin', 'DateButoirFinJavascript', this, e);
+            },
+            changeDateClotureDebut: function (e) {
+                setDateTime('#DateClotureDebutInput', 'DateClotureDebut', 'DateClotureDebutJavascript', this, e);
+            },
+            changeDateClotureFin: function (e) {                
+                setDateTime('#DateClotureFinInput', 'DateClotureFin', 'DateClotureFinJavascript', this, e);
+            },
+            dateFormatMVC: dateTimeUtils.dateFormatMVC,
+            changeIsNouvelleFiche: function () {
+                this.model.get('paramModel').set({ 'IsNouvelleFiche': $('#IsNouvelleFiche').is(":checked") });
+            },
+            changeIsPlanActionValide: function () {
+                this.model.get('paramModel').set({ 'IsPlanActionValide': $('#IsPlanActionValide').is(":checked") });
+            },
+            changeIsPlanActionAttente: function () {
+                this.model.get('paramModel').set({ 'IsPlanActionAttente': $('#IsPlanActionAttente').is(":checked") });
+            },
+            changeIsPlanActionRejete: function () {
+                this.model.get('paramModel').set({ 'IsPlanActionRejete': $('#IsPlanActionRejete').is(":checked") });
+            },
+            changeIsPlanActionCloture: function () {
+                this.model.get('paramModel').set({ 'IsPlanActionCloture': $('#IsPlanActionCloture').is(":checked") });
+            },
+            changeIsFicheSecuriteCloture: function () {
+                this.model.get('paramModel').set({ 'IsFicheSecuriteCloture': $('#IsFicheSecuriteCloture').is(":checked") });
+            },
+            changeResponsableNomAction: function (e) {
+                this.model.get('paramModel').set({ 'ResponsableNomAction': $('#ResponsableNomAction').val() });
+                this.model.get('paramModel').set({ 'ResponsableNomActionGuid': null });
+
+                this.triggerRechercheSurEntree(e);
+            },
+        });
+
+
+
+        var RechercheTableView = Backbone.View.extend({
+            id: 'RechercheTableFicheSecurite',
+            template: _.template($('#TableRecherche').html()),
+            render: function () {
+                this.$el.html(this.template(this.model.toJSON()));
+
+                this.buildDataTable();
+
+                return this;
+            },
+            initialize: function () {
+
+                Backbone.applicationEvents.on('recherche', function () {
+                    this.recherche();
+                }, this);
+
+                this.render();
+
+            },
+            events: {
+                "click #RechercheBouton": "recherche"
+
+            },
+            recherche: function () {
+                this.render();
+                //this.buildDataTable();
+            },
+            buildDataTable: function () {
+                // /!\ Les fonctions d'ajout de 'datas' supplémentaires de DataTables ne fonctionnent pas très bien
+                // Donc à chaque recherche, nous réinstancions le tableau
+                // A chaque recherche, les paramètres de tri ne sont donc pas sauvegardés ... A voir si c'est grâve.
+
+                $("#Table").DataTable().destroy();
+
+                var datatableLength = datatableUtils.getDatatableLength();
+
+                var columns = [
+                    {
+                        "mData": "FicheSecuriteID",
+                        "sTitle": "Id",
+                        "visible": false,
+                        "orderable": false,
+                        "width": "0px"
+                    },
+                    {
+                        "mData": "Code",
+                        "sTitle": "Code",
+                        "orderable": true,
+                        "width": "12%"
+                    },
+                    {
+                        "mData": "Responsable",
+                        "sTitle": "Nom",
+                        "orderable": false,
+                        "width": "20%",
+                        "mRender": function(date, type, full) {
+                            return full.Responsable.Nom + ' ' + full.Responsable.Prenom;
+                        }
+                    },
+                    {
+                        "mData": "Description",
+                        "sTitle": "Description",
+                        "orderable": false,
+                    },
+                    {
+                        "mData": "FicheSecuriteID",
+                        "sTitle": "Action",
+                        "orderable": false,
+                        "width": "5%",
+                        "mRender": function(date, type, full) {
+
+                            var urlEdit = '@Url.Action("Edit", new { id=-1 })';
+                            urlEdit = urlEdit.replace('-1', full.FicheSecuriteID);
+
+                            var links = '<div ><a class="glyphicon glyphicon-edit" href="' +
+                                urlEdit +
+                                '"></a>&nbsp;&nbsp;';
+                            if (@ViewBag.CurrentHSERole < 400) {
+
+                                links = links +
+                                    '<a id="deleteFicheSecurite" data-id="' +
+                                    full.FicheSecuriteID +
+                                    '" class="glyphicon glyphicon-remove"></a></div>';
+                            }
+
+
+                            return links;
+                        }
+                    }
+                ];
+
+                var currentRecherche = new Backbone.Model();
+                currentRecherche.fetch({
+                    async: false, wait: true,
+                    url: '/api/action/FicheSecurite/ActionColumns/',
+                    type: "get",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(this.model.get('paramModel'))
+                });
+
+                var actionColumns = eval(currentRecherche.get('columns'));
+
+                for (var i = 0; i < actionColumns.length; i++) {
+                    columns.push(actionColumns[i]);
+                }
+
+                table = $("#Table").DataTable({
+                    dom: 'lf<"floatright"B>rtip',
+                    buttons: [
+                       {
+                           extend: 'copyHtml5',
+                           exportOptions: {
+                               columns: [ 1,2,3,5,6,7,8,9,10,11,12,13,14 ]
+                           }
+                       },
+                       {
+                           extend: 'excelHtml5',
+                           exportOptions: {
+                               columns: [ 1,2,3,5,6,7,8,9,10,11,12,13,14 ]
+                           }
+                       },
+                       {
+                           extend: 'pdfHtml5',
+                           exportOptions: {
+                               columns: [ 1,2,3,5,6,7,8,9,10,11,12,13,14 ]
+                           }
+                       },
+                       'colvis'
+                    ],
+                    "scrollY": "400px",
+                    "autoWidth": false,
+                    "serverSide": true,
+                    "processing": true,
+                    "filter": false,
+                    "ajax": {
+                        "url":  "/api/action/FicheSecurite/Get",
+                        data: this.model.get('paramModel').attributes
+                    },
+                    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tous"]],
+                    "pageLength": datatableLength,
+                    "fnRowCallback": function (nRow, aData) {
+                        var $nRow = $(nRow); // cache the row wrapped up in jQuery
+
+                        $('td:eq(0)', nRow).css({ "border-style": "solid", "border-width": "1px", "border-color": "#B4B4B4" });
+                        var color = "white";
+                        var colorHeavy = "white";
+                        var colorLight = "white";
+                        if (aData.WorkFlowAttenteASEValidation == true) {
+                            colorHeavy = "#BFBFBF";
+                            colorLight = "#E0E0E0";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.WorkFlowASERejetee == true) {
+                            colorHeavy = "#FF0000";
+                            colorLight = "#FFE7FF";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.WorkFlowASEValidee == true) {
+                            colorHeavy = "#FFC000";
+                            colorLight = "#FCE6A2";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.WorkFlowCloturee == true && aData.WorkFlowASEValidee == true) {
+                            colorHeavy = "#00B0F0";
+                            colorLight = "#AFE8FD";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.WorkFlowFicheSecuriteCloturee == true) {
+                            colorHeavy = "#00FF00";
+                            colorLight = "#AFFDAF";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        $(nRow).hover(function () {
+                            //$nRow.css({ "background-color": "#EAEAEA" });
+                            $nRow.css({ "background-color": "#808181", "color": "white" });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy, "color": "black" });
+                        }, function () {
+                            $nRow.css({ "background-color": colorLight, "color": "black" });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy, "color": "black" });
+                        });
+                        return nRow;
+                    },
+                    "columns": columns,
+                    "oLanguage": {
+                        "sUrl": "Scripts/datatables_lang_fr.js"
+                    }
+                });
+
+                $('#Table').on( 'length.dt', function ( e, settings, len ) {
+                    $(this).find('tbody').addClass('loading');
+                });
+
+                $('#Table').on('xhr.dt', function ( e, settings, json, xhr ) {
+                    $(this).find('tbody').removeClass('loading');
+                });
+
+                table.$('tr.selected').removeClass('selected');
+
+                $('#Table tbody').on('mousedown', 'tr', function (e) {
+
+                    // !!! Triche >> Pour raison X, le click sur un élément la ligne ou un élément de celle-ci se joue deux fois
+                    // On n'active donc le code qu'une fois sur deux (Ce n'est pas une question de propagation Bubbling ... )
+                    var i = 0;
+                    i++;
+                    if (i % 2 > 0) {
+
+                        if (e.button == 0) {
+
+                            if (e.target.id == "deleteFicheSecurite") {
+
+                                var id = e.target.getAttribute("data-id");
+                                var confirmation = confirm("Êtes-vous sûr de vouloir supprimer cette Fiche Sécurité ?");
+                                if (confirmation == true) {
+                                    var ficheSecuriteToDeleteModel = new FicheSecuriteModel({ "FicheSecuriteID": id });
+                                    ficheSecuriteToDeleteModel.destroy({
+                                        async: false, wait: true,
+                                        success: _.bind(function (model, repsonse) {
+                                            //Backbone.applicationEvents.trigger('validFicheSecurite', 'la cause a été supprimée');
+                                        }, this)
+                                    });
+                                    table.ajax.reload(null, false);
+                                }
+                            } else {
+                                // CODE POUR OUVRIR DANS MEME FENETRE NE PAS SUPPRIMER
+                                @*var aData = $("#Table").dataTable().fnGetData(this);
+                                var url = '@Url.Action("Edit", "FicheSecurite", new { id = "__id__" })';
+                                window.location.href = url.replace('__id__', aData.FicheSecuriteID);*@
+
+                                var aData = $("#Table").dataTable().fnGetData(this);
+                                var url = '@Url.Action("Edit", "FicheSecurite", new { id = "__id__" })';
+                                var realUrl = url.replace('__id__', aData.FicheSecuriteID);
+                                window.open(realUrl, "_blank");
+                            }
+                        }
+
+                        e.preventDefault();
+
+                        if (e.button == 2 || e.button == 1) {
+                            var aData = $("#Table").dataTable().fnGetData(this);
+                            var url = '@Url.Action("Edit", "FicheSecurite", new { id = "__id__" })';
+                            var realUrl = url.replace('__id__', aData.FicheSecuriteID);
+                            window.open(realUrl, "_blank");
+                        }
+
+                    }
+                });
+
+            }
+        });
+
+
+        var RechercheActionTableView = Backbone.View.extend({
+            id: 'RechercheTableFicheSecurite',
+            template: _.template($('#TableRecherche').html()),
+            render: function () {
+                this.$el.html(this.template(this.model.toJSON()));
+
+                this.buildDataTable();
+
+                return this;
+            },
+            initialize: function () {
+
+                Backbone.applicationEvents.on('rechercheAction', function () {
+                    this.rechercheAction();
+                }, this);
+
+            },
+            events: {
+                "click #RechercheActionBouton": "rechercheAction"
+            },
+            rechercheAction: function () {
+                this.render();
+                //this.buildDataTable();
+            },
+            buildDataTable: function () {
+                // /!\ Les fonctions d'ajout de 'datas' supplémentaires de DataTables ne fonctionnent pas très bien
+                // Donc à chaque recherche, nous réinstancions le tableau
+                // A chaque recherche, les paramètres de tri ne sont donc pas sauvegardés ... A voir si c'est grâve.
+
+                $("#Table").DataTable().destroy();
+
+                var datatableLength = datatableUtils.getDatatableLength();
+
+                table = $("#Table").DataTable({
+                    dom: 'lf<"floatright"B>rtip',
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ],
+                    "scrollY": "400px",
+                    "autoWidth": false,
+                    "serverSide": true,
+                    "processing": true,
+                    "filter": false,
+                    "ajax": {
+                        "url": "/api/action/FicheSecurite/Get",
+                        data: this.model.get('paramModel').attributes
+                    },
+                    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tous"]],
+                    "pageLength": datatableLength,
+                    "fnRowCallback": function (nRow, aData) {
+                        var $nRow = $(nRow); // cache the row wrapped up in jQuery
+
+                        $('td:eq(0)', nRow).css({ "border-style": "solid", "border-width": "1px", "border-color": "#B4B4B4" });
+                        var color = "white";
+                        var colorHeavy = "white";
+                        var colorLight = "white";
+                        if (aData.FicheSecurite.WorkFlowAttenteASEValidation == true) {
+                            colorHeavy = "#BFBFBF";
+                            colorLight = "#E0E0E0";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.FicheSecurite.WorkFlowASERejetee == true) {
+                            colorHeavy = "#FF0000";
+                            colorLight = "#FFE7FF";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.FicheSecurite.WorkFlowASEValidee == true) {
+                            colorHeavy = "#FFC000";
+                            colorLight = "#FCE6A2";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.FicheSecurite.WorkFlowCloturee == true && aData.FicheSecurite.WorkFlowASEValidee == true) {
+                            colorHeavy = "#00B0F0";
+                            colorLight = "#AFE8FD";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.FicheSecurite.WorkFlowFicheSecuriteCloturee == true) {
+                            colorHeavy = "#00FF00";
+                            colorLight = "#AFFDAF";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        $(nRow).hover(function () {
+                            //$nRow.css({ "background-color": "#EAEAEA" });
+                            $nRow.css({ "background-color": "#808181", "color": "white" });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy, "color": "black" });
+                        }, function () {
+                            $nRow.css({ "background-color": colorLight, "color": "black" });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy, "color": "black" });
+                        });
+                        return nRow;
+                    },
+                    "columns": [
+                        {
+                            "mData": "FicheSecurite.FicheSecuriteID",
+                            "sTitle": "Id",
+                            "visible": false,
+                            "orderable": false,
+                            "width": "0px"
+                        },
+                        {
+                            "mData": "FicheSecurite.Code",
+                            "sTitle": "Code",
+                            "orderable": true,
+                            "width": "12%"
+                        },
+                        {
+                            "mData": "Responsable",
+                            "sTitle": "Responsable",
+                            "orderable": true,
+                            "width": "20%",
+                            "mRender": function (date, type, full) {
+                                return full.ActionQSE.Responsable.Nom + ' ' + full.ActionQSE.Responsable.Prenom;
+                            }
+                        },
+                        {
+                            "mData": "Description",
+                            "sTitle": "Description",
+                            "orderable": false,
+                            "mRender": function (date, type, full) {
+                                //return '<span title="' + full.ActionQSE.Description + '" </span>>' + full.ActionQSE.Description.substring(0, 40) + '...</span>'
+                                return full.ActionQSE.Description;
+                            }
+                        },
+                        {
+                            "mData": "DateButoireInitiale",
+                            "sTitle": "Date Butoir 1",
+                            "sType": "date",
+                            "mRender": function (date, type, full) {
+                                return full.ActionQSE.DateButoireInitiale.substring(8, 10) + '/' + full.ActionQSE.DateButoireInitiale.substring(5, 7) + '/' + full.ActionQSE.DateButoireInitiale.substring(0, 4);
+                            },
+                            "orderable": true,
+                            "width": "10%"
+                        },
+                        {
+                            "mData": "DateButoireNouvelle",
+                            "sTitle": "Date Butoir 2",
+                            "sType": "date",
+                            "mRender": function (date, type, full) {
+                                if (full.ActionQSE.DateButoireNouvelle === null || full.ActionQSE.DateButoireNouvelle === undefined) { return ""; }
+                                return full.ActionQSE.DateButoireNouvelle.substring(8, 10) + '/' + full.ActionQSE.DateButoireNouvelle.substring(5, 7) + '/' + full.ActionQSE.DateButoireNouvelle.substring(0, 4);
+                            },
+                            "orderable": true,
+                            "width": "10%"
+                        },
+                        {
+                            "mData": "DateCloture",
+                            "sTitle": "Date clôture",
+                            "sType": "date",
+                            "mRender": function (date, type, full) {
+                                if (full.ActionQSE.ClotureDate === null || full.ActionQSE.ClotureDate === undefined) { return ""; }
+                                return full.ActionQSE.ClotureDate.substring(8, 10) + '/' + full.ActionQSE.ClotureDate.substring(5, 7) + '/' + full.ActionQSE.ClotureDate.substring(0, 4);
+                            },
+                            "orderable": true,
+                            "width": "10%"
+                        },
+                        {
+                            "mData": "FicheSecuriteID",
+                            "sTitle": "Action",
+                            "orderable": false,
+                            "width": "5%",
+                            "mRender": function (date, type, full) {
+
+                                var urlEdit = '@Url.Action("Edit", new { id=-1 })';
+                                urlEdit = urlEdit.replace('-1', full.FicheSecurite.FicheSecuriteID);
+
+                                var links = '<div ><a class="glyphicon glyphicon-edit" href="' + urlEdit + '"></a>&nbsp;&nbsp;';
+                                if (@ViewBag.CurrentHSERole < 400) {
+
+                                    links = links + '<a id="deleteFicheSecurite" data-id="' + full.FicheSecurite.FicheSecuriteID + '" class="glyphicon glyphicon-remove"></a></div>';
+                                }
+
+
+                                return links;
+                            }
+                        }
+
+
+                    ],
+                    "oLanguage": {
+                        "sUrl": "Scripts/datatables_lang_fr.js"
+                    }
+                });
+
+                $('#Table').on( 'length.dt', function ( e, settings, len ) {
+                    $(this).find('tbody').addClass('loading');
+                });
+
+                $('#Table').on('xhr.dt', function ( e, settings, json, xhr ) {
+                    $(this).find('tbody').removeClass('loading');
+                });
+
+                table.$('tr.selected').removeClass('selected');
+
+                $('#Table tbody').on('mousedown', 'tr', function (e) {
+
+                    // !!! Triche >> Pour raison X, le click sur un élément la ligne ou un élément de celle-ci se joue deux fois
+                    // On n'active donc le code qu'une fois sur deux (Ce n'est pas une question de propagation Bubbling ... )
+                    var a = 0;
+                    i++
+                    if (i % 2 > 0) {
+
+                        if (e.button == 0) {
+
+                            if (e.target.id == "deleteFicheSecurite") {
+
+                                var id = e.target.getAttribute("data-id");
+                                var confirmation = confirm("Êtes-vous sûr de vouloir supprimer cette Fiche Sécurité ?");
+                                if (confirmation == true) {
+                                    var ficheSecuriteToDeleteModel = new FicheSecuriteModel({ "FicheSecuriteID": id })
+                                    ficheSecuriteToDeleteModel.destroy({
+                                        async: false, wait: true,
+                                        success: _.bind(function (model, repsonse) {
+                                            //Backbone.applicationEvents.trigger('validFicheSecurite', 'la cause a été supprimée');
+                                        }, this)
+                                    });
+                                    table.ajax.reload(null, false);
+                                }
+                            } else {
+                                var aData = $("#Table").dataTable().fnGetData(this);
+                                var url = '@Url.Action("Edit", "FicheSecurite", new { id = "__id__" })';
+                                window.location.href = url.replace('__id__', aData.FicheSecurite.FicheSecuriteID);
+                            }
+                        }
+
+                        e.preventDefault();
+
+                        if (e.button == 2 || e.button == 1) {
+                            var aData = $("#Table").dataTable().fnGetData(this);
+                            var url = '@Url.Action("Edit", "FicheSecurite", new { id = "__id__" })';
+                            var realUrl = url.replace('__id__', aData.FicheSecurite.FicheSecuriteID)
+                            window.open(realUrl, "_blank");
+                        }
+
+                    }
+                });
+
+            }
+        });
+
+        var filtreTableView = new FiltreTableView({
+            el: $("#TableFiltreDiv"),
+            model: viewModel
+        });
+
+        var rechercheTableView = new RechercheTableView({
+            el: $("#TableRechercheDiv"),
+            model: viewModel
+        });
+
+        var rechercheActionTableView = new RechercheActionTableView({
+            el: $("#TableRechercheDiv"),
+            model: viewModel
+        });
+    });
+
+    function setDateTime(dateInputId, dateName, dateJavascriptName, that, e) {
+        var inputDateValue = $(dateInputId).val();
+        var map = {};
+        if (inputDateValue === '') {
+            map[dateName] = null;
+            map[dateJavascriptName] = '';
+        } else {
+            map[dateName] = that.dateFormatMVC(inputDateValue) + 'T' + '00:00:00.0';
+            map[dateJavascriptName] = inputDateValue;
+        }
+        that.model.get('paramModel').set(map);
+
+        that.triggerRechercheSurEntree(e);
+    }
+
+</script>

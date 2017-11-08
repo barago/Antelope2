@@ -1,0 +1,295 @@
+﻿
+@{
+    ViewBag.Title = "MatriceApplicative";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/Scripts/jquery.dataTables.min.js"></script>
+
+
+<script type="text/javascript" src="/Scripts/underscore.js"></script>
+<script type="text/javascript" src="/Scripts/backbone.js"></script>
+
+<script type="text/javascript" src="~/Scripts/jquery.scrollTableBody-1.0.0.js"></script>
+
+<script type="text/template" id="MatriceApplicativeTemplate">
+
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Matrice Applicative</div>
+        <div class="panel-body" >
+            <div class="row">
+
+                <label for="IsSRV" style="font-weight:normal"> <span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:white;height:10px;">&nbsp;SRV&nbsp;</span></label>
+                <input type="checkbox" id="IsSRV" checked>&nbsp;&nbsp;&nbsp;&nbsp;
+
+                <label for="IsBDD" style="font-weight:normal"> <span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:white;height:10px;">&nbsp;BDD&nbsp;</span></label>
+                <input type="checkbox" id="IsBDD" checked>&nbsp;&nbsp;&nbsp;&nbsp;
+
+                <label for="IsKUS" style="font-weight:normal"> <span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:white;height:10px;">&nbsp;KUS&nbsp;</span></label>
+                <input type="checkbox" id="IsKUS" checked>&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+            </div>
+
+
+            <table id="table" >
+                <thead style="background-color:#F5F5F5;">
+                    <tr>
+
+                        <% tableModel.get('firstLine').forEach(function(first){ %>
+
+                        <th>
+                    <div class="vertical-text"><div class="vertical-text__inner"><%= first %></div></div>
+
+
+                    </th>
+
+                    <% }); %>
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <% tableModel.get('allLine').forEach(function(line){ %>
+
+                    <tr>
+
+                        <% line.forEach(function(column){ %>
+                        <td style="border: 1px solid black">
+                            <%= column %>
+
+                        </td>
+
+                        <% }); %>
+
+                    </tr>
+
+                    <% }); %>
+
+
+
+                </tbody>
+
+
+            </table>
+
+
+
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+</script>
+
+<div id="PrincipalDiv">
+</div>
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+        //var currentHSERole = "@ViewBag.CurrentHSERole";
+
+        ResponseModel = Backbone.Model.extend({
+            url: '/api/Annuaire/',
+            id:0
+        });
+
+        MatriceAplicativeParamModel = Backbone.Model.extend({
+        });
+
+        ApplicationModel = Backbone.Model.extend({
+        });
+
+        ApplicationIdModel = Backbone.Model.extend({
+        });
+
+
+        ApplicationCollection = Backbone.Collection.extend({
+            model: ApplicationModel
+        });
+
+        ApplicationIdCollection = Backbone.Collection.extend({
+            model: ApplicationModel
+        });
+
+
+        TableModel = Backbone.Model.extend({
+        });
+
+        TableCollection = Backbone.Collection.extend({
+            model: TableModel
+        });
+
+
+
+        responseModel = new ResponseModel();
+        //responseModel.set({ "currentHSERole": currentHSERole });
+
+        responseModel.url = '/api/action/MatriceApplicative/GetApplication';
+        responseModel.fetch({ async: false, wait: true });
+
+        var allApplicationName = _.pluck(responseModel.get('AllApplication'), 'softwareName');
+        var allUniqueApplicationName = _.uniq(allApplicationName);
+
+        var allComputerId = _.pluck(responseModel.get('AllApplication'), 'computerId');
+        var allUniqueComputerId = _.uniq(allComputerId);
+
+        applicationCollection = new ApplicationCollection(responseModel.get('AllApplication'));
+
+
+        //applicationIdCollection = new ApplicationIdCollection(allUniqueApplicationId);
+
+        responseModel.set({ 'applicationCollection': applicationCollection });
+
+        responseModel.set({ 'isSRV': true });
+        responseModel.set({ 'isBDD': true });
+        responseModel.set({ 'isKUS': true });
+
+        responseModel.get('applicationCollection').each(function (application) {
+
+            application.set({ 'type': application.get('versionName').substr(0, 3) });
+
+        });
+
+        responseModel.set({ 'allUniqueApplicationName': allUniqueApplicationName });
+        responseModel.set({ 'allUniqueComputerId': allUniqueComputerId });
+
+
+
+
+        //-------------------------------------------
+
+        function calculMatrice(responseModel) {
+
+            var allLine = []
+
+            var firstLine = ['App']
+
+            allUniqueComputerId.forEach(function (computer) {
+                applicationCollection.each(function (application) {
+
+                    if (application.get('computerId') === computer && ((application.get('type') === 'SRV' && responseModel.get('isSRV') === true) || application.get('type') === 'BDD') || application.get('type') === 'KUS') {
+
+                        firstLine.push(application.get('computerName'));
+                    }
+                });
+            });
+
+            //console.log(firstLine);
+            console.log('BEFORE BOUCLE');
+            allUniqueApplicationName.forEach(function (software) {
+                var line = [];
+                console.log('PASSAGE LIGNE software = ' + software);
+                line.push(software);
+                allUniqueComputerId.forEach(function (computer) {
+                    console.log('PASSAGE COLONNE computer = ' + computer);
+                    applicationCollection.each(function (application) {
+
+                        console.log('PASSAGE COLLECTION computerId = ' + application.get('computerId') + ' softwareId = ' + application.get('softwareId') + ' type = ' + application.get('type'));
+
+                        if (application.get('computerId') === computer && application.get('softwareName') === software && ((application.get('type') === 'SRV' /*&& responseModel.get('isSRV') === true*/) || application.get('type') === 'BDD' || application.get('type') === 'KUS')) {
+                            console.log('****************************************************************');
+                            line.push(application.get('type'));
+
+
+                        }
+                        else if (application.get('computerId') === computer && application.get('softwareName') != software && ((application.get('type') === 'SRV'  /*&& responseModel.get('isSRV') === true*/) || application.get('type') === 'BDD' || application.get('type') === 'KUS')) {
+                            console.log('----------------------------------------------------------------');
+                            line.push('--');
+
+                        }
+                    });
+                });
+                allLine.push(line);
+            });
+
+            console.log(allLine);
+            tableModel = new TableModel({ 'firstLine': firstLine, 'allLine': allLine });
+
+            responseModel.set({ 'tableModel': tableModel });
+
+            console.log('fin calcul matrice');
+        };
+        //----------------------------------------------
+
+        calculMatrice(responseModel);
+
+
+        //console.log(responseModel);
+        MatriceApplicativeView = Backbone.View.extend({
+            id: 'AnnuaireDiv',
+            template: _.template($('#MatriceApplicativeTemplate').html()),
+            render: function () {
+                //console.log(this.model);
+                this.$el.html(this.template(this.model.toJSON()));
+
+                $('#table').scrollTableBody({ rowsToDisplay: 25 });
+             
+                return this;
+            },
+            initialize : function(){
+
+                this.render();
+            },
+            events: {
+
+                "click #IsSRV": "changeIsSRV",
+                "click #IsBDD": "changeIsBDD",
+                "click #IsKUS": "changeIsKUS",
+
+            },
+            changeIsSRV: function () {
+                console.log('Change ISSRV');
+                console.log($('#IsSRV').is(":checked"));
+                this.model.set({ 'IsSRV': $('#IsSRV').is(":checked") });
+                console.log(this.model.get('IsSRV'));
+
+                calculMatrice(this.model);
+                //this.render();
+            },
+            changeIsBDD: function () {
+                this.model.set({ 'IsBDD': $('#IsBDD').is(":checked") });
+            },
+            changeIsKUS: function () {
+                this.model.set({ 'IsKUS': $('#IsKUS').is(":checked") });
+            }
+
+
+
+
+
+
+
+
+        });
+
+
+        var MatriceApplicativeView = new MatriceApplicativeView({
+            el: $("#PrincipalDiv"),
+            model: responseModel
+        });
+
+
+
+
+
+    });
+
+
+</script>
+

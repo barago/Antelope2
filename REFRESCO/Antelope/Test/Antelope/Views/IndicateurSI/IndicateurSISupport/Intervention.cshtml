@@ -1,0 +1,691 @@
+﻿
+@{
+    ViewBag.Title = "Intervention";
+    Layout = "~/Views/IndicateurSI/Shared/_Layout.cshtml";
+}
+
+<h2><img alt="" width="32" height="32" src="~/Content/images/IndicateurSI/histogramme.png" /> Intervention aux heures non-ouvrées</h2>
+
+
+<div class="row" style="background-color: #AADBE0; border-color: black; border-width: 1px; border-style: solid; padding:0px">
+
+    <div class="col-md-3">
+        <div id="selectGranularite"></div><br />
+    </div>
+
+    <div class="col-md-3">
+        <br />
+        <button class='regular' name='buttonTabIntervention' id="buttonTabIntervention"
+                onclick="this.getElementsByTagName('span')[0].innerHTML = (this.getElementsByTagName('span')[0].innerHTML == 'Afficher interventions non validées' ? 'Masquer interventions' : 'Afficher interventions non validées'); AfficherNonValide();">
+            <img alt="" width="20" height="20" src="~/Content/images/IndicateurSI/img_loupe.png" />  <span>Afficher interventions non validées</span>
+        </button>
+    </div>
+
+    <div class="col-md-3">
+        <br />
+        <button class='regular' name='buttonAddIntervention' id="buttonAddIntervention"
+                onclick="this.getElementsByTagName('span')[0].innerHTML = (this.getElementsByTagName('span')[0].innerHTML == 'Ajouter une intervention' ? 'Annuler' : 'Ajouter une intervention'); ADDIntervention();">
+            <div class="glyphicon glyphicon-plus-sign"></div>  <span>Ajouter une intervention</span>
+        </button>
+    </div>
+</div>
+
+<br />
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="container" style="height: 300px; min-width: 400px"></div>
+
+    </div>
+</div>
+<br />
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="addIntervention"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="checkIntervention"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="editIntervention"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="tabIntervention"></div>
+    </div>
+</div>
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+        addIntervention = 0;
+        checkIntervention = 0;
+        tabIntervenant = new Array();
+        tabIntervenant = ["Frederic Victor", "Philippe Vissyrias"];
+        tabMois = new Array();
+        tabMois = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+        tabSelection = new Array();
+        jsonData = null;
+
+
+        var granularite = '<h3 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection granularité</h3><select id="SelGranularite">'
+        granularite += '<option value=0 selected >Mois</option>';
+        granularite += '<option value=1 >Année</option>';
+        granularite += '</select>';
+
+        document.getElementById('selectGranularite').innerHTML = granularite;
+
+        $('#SelGranularite').on('change', function () {
+            draw($('#SelGranularite').find(':selected').val());
+        })
+
+        draw(0);
+
+    });
+
+    function MAJTabIntervention(granularite, date) {
+
+        var dateController = "";
+
+        if (granularite == 0) {
+            var dateSplit = date.split('-');
+            dateSplit[0]++;
+            if (dateSplit[0] < 10) { dateController = "0" + dateSplit[0] }
+            else { dateController = dateSplit[0] }
+            dateController += "-" + dateSplit[1];
+        }
+        else {
+            dateController = date;
+        }
+
+        jsonData = $.ajax({
+            url: "@Url.Action("MAJTabIntervention", "Intervention")",
+            data: { date: dateController },
+            dataType: "json",
+            type: "POST",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (data) {
+
+                var json = parseJSON(jsonData.responseJSON);
+
+                    $('#afficherIntervention').remove();
+
+                    var tabAffichage = '<center id="afficherIntervention"><h4>Interventions ';
+                    if (granularite == 0)
+                    {
+                        var dateSplit = date.split('-');
+                        tabAffichage += 'du mois '
+                        if (dateSplit[0] == 3 || dateSplit[0] == 7)
+                        {
+                            tabAffichage += 'd\''
+                        }
+                        else
+                        {
+                            tabAffichage += 'de '
+                        }
+                        
+                        tabAffichage += tabMois[dateSplit[0]] + ' ' + dateSplit[1]
+                    }
+                    else
+                    {
+                        tabAffichage += 'de l\'année ' + date
+                    }
+                    tabAffichage += '</h4><table class="table table-hover"><tr>';
+                    tabAffichage += '<th class="col-sm-1" style="vertical-align:middle"><center>Intervenant</center></th>';
+                    tabAffichage += '<th class="col-sm-1" style="vertical-align:middle"><center>Date intervention</center></th>';
+                    tabAffichage += '<th class="col-sm-1" style="vertical-align:middle"><center>Planifié</center></th>';
+                    tabAffichage += '<th class="col-sm-1" style="vertical-align:middle"><center>Demandeur</center></th>';
+                    tabAffichage += '<th class="col-sm-2" style="vertical-align:middle"><center>Motif</center></th>';
+                    tabAffichage += '<th class="col-sm-1" style="vertical-align:middle"><center>Durée intervention (min)</center></th>';
+                    tabAffichage += '<th class="col-sm-1" style="vertical-align:middle"><center>Note de frais</center></th>';
+                    tabAffichage += '<th class="col-sm-1" style="vertical-align:middle"><center>Prime intervention</center></th>';
+                    tabAffichage += '<th class="col-sm-1" style="vertical-align:middle"><center>Prime dimanche / jour férié</center></th>';
+                    tabAffichage += '<th class="col-sm-1" style="vertical-align:middle"><center>Validée</center></th>';
+                    tabAffichage += '<th class="col-sm-1" style="vertical-align:middle"><center>Actions</center></th>';
+                    tabAffichage += '</tr>';
+                    for (var i = 0; i < json.Intervenant.length; i++)
+                    {
+                        tabAffichage += '<tr>';
+                        tabAffichage += '<td style="vertical-align:middle">' + json.Intervenant[i] + '</td>';
+                        tabAffichage += '<td style="vertical-align:middle">' + json.DateIntervention[i] + '</td>';
+                        tabAffichage += '<td style="vertical-align:middle"><center>' + OuiOuNon(json.Planifie[i]) + '</center></td>';
+                        tabAffichage += '<td style="vertical-align:middle">' + json.Demandeur[i] + '</td>';
+                        tabAffichage += '<td style="vertical-align:middle">' + json.Motif[i] + '</td>';
+                        tabAffichage += '<td style="vertical-align:middle"><center>' + json.DureeIntervention[i] + '</center></td>';
+                        tabAffichage += '<td style="vertical-align:middle"><center>' + OuiOuNon(json.NoteFrais[i]) + '</center></td>';
+                        tabAffichage += '<td style="vertical-align:middle"><center>' + json.PrimeIntervention[i] + '</center></td>';
+                        tabAffichage += '<td style="vertical-align:middle"><center>' + json.PrimeDimanche[i] + '</center></td>';
+                        tabAffichage += '<td style="vertical-align:middle"><center><input type="checkbox"';
+                        if (json.Valide[i]) { tabAffichage += ' checked' }
+                        tabAffichage += ' disabled="disabled"></center></td>';
+                        tabAffichage += '<td style="vertical-align:middle"><center><button title="Editer" onclick="editerIntervention(' + i + ');" class="glyphicon glyphicon-edit"></button></center></td>';
+                        tabAffichage += '</tr>';
+                    }
+
+                    tabAffichage += '</table><button id="buttonFermer">FERMER</button></center>';
+                    document.getElementById('tabIntervention').innerHTML = tabAffichage;
+
+                    $('#buttonFermer').on('click', function () {
+                        $('#afficherIntervention').remove();
+                    })
+                }
+        });
+    }
+
+    function editerIntervention(ID) {
+
+        var json = parseJSON(jsonData.responseJSON);
+
+        var formulaire = '<center id="editerIntervention"><div class="row"><h4>----- Editer une intervention -----</h4>';
+        formulaire += '<div class="col-md-2" style="vertical-align:middle"><h5>Intervenant</h5></div>';
+        formulaire += '<div class="col-md-1" style="vertical-align:middle"><h5>Date intervention (heure hh:mm)</h5></div>';
+        formulaire += '<div class="col-md-2" style="vertical-align:middle"><h5>Planifié</h5></div>';
+        formulaire += '<div class="col-md-1" style="vertical-align:middle"><h5>Demandeur</h5></div>';
+        formulaire += '<div class="col-md-2" style="vertical-align:middle"><h5>Motif</h5></div>';
+        formulaire += '<div class="col-md-1" style="vertical-align:middle"><h5>Durée intervention (en minutes)</h5></div>';
+        formulaire += '<div class="col-md-2" style="vertical-align:middle"><h5>Note de frais</h5></div>';
+        formulaire += '<div class="col-md-1" style="vertical-align:middle"><h5>Actions</h5></div>';
+        formulaire += '</div><div class="row">'
+        formulaire += '<div class="col-md-2" style="vertical-align:middle;"><select id="inputEditIntervenant">';
+        for (var i = 0; i < tabIntervenant.length; i++) {
+            formulaire += '<option';
+            if (tabIntervenant[i] == json.Intervenant[ID])
+                formulaire += ' selected ';
+            formulaire += '>' + tabIntervenant[i] + '</option>';
+        }
+        formulaire += '</select></div>';
+        var dateSplit = json.DateIntervention[ID].split(' ');
+        formulaire += '<div class="col-md-1" style="vertical-align:middle;"><center><input size="8" id="inputEditDateIntervention" value="' + dateSplit[0] + '" /><br/><input size="3" id="inputEditHeureIntervention" value="' + dateSplit[1] + '" /></center></div>';
+        if (json.Planifie[ID])
+            formulaire += '<div class="col-md-2" style="vertical-align:middle;"><input type="radio" name="planifie" value="oui" checked id="inputEditPlanifie"> Oui <input type="radio" name="planifie" value="non" > Non<br/>'
+        else
+            formulaire += '<div class="col-md-2" style="vertical-align:middle;"><input type="radio" name="planifie" value="oui" id="inputEditPlanifie"> Oui <input type="radio" name="planifie" value="non" checked > Non<br/>'
+        formulaire += '<input type="checkbox" id="inputEditFerie"'
+        if (json.PrimeDimanche[ID] > 0)
+            formulaire += ' checked '
+        formulaire += '/> Jour férié</div>';
+        formulaire += '<div class="col-md-1" style="vertical-align:middle;"><input size="10" id="inputEditDemandeur" value="' + json.Demandeur[ID] + '" /></div>';
+        formulaire += '<div class="col-md-2" style="vertical-align:middle;"><textarea cols="20" rows="3" id="inputEditMotif">' + json.Motif[ID] + '</textarea></div>';
+        formulaire += '<div class="col-md-1" style="vertical-align:middle;"><input size="10" id="inputEditDureeIntervention" value="' + json.DureeIntervention[ID] + '" /></div>';
+        if (json.NoteFrais[ID])
+            formulaire += '<div class="col-md-2" style="vertical-align:middle;"><input type="radio" name="NdF" value="oui" checked id="inputEditNoteFrais"> Oui <input type="radio" name="NdF" value="non" > Non</div>';
+        else
+            formulaire += '<div class="col-md-2" style="vertical-align:middle;"><input type="radio" name="NdF" value="oui" id="inputEditNoteFrais"> Oui <input type="radio" name="NdF" value="non" checked > Non</div>';
+        formulaire += '<div class="col-md-1" style="vertical-align:middle;"><button title="Sauvegarder" onclick="';
+        formulaire += 'enregistrerEditIntervention(' + json.ID[ID] + ',$(\'#inputEditIntervenant\').find(\':selected\').val(), $(\'#inputEditDateIntervention\').val() + \' \' + $(\'#inputEditHeureIntervention\').val(), $(\'#inputEditPlanifie\').is(\':checked\'), $(\'#inputEditFerie\').is(\':checked\') ,$(\'#inputEditDemandeur\').val(), $(\'#inputEditMotif\').val(), $(\'#inputEditDureeIntervention\').val(), $(\'#inputEditNoteFrais\').is(\':checked\'));';
+        formulaire += '" id="saveButton" class="glyphicon glyphicon-floppy-disk"></button> <button title="Annuler" onclick="$(\'#buttonAddIntervention\').click();" class="glyphicon glyphicon-remove"></button></div>';
+        formulaire += '</div></center>';
+        document.getElementById('addIntervention').innerHTML = formulaire;
+
+    }
+
+    function OuiOuNon(booleen) {
+        if (booleen)
+            return "Oui";
+        else
+            return "Non";
+    }
+
+    
+    function enregistrerIntervention(intervenant, dateIntervention, planifie, ferie, demandeur, motif, dureeIntervention, noteFrais) {
+
+        var splitDateIntervention = dateIntervention.split(' ');
+
+        if (dateIntervention.length == 0 || demandeur.length == 0 || motif.length == 0 || dureeIntervention.length == 0) {
+            alert('Tous les champs sont obligatoires !')
+        }
+        else {
+
+            splitDateIntervention = dateIntervention.split(' ');
+            if (splitDateIntervention.length < 2) {
+
+                alert('Respectez les formats de date !')
+            }
+            else {
+
+                var splitDayIntervention = splitDateIntervention[0].split('-');
+                var splitHourIntervention = splitDateIntervention[1].split(':');
+
+                if (splitDayIntervention.length != 3 || splitHourIntervention.length != 2) {
+
+                    alert('Respectez les formats de date !')
+                }
+                else {
+                    if (splitDayIntervention[0].length != 2 || splitDayIntervention[1].length != 2 || splitDayIntervention[2].length != 4 || splitHourIntervention[0].length != 2 || splitHourIntervention[1].length != 2) {
+
+                        alert('Respectez les formats de date !')
+                    }
+                    else {
+
+                        if (splitHourIntervention[0] > 23 || splitHourIntervention[1] > 59 || splitHourIntervention[0] < 0 || splitHourIntervention[1] < 0) {
+
+                            alert('Cette heure est invalide !')
+                        }
+                        else
+                        {
+                        if (parseInt(dureeIntervention) != dureeIntervention) {
+
+                            alert('La durée d\'intervention doit être éxprimée en minutes !')
+                        }
+                        else {
+
+                            $.ajax({
+                                url: "@Url.Action("AddIntervention", "Intervention")",
+                                    data: { intervenant: intervenant, dateIntervention: dateIntervention, planifie: planifie, ferie: ferie, demandeur: demandeur, motif: motif, dureeIntervention: dureeIntervention, noteFrais: noteFrais },
+                                    dataType: "json",
+                                    type: "POST",
+                                    error: function () {
+                                        alert("Une erreur est survenue.");
+                                    },
+                                    success: function (data) {
+
+                                        alert('Intervention enregistrée !');
+                                        $('#buttonAddIntervention').click();
+                                        draw($('#SelGranularite').find(':selected').val());
+                                        if (tabIntervention == 1) {
+                                            $('#buttonTabIntervention').click();
+                                            $('#buttonTabIntervention').click();
+                                        }
+                                    }
+                                });
+                            }
+                        }
+
+                    }
+
+                }
+
+            }
+        }
+
+    }
+
+    function enregistrerEditIntervention(ID, intervenant, dateIntervention, planifie, ferie, demandeur, motif, dureeIntervention, noteFrais) {
+
+        var splitDateIntervention = dateIntervention.split(' ');
+        var IDIntervention = ID;
+
+        if (dateIntervention.length == 0 || demandeur.length == 0 || motif.length == 0 || dureeIntervention.length == 0) {
+            alert('Tous les champs sont obligatoires !')
+        }
+        else {
+
+            splitDateIntervention = dateIntervention.split(' ');
+            if (splitDateIntervention.length < 2) {
+
+                alert('Respectez les formats de date !')
+            }
+            else {
+
+                var splitDayIntervention = splitDateIntervention[0].split('-');
+                var splitHourIntervention = splitDateIntervention[1].split(':');
+
+                if (splitDayIntervention.length != 3 || splitHourIntervention.length != 2) {
+
+                    alert('Respectez les formats de date !')
+                }
+                else {
+                    if (splitDayIntervention[0].length != 2 || splitDayIntervention[1].length != 2 || splitDayIntervention[2].length != 4 || splitHourIntervention[0].length != 2 || splitHourIntervention[1].length != 2) {
+
+                        alert('Respectez les formats de date !')
+                    }
+                    else {
+
+                        if (splitHourIntervention[0] > 23 || splitHourIntervention[1] > 59 || splitHourIntervention[0] < 0 || splitHourIntervention[1] < 0) {
+
+                            alert('Cette heure est invalide !')
+                        }
+                        else
+                        {
+                            if (parseInt(dureeIntervention) != dureeIntervention) {
+
+                                alert('La durée d\'intervention doit être éxprimée en minutes !')
+                            }
+                            else {
+
+                                $.ajax({
+                                    url: "@Url.Action("EditIntervention", "Intervention")",
+                                    data: { ID: IDIntervention, intervenant: intervenant, dateIntervention: dateIntervention, planifie: planifie, ferie: ferie, demandeur: demandeur, motif: motif, dureeIntervention: dureeIntervention, noteFrais: noteFrais },
+                                dataType: "json",
+                                type: "POST",
+                                error: function () {
+                                    alert("Une erreur est survenue.");
+                                },
+                                success: function (data) {
+
+                                    alert('Intervention enregistrée !');
+                                    draw($('#SelGranularite').find(':selected').val());
+                                    $('#editerIntervention').remove();
+                                    $('#afficherIntervention').remove();
+                                    if (tabIntervention == 1) {
+                                        $('#buttonTabIntervention').click();
+                                        $('#buttonTabIntervention').click();
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+    }
+
+    }
+
+    function draw(granularite) {
+
+        $.ajax({
+            url: "@Url.Action("Draw", "Intervention")",
+            data: { granularite: granularite },
+            dataType: "json",
+            type: "POST",
+            error: function () {
+                alert("Une erreur est survenue.");
+            },
+            success: function (data) {
+
+                var json = parseJSON(data);
+
+                $('#container').highcharts('StockChart', {
+                    credits: {
+                        enabled: false
+                    },
+
+
+                    rangeSelector: {
+                        selected: 1,
+                        inputEnabled: $('#container').width() > 480
+                    },
+
+                    title: {
+                        text: ''
+                    },
+
+                    legend: {
+                        enabled: true
+                    },
+
+                    yAxis: { min: 0 },
+
+                    series: [{
+                        name: 'Nombre d\'interventions',
+                        color: 'rgba(255, 128, 0, 0.7)',
+                        fillColor: {
+                            linearGradient: [0, 0, 0, 0],
+                            stops: [
+                              [0, 'rgba(255, 128, 0, 0.2)']
+                            ]
+                        },
+                        type: 'area',
+                        data: json.Total,
+                        point: {
+                            events:
+                            {
+                                click: function (event) {
+                                    onClickGraph(this.x);
+                                }
+                            }
+                        },
+                        tooltip: {
+                            valueDecimals: 0
+                        }
+                    },{
+                        name: 'Déplacement requis',
+                        color: 'rgba(35, 167, 172, 0.7)',
+                        fillColor: {
+                            linearGradient: [0, 0, 0, 0],
+                            stops: [
+                              [0, 'rgba(35, 167, 172, 0.2)']
+                            ]
+                        },
+                        type: 'area',
+                        data: json.Deplacement,
+                        point: {
+                            events:
+                            {
+                                click: function (event) {
+                                    onClickGraph(this.x);
+                                }
+                            }
+                        },
+                        tooltip: {
+                            valueDecimals: 2
+                        }
+                    }]
+                    
+                });
+            }
+        })
+    }
+
+    function onClickGraph(timestamp) {
+        var date = new Date(timestamp)
+        if ($('#SelGranularite').find(':selected').val() == 1) {
+            MAJTabIntervention(1, date.getFullYear());
+        }
+        else {
+            var dateMoisAnnee = date.getMonth() + "-" + date.getFullYear();
+            MAJTabIntervention(0, dateMoisAnnee);
+        }
+        
+    }
+
+    function AfficherNonValide() {
+        if (checkIntervention == 0) {
+
+            var data = $.ajax({
+                url: "@Url.Action("AfficherNonValide", "Intervention")",
+                data: {},
+                dataType: "json",
+                async: false,
+                type: "POST",
+                error: function () {
+                    alert("An error occurred.");
+                },
+                success: function (data) { }
+            });
+                
+
+                    var json = parseJSON(data.responseJSON);
+
+                    tabCheck = '<center id="valideIntervention"><h4>----- Interventions non validées -----</h4>';
+                    tabCheck += '<div class="row">';
+                    tabCheck += '<div class="col-md-12">';
+                    tabCheck += '<button class="regular pull-right" onclick="valideIntervention(' + json.Intervenant.length + ');">Valider les interventions sélectionnées</button>'
+                    tabCheck += '</div>';
+                    tabCheck += '</div>';
+                    tabCheck += '<table class="table table-hover"><tr>';
+                    tabCheck += '<th class="col-sm-1" style="vertical-align:middle"><center>Intervenant</center></th>';
+                    tabCheck += '<th class="col-sm-1" style="vertical-align:middle"><center>Date intervention</center></th>';
+                    tabCheck += '<th class="col-sm-1" style="vertical-align:middle"><center>Planifié</center></th>';
+                    tabCheck += '<th class="col-sm-1" style="vertical-align:middle"><center>Demandeur</center></th>';
+                    tabCheck += '<th class="col-sm-2" style="vertical-align:middle"><center>Motif</center></th>';
+                    tabCheck += '<th class="col-sm-1" style="vertical-align:middle"><center>Durée intervention (min)</center></th>';
+                    tabCheck += '<th class="col-sm-1" style="vertical-align:middle"><center>Note de frais</center></th>';
+                    tabCheck += '<th class="col-sm-1" style="vertical-align:middle"><center>Prime intervention</center></th>';
+                    tabCheck += '<th class="col-sm-1" style="vertical-align:middle"><center>Prime dimanche / jour férié</center></th>';
+                    tabCheck += '<th class="col-sm-2" style="vertical-align:middle"><center><div id="inverserSelect">Inverser<br/>la sélection<br/><span class="glyphicon glyphicon-random"></span></div></center></th>';
+                    tabCheck += '</tr>';
+                    for (var i = 0; i < json.Intervenant.length; i++) {
+                        console.log(json.ID[i])
+                        tabCheck += '<tr>';
+                        tabCheck += '<td style="vertical-align:middle"><div data-id="'  + json.ID[i] + '" id="nom' + i + '">' + json.Intervenant[i] + '</div></td>';
+                        tabCheck += '<td style="vertical-align:middle"><div id="date' + i + '">' + json.DateIntervention[i] + '</div></td>';
+                        tabCheck += '<td style="vertical-align:middle"><center>' + OuiOuNon(json.Planifie[i]) + '</center></td>';
+                        tabCheck += '<td style="vertical-align:middle">' + json.Demandeur[i] + '</td>';
+                        tabCheck += '<td style="vertical-align:middle">' + json.Motif[i] + '</td>';
+                        tabCheck += '<td style="vertical-align:middle"><center><div id="duree' + i + '">' + json.DureeIntervention[i] + '</div></center></td>';
+                        tabCheck += '<td style="vertical-align:middle"><center><div id="NdF' + i + '">' + OuiOuNon(json.NoteFrais[i]) + '</div></center></td>';
+                        tabCheck += '<td style="vertical-align:middle"><center><div id="primeInter' + i + '">' + json.PrimeIntervention[i] + '</div></center></td>';
+                        tabCheck += '<td style="vertical-align:middle"><center><div id="primeWE' + i + '">' + json.PrimeDimanche[i] + '</div></center></td>';
+                        tabCheck += '<td style="vertical-align:middle"><center><input id="checkbox' + i + '" type="checkbox"/></center></td>';
+                        tabCheck += '</tr>';
+                    }
+                    tabCheck += '</table><button onclick="$(\'#buttonTabIntervention\').click();">FERMER</button></center>';
+
+                    document.getElementById('checkIntervention').innerHTML = tabCheck;
+                    checkIntervention = 1;
+
+                    $('#inverserSelect').on('click', function () {
+
+                            for (var i = 0; i < json.Intervenant.length; i++) {
+
+                                $('#checkbox' + i).click();
+                            }
+                    })
+
+                
+        }
+        else {
+            $('#valideIntervention').remove();
+            checkIntervention = 0;
+        }
+        
+    }
+
+    function valideIntervention(valMax) {
+
+        var nbSelect = 0;
+        var tabId = "";
+
+        for (var i = 0; i < valMax; i++) {
+
+            if ($('#checkbox' + i).is(':checked')) {
+                nbSelect++;
+                console.log(document.getElementById('nom' + i).getAttribute('data-id'))
+                tabSelection.push([document.getElementById('nom' + i).innerHTML, document.getElementById('date' + i).innerHTML, document.getElementById('duree' + i).innerHTML, document.getElementById('NdF' + i).innerHTML, document.getElementById('primeInter' + i).innerHTML, document.getElementById('primeWE' + i).innerHTML])
+                tabId += (document.getElementById('nom' + i).getAttribute('data-id')) + "|"
+            }
+        }
+        if (nbSelect < 1) {
+            alert('Vous n\'avez sélectionné aucune intervention !');
+        }
+        else {
+            if (prompt('Entrez le mot de passe', '') == "Refresco2014") {
+                mailto(tabId);
+            }
+            else{
+                alert('Mauvais mot de passe')
+            }
+            
+        }
+        tabSelection = [];
+
+    }
+
+    function mailto(tabId) {
+
+        var tabInter = "<html><body><h5 style='color:#6A7279; font-style:italic'>## Ceci est un message automatique ##</h5>";
+        tabInter += "<p>Bonjour,<br/>merci d'enregistrer les primes conséquentes aux interventions suivantes:</p>";
+        tabInter += "<table><tr style='background:#F2F2F2'><th style='margin:10px;'>Nom intervenant</th><th style='margin:10px;'>Date intervention</th><th style='margin:10px;'>Durée intervention</th><th style='margin:10px;'>Note de frais</th><th style='margin:10px;'>Prime intervention</th><th style='margin:10px;'>Prime W-E</th></tr>";
+        for (var i = 0; i < tabSelection.length; i++) {
+            if ((parseInt(i / 2) == (i / 2))) {
+                tabInter += "<tr style='background:#E4FFD6'>";
+            }
+            else {
+                tabInter += "<tr style='background:#F2F2F2'>";
+            }
+            for (var j = 0; j < 6; j++) {
+                tabInter += "<td>" + tabSelection[i][j] + "</td>";
+            }
+            tabInter += "</tr>"
+        }
+
+        tabInter += "</table></body></html>";
+
+        // Encodage du code HTML
+        tabInter = tabInter.replace(/\//g, "%2F").replace(/</g, "%139").replace(/>/g, "%155")
+
+        $.ajax({
+            url: "@Url.Action("SendMail", "Intervention")",
+            data: { body: tabInter, tabId: tabId },
+            dataType: "json",
+            type: "POST",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (data) {
+                checkIntervention = 0;
+                AfficherNonValide();
+            }
+        })
+    }
+
+    function parseJSON(data) {
+        return window.JSON && window.JSON.parse ? window.JSON.parse(data) : (new Function("return " + data))();
+    }
+
+</script>
+
+    @* TODO *@ 
+
+    <link href="~/Content/cupertino/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/Scripts/jquery-ui-1.10.4.custom.min.js"></script>
+
+<script>
+
+    function ADDIntervention() {
+        if (addIntervention == 0) {
+            var formulaire = '<center id="ajouterIntervention"><div class="row"><h4>----- Ajouter une intervention -----</h4>';
+            formulaire += '<div class="col-md-2" style="vertical-align:middle"><h5>Intervenant</h5></div>';
+            formulaire += '<div class="col-md-1" style="vertical-align:middle"><h5>Date intervention (heure hh:mm)</h5></div>';
+            formulaire += '<div class="col-md-2" style="vertical-align:middle"><h5>Planifié</h5></div>';
+            formulaire += '<div class="col-md-1" style="vertical-align:middle"><h5>Demandeur</h5></div>';
+            formulaire += '<div class="col-md-2" style="vertical-align:middle"><h5>Motif</h5></div>';
+            formulaire += '<div class="col-md-1" style="vertical-align:middle"><h5>Durée intervention (en minutes)</h5></div>';
+            formulaire += '<div class="col-md-2" style="vertical-align:middle"><h5>Note de frais</h5></div>';
+            formulaire += '<div class="col-md-1" style="vertical-align:middle"><h5>Actions</h5></div>';
+            formulaire += '</div><div class="row">'
+            formulaire += '<div class="col-md-2" style="vertical-align:middle;"><select id="inputIntervenant">';
+            for (var i = 0; i < tabIntervenant.length; i++) {
+                formulaire += '<option>' + tabIntervenant[i] + '</option>';
+            }
+            formulaire += '</select></div>';
+            formulaire += '<div class="col-md-1" style="vertical-align:middle;"><center><input size="8" id="inputDateIntervention" /><br/><input size="3" id="inputHeureIntervention" /></center></div>';
+            formulaire += '<div class="col-md-2" style="vertical-align:middle;"><input type="radio" name="planifie" value="oui" id="inputPlanifie"> Oui <input type="radio" name="planifie" value="non" checked > Non<br/><input type="checkbox" id="inputFerie"/> Jour férié</div>';
+            formulaire += '<div class="col-md-1" style="vertical-align:middle;"><input size="10" id="inputDemandeur" /></div>';
+            formulaire += '<div class="col-md-2" style="vertical-align:middle;"><textarea cols="20" rows="3" id="inputMotif"></textarea></div>';
+            formulaire += '<div class="col-md-1" style="vertical-align:middle;"><input size="10" id="inputDureeIntervention" /></div>';
+            formulaire += '<div class="col-md-2" style="vertical-align:middle;"><input type="radio" name="NdF" value="oui" id="inputNoteFrais"> Oui <input type="radio" name="NdF" value="non" checked > Non</div>';
+            formulaire += '<div class="col-md-1" style="vertical-align:middle;"><button title="Sauvegarder" onclick="';
+            formulaire += 'enregistrerIntervention($(\'#inputIntervenant\').find(\':selected\').val(), $(\'#inputDateIntervention\').val() + \' \' + $(\'#inputHeureIntervention\').val(), $(\'#inputPlanifie\').is(\':checked\'), $(\'#inputFerie\').is(\':checked\') ,$(\'#inputDemandeur\').val(), $(\'#inputMotif\').val(), $(\'#inputDureeIntervention\').val(), $(\'#inputNoteFrais\').is(\':checked\'));';
+            formulaire += '" id="saveButton" class="glyphicon glyphicon-floppy-disk"></button> <button title="Annuler" onclick="$(\'#buttonAddIntervention\').click();" class="glyphicon glyphicon-remove"></button></div>';
+            formulaire += '</div></center>';
+            document.getElementById('addIntervention').innerHTML = formulaire;
+
+
+            $("#inputDateIntervention").datepicker({
+                monthNames: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Decembre"],
+                dayNamesMin: ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"],
+                dayNames: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+                dateFormat: "dd-mm-yy",
+                firstDay: 1
+            });
+
+            addIntervention = 1;
+        }
+        else {
+            $('#ajouterIntervention').remove();
+            addIntervention = 0;
+        }
+    }
+
+</script>
+

@@ -1,0 +1,793 @@
+﻿@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+@*ORDRE DES SCRIPTS : JQUERY / MOMENT / UNDERSCORE / BACKBONE*@
+@*<link href="~/Content/smoothness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css" />*@
+<script type="text/javascript" src="/Scripts/spin.min.js"></script>
+<link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/Scripts/moment-with-langs.js"></script>
+@*<script type="text/javascript" src="/Scripts/jquery-1.10.2.min.js"></script>*@
+@*<script type="text/javascript" src="/Scripts/jquery-ui-1.10.4.custom.min.js"></script>*@
+<script type="text/javascript" src="/Scripts/bootstrap-datetimepicker.min.js"></script>
+
+@*<script type="text/javascript" src="/Scripts/bootstrap-datepicker.js"></script>*@
+<script type="text/javascript" src="/Scripts/underscore.js"></script>
+<script type="text/javascript" src="/Scripts/backbone.js"></script>
+@*<script type="text/javascript" src="@Url.Content("~/Content/Scripts/HSE/FicheSecurite/Create.js")"></script>*@
+<script type="text/javascript" src="~/Scripts/jquery.imagemapster.min.js"></script>
+
+
+<script type="text/javascript" src="~/Scripts/Application/HSE/DialogueSecurite/Formulaire/ViewModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/RechercheActiveDirectoryModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/HSE/DialogueSecurite/DialogueSecuriteModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/HSE/DialogueSecurite/ThematiqueModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/SiteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/ZoneModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/LieuModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/Socle/PersonneModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/Socle/ServiceTypeModel.js"></script>
+@*<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/ResponsableModel.js"></script>
+    <script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/VerificateurModel.js"></script>
+    <script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/ActionModel.js"></script>*@
+
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/RechercheActiveDirectoryView.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/AlerteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/AlerteView.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/HSE/DialogueSecurite/Formulaire/DialogueSecuriteView.js"></script>
+@*<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/ActionView.js"></script>*@
+
+
+
+<script type="text/template" id="RechercheActiveDirectory">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Recherche d'un utilisateur dans l'annuaire</h4>
+            </div>
+            <div class="modal-body">
+                <p>Veuillez saisir un nom et/ou un prénom&hellip;&nbsp;Puis selectionner l'utilisateur voulu</p>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            @*style="padding-right:0px;"*@
+                            <label for="NomRecherche" class="label-xs">Nom&nbsp;recherché&nbsp;:&nbsp;</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control input-xs" id="NomRecherche" value="<%= typeof Nom === 'undefined' ? "" : Nom %>">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            @*style="padding-right:0px;"*@
+                            <label for="PrenomRecherche" class="label-xs">Prénom&nbsp;recherché&nbsp;:&nbsp;</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control input-xs" id="PrenomRecherche" value="<%= typeof Prenom === 'undefined' ? "" : Prenom %>">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button id="RechercheADUtilisateur" type="submit" class="btn pull-right btn-xs">
+                            <span class="glyphicon glyphicon-user"></span> Recherche
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <table class="table">
+                        <thead>
+                        <td>
+                            Nom
+                        </td>
+                        <td>
+                            Prénom
+                        </td>
+                        <td>
+                            Choisir
+                        </td>
+                        </thead>
+                        <tbody>
+
+                            <% rechercheActiveDirectoryCollection.each( function(utilisateurActiveDirectory){ %>
+
+                            <% if(utilisateurActiveDirectory.get('IsAnnuaireApplication') == true && utilisateurActiveDirectory.get('IsAnnuaireAD') == false) {%>
+                            <tr style="background-color:#F7E5C5;">
+                                <% } %>
+                                <% if(utilisateurActiveDirectory.get('IsAnnuaireAD') == true) {%>
+                            <tr>
+                                <% } %>
+
+                                <td>
+                                    <%= utilisateurActiveDirectory.get('Nom') %>
+                                </td>
+                                <td>
+                                    <%= utilisateurActiveDirectory.get('Prenom') %>
+                                </td>
+                                <td>
+                                    <button type="button" id="<%= utilisateurActiveDirectory.get('PersonneId') %>" class="BoutonChoixUtilisateurActiveDirectory btn btn-default">
+                                        <span class="glyphicon glyphicon-arrow-right"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</script>
+<div id="RechercheActiveDirectoryDiv">
+</div>
+
+@*--------------------------------------------------DIALOGUE SECURITE----------------------------------------------------*@
+<script type="text/template" id="DialogueSecuriteTemplate">
+
+    <!-- ---------------------------------!!!!VERSION IMPRESSION !!!!-------------------------------- -->
+    <div id="ToPrint" class="visible-print">
+
+
+        <div class="panel-group" id="accordion">
+
+            <div id="DialogueSecuritePanel" class="panel panel-primary" style="border-color: #EB8C07">
+
+                <div class="panel-heading" style="background-color: #EB8C07; color: white">
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" href="#collapseOne" data-target="#collapseOne">
+                                    @*data-parent="#accordion"*@
+                                    DIALOGUE-SECURITE  &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;<%= dialogueSecuriteModel.get('Code') %>
+                                </a>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="collapseOne" class="panel-collapse collapse in">
+                    <div class="panel-body" style="background-color:#FBDAAB">
+
+                        <div class="row">
+
+                            <div class="col-xs-12">
+
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        <label>Site&nbsp;:&nbsp;</label>
+                                        <% siteCollection.each( function(site){ %>
+                                        <% if (dialogueSecuriteModel.get('SiteId') == site.get('SiteID')){ %>
+                                        <%= site.get('Trigramme') %>
+                                        <%} }); %>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <label>Zone&nbsp;:&nbsp;</label>
+                                        <% zoneCollection.each( function(zone){ %>
+                                        <% if (dialogueSecuriteModel.get('ZoneId') == zone.get('ZoneID')){ %>
+                                        <%= zone.get('Nom') %>
+                                        <%} }); %>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <label>Lieu&nbsp;:&nbsp;</label>
+                                        <% lieuCollection.each( function(lieu){ %>
+                                        <% if (dialogueSecuriteModel.get('LieuId') == lieu.get('LieuID')){ %>
+                                        <%= lieu.get('Nom') %>
+                                        <%} }); %>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        <label>Date&nbsp;:&nbsp;</label>
+                                        <%= (dialogueSecuriteModel.get('DateJavascript') == '01/01/0001') ? '' : dialogueSecuriteModel.get('DateJavascript') %>
+                                    </div>
+                                    <div class="col-xs-8">
+                                        <label>Thématique&nbsp;:&nbsp;</label>
+                                        <% thematiqueCollection.each( function(thematique){ %>
+                                        <% if (dialogueSecuriteModel.get('ThematiqueId') == thematique.get('ThematiqueId')){ %>
+                                        <%= thematique.get('Nom') %>
+                                        <%} }); %>
+                                    </div>
+                                </div>
+                                <div class="well well-sm text-center" style="background:grey;margin:0px;padding:0px;">
+                                    DIALOGUEURS
+                                 </div>
+                                    <div class="row">
+                                        <div class="col-xs-4">
+                                            1/ <label>Nom&nbsp;:&nbsp;</label>
+                                            <%= dialogueSecuriteModel.get('Dialogueur1').get('Nom')  %>
+                                            <br />
+                                            2/ <label>Nom&nbsp;:&nbsp;</label>
+                                            <%= dialogueSecuriteModel.get('Dialogueur2').get('Nom')  %>
+                                            <br />
+                                            3/ <label>Nom&nbsp;:&nbsp;</label>
+                                            <%= dialogueSecuriteModel.get('Dialogueur3').get('Nom')  %>
+                                        </div>
+
+                                        <div class="col-xs-4">
+                                            <label>Prénom&nbsp;:&nbsp;</label>
+                                            <%= dialogueSecuriteModel.get('Dialogueur1').get('Prenom')  %>
+                                            <br />
+                                            <label>Prénom&nbsp;:&nbsp;</label>
+                                            <%= dialogueSecuriteModel.get('Dialogueur2').get('Prenom')  %>
+                                            <br />
+                                            <label>Prénom&nbsp;:&nbsp;</label>
+                                            <%= dialogueSecuriteModel.get('Dialogueur3').get('Prenom')  %>
+                                        </div>
+
+                                        <div class="col-xs-4">
+                                            <label>Service&nbsp;:&nbsp;</label>
+                                            <% serviceTypeCollection.each( function(serviceType){ %>
+                                            <% if (dialogueSecuriteModel.get('ServiceTypeDialogueur1Id') == serviceType.get('ServiceTypeId')){ %>
+                                            <%= serviceType.get('Nom') %>
+                                            <%} }); %>
+                                            <br />
+                                            <label>Service&nbsp;:&nbsp;</label>
+                                            <% serviceTypeCollection.each( function(serviceType){ %>
+                                            <% if (dialogueSecuriteModel.get('ServiceTypeDialogueur2Id') == serviceType.get('ServiceTypeId')){ %>
+                                            <%= serviceType.get('Nom') %>
+                                            <%} }); %>
+                                            <br />
+                                            <label>Service&nbsp;:&nbsp;</label>
+                                            <% serviceTypeCollection.each( function(serviceType){ %>
+                                            <% if (dialogueSecuriteModel.get('ServiceTypeDialogueur3Id') == serviceType.get('ServiceTypeId')){ %>
+                                            <%= serviceType.get('Nom') %>
+                                            <%} }); %>
+                                        </div>
+                                        </div>
+
+                                        <div class="well well-sm text-center" style="background:grey;margin:0px;padding:0px;">
+                                            DIALOGU&Eacute;S
+                                        </div>
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        1/ <label>Nom&nbsp;:&nbsp;</label>
+                                        <%= dialogueSecuriteModel.get('Entretenu1').get('Nom')  %>
+                                        <br />
+                                        2/ <label>Nom&nbsp;:&nbsp;</label>
+                                        <%= dialogueSecuriteModel.get('Entretenu2').get('Nom')  %>
+                                        <br />
+                                        3/ <label>Nom&nbsp;:&nbsp;</label>
+                                        <%= dialogueSecuriteModel.get('Entretenu3').get('Nom')  %>
+                                    </div>
+
+                                    <div class="col-xs-4">
+                                        <label>Prénom&nbsp;:&nbsp;</label>
+                                        <%= dialogueSecuriteModel.get('Entretenu1').get('Prenom')  %>
+                                        <br />
+                                        <label>Prénom&nbsp;:&nbsp;</label>
+                                        <%= dialogueSecuriteModel.get('Entretenu2').get('Prenom')  %>
+                                        <br />
+                                        <label>Prénom&nbsp;:&nbsp;</label>
+                                        <%= dialogueSecuriteModel.get('Entretenu3').get('Prenom')  %>
+                                    </div>
+
+                                    <div class="col-xs-4">
+                                        <label>Service&nbsp;:&nbsp;</label>
+                                        <% serviceTypeCollection.each( function(serviceType){ %>
+                                        <% if (dialogueSecuriteModel.get('ServiceTypeEntretenu1Id') == serviceType.get('ServiceTypeId')){ %>
+                                        <%= serviceType.get('Nom') %>
+                                        <%} }); %>
+                                        <br />
+                                        <label>Service&nbsp;:&nbsp;</label>
+                                        <% serviceTypeCollection.each( function(serviceType){ %>
+                                        <% if (dialogueSecuriteModel.get('ServiceTypeEntretenu2Id') == serviceType.get('ServiceTypeId')){ %>
+                                        <%= serviceType.get('Nom') %>
+                                        <%} }); %>
+                                        <br />
+                                        <label>Service&nbsp;:&nbsp;</label>
+                                        <% serviceTypeCollection.each( function(serviceType){ %>
+                                        <% if (dialogueSecuriteModel.get('ServiceTypeEntretenu3Id') == serviceType.get('ServiceTypeId')){ %>
+                                        <%= serviceType.get('Nom') %>
+                                        <%} }); %>
+                                    </div>
+                                </div>
+
+                                </div>
+
+                            <div class="col-xs-12">
+                                <br />
+                                
+                                @*<div class="row" style="margin-left:5px;margin-right:5px;">*@
+                                    <div class="form-group">
+                                        <label for="Contexte" class="label-xs">SITUER&nbsp;:&nbsp;</label>
+                                        <textarea class="form-control input-small" rows="5" style="max-width:100%;"><%= dialogueSecuriteModel.get('Contexte') %></textarea>
+                                    </div>
+                                @*</div>*@
+                                <div class="row" style="margin-left:5px;margin-right:5px;">
+                                    <div class="form-group">
+                                        <label for="Observation" class="label-xs">OBSERVER&nbsp;:&nbsp;</label>
+                                        <textarea class="form-control input-small" rows="5" style="max-width:100%;"><%= dialogueSecuriteModel.get('Observation') %></textarea>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-left:5px;margin-right:5px;">
+                                    <div class="form-group">
+                                        <label for="Reflexion" class="label-xs">R&Eacute;FL&Eacute;CHIR&nbsp;:&nbsp;</label>
+                                        <textarea class="form-control input-small" rows="5" style="max-width:100%;"><%= dialogueSecuriteModel.get('Reflexion') %></textarea>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-left:5px;margin-right:5px;">
+                                    <div class="form-group">
+                                        <label for="Action" class="label-xs">AGIR&nbsp;:&nbsp;</label>
+                                        <textarea class="form-control input-small" rows="5" style="max-width:100%;"><%= dialogueSecuriteModel.get('Action') %></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*---------------------------VERSION ECRAN--------------------------------------*@
+
+    <div class="panel-group hidden-print" id="accordion">
+
+        <div id="DialogueSecuritePanel" class="panel panel-primary" style="border-color: #EB8C07;">
+
+            <div class="panel-heading" style="background-color: #EB8C07; color: white">
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <h4 class="panel-title">
+                            <button id="ImprimerFicheSecurite" type="submit" class="pull-left btn-xs" style="color:#333333">
+                                <span class="glyphicon glyphicon-print"></span>
+                            </button>&nbsp;&nbsp;
+                            <a data-toggle="collapse" href="#collapseOne" data-target="#collapseOne">
+                                @*data-parent="#accordion"*@
+                                DIALOGUE-SECURITE  &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;<%= dialogueSecuriteModel.get('Code') %>
+                            </a>
+                        </h4>
+                    </div>
+
+                    <div class="col-md-8">
+
+                        <button id="Enregistrer" type="submit" class="btn pull-right btn-xs" style="color: green">
+                            <span class="glyphicon glyphicon-floppy-disk"></span> Enregistrer
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="collapseOne" class="panel-collapse collapse in">
+                <div class="panel-body" style="background-color:#FBDAAB">
+
+                    <div class="row">
+
+                        <div class="col-md-5">
+                            <div class="row" style="padding-left:15px; padding-right:15px;">
+
+                                <div class="panel panel-default" style="margin-bottom:15px;">
+                                    <div class="panel-body" style="padding:0px; ">
+
+                                        <div style="padding:5px;">
+                                            <div class="col-md-6">
+                                                <div class="row" style="padding-right:10px;margin-bottom:15px;">
+
+                                                    <label for="Site" class="label-xs">Site&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                    <select id="Site" class="form-control input-xs">
+                                                        <option value="null" <% if (dialogueSecuriteModel.get('SiteId') == 'null'){ %> selected <% } %> ></option>
+                                                        <% siteCollection.each( function(site){ %>
+                                                        <option value="<%= site.get('SiteID') %>"
+                                                <% if (dialogueSecuriteModel.get('SiteId') == site.get('SiteID')){ %> selected <% } %>
+                                                >
+                                                <%= site.get('Trigramme') %>
+                                            </option>
+                                                        <% }); %>
+                                                    </select>
+
+
+                                                    <label for="Zone" class="label-xs"><span class="glyphicon glyphicon-arrow-right"></span>&nbsp;Zone&nbsp;:&nbsp;<span style="color:red">*</span></label>
+
+                                                    <select class="form-control input-xs" id="Zone">
+                                                        <option value="null" <% if (dialogueSecuriteModel.get('ZoneId') == 'null'){ %> selected <% } %> ></option>
+                                                        <% zoneCollection.each( function(zone){ %>
+                                                        <option value="<%= zone.get('ZoneID') %>"
+                                                <% if (dialogueSecuriteModel.get('ZoneId') == zone.get('ZoneID')){ %> selected <% } %>
+                                                >
+                                                <%= zone.get('Nom') %>
+                                            </option>
+                                                        <% }); %>
+
+                                                    </select>
+
+                                                    <label for="Lieu" class="label-xs"><span class="glyphicon glyphicon-arrow-right"></span>&nbsp;Lieu&nbsp;:&nbsp;<span style="color:red">*</span></label>
+
+                                                    <select class="form-control input-xs" id="Lieu">
+                                                        <option value="null" <% if (dialogueSecuriteModel.get('LieuId') == 'null'){ %> selected <% } %> ></option>
+                                                        <% lieuCollection.each( function(lieu){ %>
+                                                        <option value="<%= lieu.get('LieuID') %>"
+                                                <% if (dialogueSecuriteModel.get('LieuId') == lieu.get('LieuID')){ %> selected <% } %>
+                                                >
+                                                <%= lieu.get('Nom') %>
+                                            </option>
+                                                        <% }); %>
+
+                                                    </select>
+
+
+
+                                                </div>
+
+
+
+                                            </div>
+
+                                            <div class="col-md-6">
+
+                                                <div class="row" style="padding-left:10px;">
+
+                                                    <label for="DateDialogueSecurite" class="label-xs">Date&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                    <div class="input-group date">
+                                                        <div class='input-group date' id="DateDialogueSecurite">
+                                                            <input type='text' name="Date" class="form-control input-xs" id="DateDialogueSecuriteInput" value="<%= (dialogueSecuriteModel.get('DateJavascript') == '01/01/0001') ? '' : dialogueSecuriteModel.get('DateJavascript') %>" />
+                                                            <span class="input-group-addon input-xs">
+                                                                <span class="glyphicon glyphicon-calendar"></span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <label for="Thematique" class="label-xs">Thématique&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                    <select id="Thematique" class="form-control input-xs">
+                                                        <option value="null" <% if (dialogueSecuriteModel.get('ThematiqueId') == 'null'){ %> selected <% } %> ></option>
+                                                        <% thematiqueCollection.each( function(thematique){ %>
+                                                        <option value="<%= thematique.get('ThematiqueId') %>"
+                                                <% if (dialogueSecuriteModel.get('ThematiqueId') == thematique.get('ThematiqueId')){ %> selected <% } %>
+                                                >
+                                                <%= thematique.get('Nom') %>
+                                            </option>
+                                                        <% }); %>
+                                                    </select>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+
+                                <div class="col-md-6">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading text-center"><strong>DIALOGUEURS</strong></div>
+                                        <div class="panel-body">
+                                            <div style="padding-left:5px; padding-right:5px;">
+                                                <div class="row">
+
+                                                    <label for="Dialogueur1Nom" class="label-xs">Nom&nbsp;dialogueur&nbsp;1&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                    <div class="input-group input-group-xs">
+                                                        <input type="text" class="form-control input-xs" id="Dialogueur1Nom" value="<%= dialogueSecuriteModel.get('Dialogueur1').get('Nom')  %>">
+                                                        <span class="input-group-btn">
+                                                            <button id="ActiveDirectoryDialogueur1Recherche" class=" btn btn-default" type="button" data-toggle="modal" data-sourceutilisateurfield="Dialogueur1">
+                                                                <span class="glyphicon glyphicon-user">
+                                                            </button>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <label for="Dialogueur1Prenom" class="label-xs">Prénom&nbsp;dialogueur&nbsp;1&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                    <input type="text" class="form-control input-xs" id="Dialogueur1Prenom" value="<%= dialogueSecuriteModel.get('Dialogueur1').get('Prenom') %>">
+                                                </div>
+                                                <div class="row">
+                                                    <label for="ServiceTypeDialogueur1" class="label-xs">Service&nbsp;du&nbsp;dialogueur&nbsp;1&nbsp;:&nbsp;<span style="color:red">*</span></label>
+
+                                                    <select id="ServiceTypeDialogueur1" class="form-control input-xs">
+
+                                                        <option value="null" <% if (dialogueSecuriteModel.get('ServiceTypeDialogueur1Id') == 'null' || dialogueSecuriteModel.get('ServiceTypeDialogueur1Id') === 0){ %> selected <% } %> ></option>
+                                                        <% serviceTypeCollection.each( function(serviceType){ %>
+                                                        <option value="<%= serviceType.get('ServiceTypeId') %>"
+                                                <% if (dialogueSecuriteModel.get('ServiceTypeDialogueur1Id') == serviceType.get('ServiceTypeId')){ %> selected <% } %>
+                                                >
+                                                <%= serviceType.get('Nom') %>
+                                            </option>
+                                                        <% }); %>
+
+                                                    </select>
+                                                </div>
+                                                <hr style="background-color: #fff; border-top: 2px dashed #8c8b8b;" />
+                                                <div class="row">
+
+                                                    <label for="Dialogueur2Nom" class="label-xs">Nom&nbsp;dialogueur&nbsp;2&nbsp;:&nbsp;<span style="color:red"></span></label>
+                                                    <div class="input-group input-group-xs">
+                                                        <input type="text" class="form-control input-xs" id="Dialogueur2Nom" value="<%= dialogueSecuriteModel.get('Dialogueur2').get('Nom')  %>">
+                                                        <span class="input-group-btn">
+                                                            <button id="ActiveDirectoryDialogueur2Recherche" class=" btn btn-default" type="button" data-toggle="modal" data-sourceutilisateurfield="Dialogueur2">
+                                                                <span class="glyphicon glyphicon-user">
+                                                            </button>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <label for="Dialogueur2Prenom" class="label-xs">Prénom&nbsp;dialogueur&nbsp;2&nbsp;:&nbsp;<span style="color:red"></span></label>
+                                                    <input type="text" class="form-control input-xs" id="Dialogueur2Prenom" value="<%= dialogueSecuriteModel.get('Dialogueur2').get('Prenom') %>">
+                                                </div>
+                                                <div class="row">
+                                                    <label for="ServiceTypeDialogueur2" class="label-xs">Service&nbsp;du&nbsp;dialogueur&nbsp;2&nbsp;:&nbsp;<span style="color:red"></span></label>
+
+                                                    <select id="ServiceTypeDialogueur2" class="form-control input-xs">
+
+                                                        <option value="null" <% if (dialogueSecuriteModel.get('ServiceTypeDialogueur2Id') == 'null' || dialogueSecuriteModel.get('ServiceTypeDialogueur2Id') === 0){ %> selected <% } %> ></option>
+                                                        <% serviceTypeCollection.each( function(serviceType){ %>
+                                                        <option value="<%= serviceType.get('ServiceTypeId') %>"
+                                                <% if (dialogueSecuriteModel.get('ServiceTypeDialogueur2Id') == serviceType.get('ServiceTypeId')){ %> selected <% } %>
+                                                >
+                                                <%= serviceType.get('Nom') %>
+                                            </option>
+                                                        <% }); %>
+
+                                                    </select>
+                                                </div>
+
+                                                <hr style="background-color: #fff; border-top: 2px dashed #8c8b8b;" />
+                                                <div class="row">
+
+                                                    <label for="Dialogueur3Nom" class="label-xs">Nom&nbsp;dialogueur&nbsp;3&nbsp;:&nbsp;<span style="color:red"></span></label>
+                                                    <div class="input-group input-group-xs">
+                                                        <input type="text" class="form-control input-xs" id="Dialogueur3Nom" value="<%= dialogueSecuriteModel.get('Dialogueur3').get('Nom')  %>">
+                                                        <span class="input-group-btn">
+                                                            <button id="ActiveDirectoryDialogueur3Recherche" class=" btn btn-default" type="button" data-toggle="modal" data-sourceutilisateurfield="Dialogueur3">
+                                                                <span class="glyphicon glyphicon-user">
+                                                            </button>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <label for="Dialogueur3Prenom" class="label-xs">Prénom&nbsp;dialogueur&nbsp;3&nbsp;:&nbsp;<span style="color:red"></span></label>
+                                                    <input type="text" class="form-control input-xs" id="Dialogueur3Prenom" value="<%= dialogueSecuriteModel.get('Dialogueur3').get('Prenom') %>">
+                                                </div>
+                                                <div class="row">
+                                                    <label for="ServiceTypeDialogueur3" class="label-xs">Service&nbsp;du&nbsp;dialogueur&nbsp;3&nbsp;:&nbsp;<span style="color:red"></span></label>
+
+                                                    <select id="ServiceTypeDialogueur3" class="form-control input-xs">
+
+                                                        <option value="null" <% if (dialogueSecuriteModel.get('ServiceTypeDialogueur3Id') == 'null' || dialogueSecuriteModel.get('ServiceTypeDialogueur3Id') === 0){ %> selected <% } %> ></option>
+                                                        <% serviceTypeCollection.each( function(serviceType){ %>
+                                                        <option value="<%= serviceType.get('ServiceTypeId') %>"
+                                                <% if (dialogueSecuriteModel.get('ServiceTypeDialogueur3Id') == serviceType.get('ServiceTypeId')){ %> selected <% } %>
+                                                >
+                                                <%= serviceType.get('Nom') %>
+                                            </option>
+                                                        <% }); %>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading text-center "><strong>DIALOGUÉS</strong></div>
+                                        <div class="panel-body">
+                                            <div style="padding-left:5px; padding-right:5px;">
+                                                <div class="row">
+
+                                                    <label for="Entretenu1Nom" class="label-xs">Nom&nbsp;dialogué&nbsp;1&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                    <div class="input-group input-group-xs">
+                                                        <input type="text" class="form-control input-xs" id="Entretenu1Nom" value="<%= dialogueSecuriteModel.get('Entretenu1').get('Nom')  %>">
+                                                        <span class="input-group-btn">
+                                                            <button id="ActiveDirectoryEntretenu1Recherche" class=" btn btn-default" type="button" data-toggle="modal" data-sourceutilisateurfield="Entretenu1">
+                                                                <span class="glyphicon glyphicon-user">
+                                                            </button>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <label for="Entretenu1Prenom" class="label-xs">Prénom&nbsp;dialogué&nbsp;1&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                    <input type="text" class="form-control input-xs" id="Entretenu1Prenom" value="<%= dialogueSecuriteModel.get('Entretenu1').get('Prenom') %>">
+                                                </div>
+                                                <div class="row">
+                                                    <label for="ServiceTypeEntretenu1" class="label-xs">Service&nbsp;du&nbsp;dialogué&nbsp;1&nbsp;:&nbsp;<span style="color:red">*</span></label>
+
+                                                    <select id="ServiceTypeEntretenu1" class="form-control input-xs">
+
+                                                        <option value="null" <% if (dialogueSecuriteModel.get('ServiceTypeEntretenu1Id') == 'null' || dialogueSecuriteModel.get('ServiceTypeEntretenu1Id') === 0){ %> selected <% } %> ></option>
+                                                        <% serviceTypeCollection.each( function(serviceType){ %>
+                                                        <option value="<%= serviceType.get('ServiceTypeId') %>"
+                                                <% if (dialogueSecuriteModel.get('ServiceTypeEntretenu1Id') == serviceType.get('ServiceTypeId')){ %> selected <% } %>
+                                                >
+                                                <%= serviceType.get('Nom') %>
+                                            </option>
+                                                        <% }); %>
+
+                                                    </select>
+                                                </div>
+                                                <hr style="background-color: #fff; border-top: 2px dashed #8c8b8b;" />
+                                                <div class="row">
+
+                                                    <label for="Entretenu2Nom" class="label-xs">Nom&nbsp;dialogué&nbsp;2&nbsp;:&nbsp;<span style="color:red"></span></label>
+                                                    <div class="input-group input-group-xs">
+                                                        <input type="text" class="form-control input-xs" id="Entretenu2Nom" value="<%= dialogueSecuriteModel.get('Entretenu2').get('Nom')  %>">
+                                                        <span class="input-group-btn">
+                                                            <button id="ActiveDirectoryEntretenu2Recherche" class=" btn btn-default" type="button" data-toggle="modal" data-sourceutilisateurfield="Entretenu2">
+                                                                <span class="glyphicon glyphicon-user">
+                                                            </button>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <label for="Entretenu2Prenom" class="label-xs">Prénom&nbsp;dialogué&nbsp;2&nbsp;:&nbsp;<span style="color:red"></span></label>
+                                                    <input type="text" class="form-control input-xs" id="Entretenu2Prenom" value="<%= dialogueSecuriteModel.get('Entretenu2').get('Prenom') %>">
+                                                </div>
+                                                <div class="row">
+                                                    <label for="ServiceTypeEntretenu2" class="label-xs">Service&nbsp;du&nbsp;dialogué&nbsp;2&nbsp;:&nbsp;<span style="color:red"></span></label>
+
+                                                    <select id="ServiceTypeEntretenu2" class="form-control input-xs">
+
+                                                        <option value="null" <% if (dialogueSecuriteModel.get('ServiceTypeEntretenu2Id') == 'null' || dialogueSecuriteModel.get('ServiceTypeEntretenu2Id') === 0){ %> selected <% } %> ></option>
+                                                        <% serviceTypeCollection.each( function(serviceType){ %>
+                                                        <option value="<%= serviceType.get('ServiceTypeId') %>"
+                                                <% if (dialogueSecuriteModel.get('ServiceTypeEntretenu2Id') == serviceType.get('ServiceTypeId')){ %> selected <% } %>
+                                                >
+                                                <%= serviceType.get('Nom') %>
+                                            </option>
+                                                        <% }); %>
+
+                                                    </select>
+                                                </div>
+
+                                                <hr style="background-color: #fff; border-top: 2px dashed #8c8b8b;" />
+                                                <div class="row">
+
+                                                    <label for="Entretenu3Nom" class="label-xs">Nom&nbsp;dialogué&nbsp;3&nbsp;:&nbsp;<span style="color:red"></span></label>
+                                                    <div class="input-group input-group-xs">
+                                                        <input type="text" class="form-control input-xs" id="Entretenu3Nom" value="<%= dialogueSecuriteModel.get('Entretenu3').get('Nom')  %>">
+                                                        <span class="input-group-btn">
+                                                            <button id="ActiveDirectoryEntretenu3Recherche" class=" btn btn-default" type="button" data-toggle="modal" data-sourceutilisateurfield="Entretenu3">
+                                                                <span class="glyphicon glyphicon-user">
+                                                            </button>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <label for="Entretenu3Prenom" class="label-xs">Prénom&nbsp;dialogué&nbsp;3&nbsp;:&nbsp;<span style="color:red"></span></label>
+                                                    <input type="text" class="form-control input-xs" id="Entretenu3Prenom" value="<%= dialogueSecuriteModel.get('Entretenu3').get('Prenom') %>">
+                                                </div>
+                                                <div class="row">
+                                                    <label for="ServiceTypeEntretenu3" class="label-xs">Service&nbsp;du&nbsp;dialogué&nbsp;3&nbsp;:&nbsp;<span style="color:red"></span></label>
+
+                                                    <select id="ServiceTypeEntretenu3" class="form-control input-xs">
+
+                                                        <option value="null" <% if (dialogueSecuriteModel.get('ServiceTypeEntretenu3Id') == 'null' || dialogueSecuriteModel.get('ServiceTypeEntretenu3Id') === 0){ %> selected <% } %> ></option>
+                                                        <% serviceTypeCollection.each( function(serviceType){ %>
+                                                        <option value="<%= serviceType.get('ServiceTypeId') %>"
+                                                <% if (dialogueSecuriteModel.get('ServiceTypeEntretenu3Id') == serviceType.get('ServiceTypeId')){ %> selected <% } %>
+                                                >
+                                                <%= serviceType.get('Nom') %>
+                                            </option>
+                                                        <% }); %>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+
+                        </div>
+
+                        <div class="col-md-7">
+
+                            <div class="row" style="margin-left:5px;margin-right:10px;">
+                                <div class="form-group">
+                                    <label for="Contexte" class="label-xs">SITUER&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                    <textarea id="Contexte" class="form-control input-small" rows="3" style="max-width:100%;"><%= dialogueSecuriteModel.get('Contexte') %></textarea>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-left:5px;margin-right:10px;">
+                                <div class="form-group">
+                                    <label for="Observation" class="label-xs">OBSERVER&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                    <textarea id="Observation" class="form-control input-small" rows="6" style="max-width:100%;"><%= dialogueSecuriteModel.get('Observation') %></textarea>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-left:5px;margin-right:10px;">
+                                <div class="form-group">
+                                    <label for="Reflexion" class="label-xs">R&Eacute;FL&Eacute;CHIR&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                    <textarea id="Reflexion" class="form-control input-small" rows="6" style="max-width:100%;"><%= dialogueSecuriteModel.get('Reflexion') %></textarea>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-left:5px;margin-right:10px;">
+                                <div class="form-group">
+                                    <label for="Action" class="label-xs">AGIR&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                    <textarea id="Action" class="form-control input-small" rows="6" style="max-width:100%;"><%= dialogueSecuriteModel.get('Action') %></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+</script>
+<div id="DialogueSecuriteDiv">
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var DialogueSecuriteId = "@ViewBag.Id";
+        function dateFormatJS(date) {
+            var dateFormated = '';
+            if (date != null) {
+                dateFormated = date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+            }
+            return dateFormated;
+        };
+
+        var viewModel = new ViewModel({ id: DialogueSecuriteId }); //{id:NonConformiteId}
+        viewModel.fetch({ async: false });
+
+        var dialogueSecuriteModel = new DialogueSecuriteModel(viewModel.get('DialogueSecurite'));
+        if (dialogueSecuriteModel.get('Id') === -1 || dialogueSecuriteModel.get('Id') === 0) {
+            dialogueSecuriteModel.unset('Id');
+        };
+        dialogueSecuriteModel.set({ 'DateJavascript': dateFormatJS(dialogueSecuriteModel.get('Date')) });
+        viewModel.set({ 'dialogueSecuriteModel': dialogueSecuriteModel });
+        viewModel.set({ 'siteCollection': new SiteCollection(viewModel.get('AllSite')) });
+        viewModel.set({ 'zoneCollection': new ZoneCollection(viewModel.get('AllZone')) });
+        viewModel.set({ 'thematiqueCollection': new ThematiqueCollection(viewModel.get('AllThematique')) });
+        viewModel.get('zoneCollection').each(function (zone, index) {
+            zone.set({ 'Nom': zone.get('ZoneType').Nom });
+        });
+        viewModel.set({ 'lieuCollection': new LieuCollection(viewModel.get('AllLieu')) });
+        dialogueSecuriteModel.set({ 'Dialogueur1': new PersonneModel(dialogueSecuriteModel.get('Dialogueur1')) })
+        dialogueSecuriteModel.set({ 'Dialogueur2': new PersonneModel(dialogueSecuriteModel.get('Dialogueur2')) })
+        dialogueSecuriteModel.set({ 'Dialogueur3': new PersonneModel(dialogueSecuriteModel.get('Dialogueur3')) })
+        dialogueSecuriteModel.set({ 'Entretenu1': new PersonneModel(dialogueSecuriteModel.get('Entretenu1')) })
+        dialogueSecuriteModel.set({ 'Entretenu2': new PersonneModel(dialogueSecuriteModel.get('Entretenu2')) })
+        dialogueSecuriteModel.set({ 'Entretenu3': new PersonneModel(dialogueSecuriteModel.get('Entretenu3')) })
+        viewModel.set({ 'serviceTypeCollection': new ServiceTypeCollection(viewModel.get('AllServiceType')) });
+        console.log(dialogueSecuriteModel);
+
+        Backbone.applicationEvents = _.extend({}, Backbone.Events);
+        var alerteModel = new AlerteModel();
+        var dialogueSecuriteView = new window.DialogueSecuriteView({
+            el: $("#DialogueSecuriteDiv"),
+            model: viewModel
+        });
+
+        var alerteView = new AlerteView({
+            el: $("#alerteDiv"),
+            model: alerteModel
+        });
+    })
+
+</script>

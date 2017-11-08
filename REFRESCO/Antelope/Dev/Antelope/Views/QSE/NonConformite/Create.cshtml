@@ -1,0 +1,107 @@
+﻿@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/QSE/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript" src="/Scripts/spin.min.js"></script>
+<link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" /> 
+<script type="text/javascript" src="/Scripts/bootstrap-datetimepicker.min.js"></script>  
+<script type="text/javascript" src="~/Scripts/jquery.imagemapster.min.js"></script>
+
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/ViewModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/RechercheActiveDirectoryModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/NonConformiteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/SiteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/ServiceTypeModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/NonConformiteOrigineModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/NonConformiteDomaineModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/NonConformiteGraviteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/ResponsableModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/VerificateurModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/ActionModel.js"></script>
+
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/RechercheActiveDirectoryView.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/AlerteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/AlerteView.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/NonConformiteView.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/ActionView.js"></script>
+ 
+@Html.Partial("~/Views/QSE/NonConformite/Create/_RechercheActiveDirectory.cshtml", "RechercheActiveDirectory")
+<div id="RechercheActiveDirectoryDiv"></div>
+
+@*NON CONFORMITES*@
+@Html.Partial("~/Views/QSE/NonConformite/Create/_NonConformiteTemplate.cshtml", "NonConformiteTemplate")
+<div id="NonConformiteDiv"></div>
+
+@*ACTIONS*@
+@Html.Partial("~/Views/QSE/NonConformite/Create/_ActionTemplate.cshtml", "ActionTemplate")
+<div id="ActionDiv"></div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var NonConformiteId = "@ViewBag.Id";
+         
+        var viewModel = new ViewModel({ id: NonConformiteId }); //{id:NonConformiteId}
+
+        viewModel.fetch({ async: false });
+
+        var nonConformiteModel = new NonConformiteModel(viewModel.get('NonConformite'));
+        if (nonConformiteModel.get('Id') === -1 || nonConformiteModel.get('Id') === 0) {
+            nonConformiteModel.unset('Id');
+        };
+
+        nonConformiteModel.set({ 'DateJavascript': dateTimeUtils.dateFormatJS(nonConformiteModel.get('Date')) })
+
+        viewModel.set({ 'nonConformiteModel': nonConformiteModel });
+
+        viewModel.set({ 'siteCollection': new SiteCollection(viewModel.get('AllSite')) });
+        viewModel.set({ 'serviceTypeCollection': new ServiceTypeCollection(viewModel.get('AllServiceType')) });
+        viewModel.set({ 'nonConformiteDomaineCollection': new NonConformiteDomaineCollection(viewModel.get('AllNonConformiteDomaine')) });
+        viewModel.set({ 'nonConformiteOrigineCollection': new NonConformiteOrigineCollection(viewModel.get('AllNonConformiteOrigine')) });
+        viewModel.set({ 'nonConformiteGraviteCollection': new NonConformiteGraviteCollection(viewModel.get('AllNonConformiteGravite')) });
+
+        viewModel.set({ 'actionModel': new ActionModel() });
+        viewModel.get('actionModel').set({ 'Responsable': new ResponsableModel() });
+        viewModel.get('actionModel').set({ 'Verificateur': new VerificateurModel() });
+        viewModel.get('actionModel').set({ 'NonConformiteId': viewModel.get('nonConformiteModel').get('Id') });
+
+        var actionCollection = new ActionCollection(viewModel.get('nonConformiteModel').get('ActionQSEs'));
+        //console.log(actionCollection);
+        actionCollection.each(function (action, index) {
+            var responsable = action.get('Responsable');
+            var verificateur = action.get('Verificateur');
+            console.log(verificateur);
+            action.set({ 'Responsable': new ResponsableModel(responsable) });
+            action.set({ 'Verificateur': new VerificateurModel(verificateur) });
+            action.set({ 'DateButoireInitialeJavascript': dateTimeUtils.dateFormatJS(action.get('DateButoireInitiale')) });
+            action.set({ 'DateButoireNouvelleJavascript': dateTimeUtils.dateFormatJS(action.get('DateButoireNouvelle')) });
+            action.set({ 'VerifieDateJavascript': dateTimeUtils.dateFormatJS(action.get('VerifieDate')) });
+            action.set({ 'RealiseDateJavascript': dateTimeUtils.dateFormatJS(action.get('RealiseDate')) });
+        });
+
+        viewModel.get('nonConformiteModel').set({'actionCollection':actionCollection})
+
+        Backbone.applicationEvents = _.extend({}, Backbone.Events);
+
+        var alerteModel = new AlerteModel();
+
+        var nonConformiteView = new window.NonConformiteView({
+            el: $("#NonConformiteDiv"),
+            model: viewModel
+        });
+
+        var actionView = new ActionView({
+            el: $("#ActionDiv"),
+            model: viewModel
+        });
+
+        var alerteView = new AlerteView({
+            el: $("#alerteDiv"),
+            model: alerteModel
+        });
+
+    })
+
+</script>

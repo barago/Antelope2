@@ -1,0 +1,11 @@
+﻿@model IEnumerable<Library.Domain.Models.Book>
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<ul>
+    @foreach (var book in Model)
+    {
+        <li>@book.Title</li>
+    }
+</ul>

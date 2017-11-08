@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Antelope - Refresco.fr</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    @Html.Partial("_Menu")
+
+<div class="container-fluid body-content" style="max-width: 1440px">
+    @*ORDRE DES SCRIPTS : JQUERY / MOMENT / UNDERSCORE / BACKBONE*@
+    <script type="text/javascript" src="/Scripts/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.cookie.js"></script>
+    <script src="~/Scripts/Common/datetimeUtils.js"></script>
+    <script src="~/Scripts/Common/datatableUtils.js"></script>
+    @RenderBody()
+</div>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

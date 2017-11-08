@@ -1,0 +1,525 @@
+﻿@model string
+<script type="text/template" id="@Model">
+    <% if (ficheSecuriteModel.get('WorkFlowDiffusee') == true){ %>
+    <!-- ----------------------INFOS CORRECTIVES ET PREVENTIVES PANEL --------------------- -->
+    <div class="panel panel-danger hidden-print">
+
+        <!-- ----------------INFOS CORRECTIVES & PREVENTIVES PANEL HEADER---------------- -->
+        <div class="panel-heading" style="background-color: #C42031; color: white">
+            <div class="row">
+
+                <div class="col-md-4">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" href="#collapseTwo" data-target="#collapseTwo">
+                            @*data-parent="#accordion"*@
+                            RECHERCHE DE CAUSES ET ACTIONS
+                        </a>
+                    </h4>
+                </div>
+                <div class="col-md-8">
+
+                    <% if (ficheSecuriteModel.get('WorkFlowFicheSecuriteCloturee') == false) { %>
+
+                    <% if (ficheSecuriteModel.get('WorkFlowAttenteASEValidation') == true) {%>
+                    <% if (currentHSERole < 400) { %>
+                    <button id="Valider" type="submit" class="btn pull-right btn-xs" style="color:#333333">
+                        <span class="glyphicon glyphicon-ok"></span> Validé
+                    </button>
+                    <span class="pull-right">&nbsp;ou&nbsp;</span>
+                    <button id="Rejeter" type="submit" class="btn pull-right btn-xs" style="color:#333333">
+                        <span class="glyphicon glyphicon-remove"></span> Rejeté
+                    </button>
+                    <span class="pull-right">
+                        &nbsp;Il&nbsp;doit&nbsp;être&nbsp;:&nbsp;
+                    </span>
+                    <% } %>
+                    <span class="pull-right">
+                        <span class="glyphicon glyphicon-ok pull-right"></span>
+                        Le&nbsp;plan&nbsp;d'action&nbsp;est&nbsp;envoyé&nbsp;
+                    </span>
+
+                    <% }else{ %>
+
+                    <% if (ficheSecuriteModel.get('WorkFlowASEValidee') == false){ %>
+
+                    <% if (currentHSERole < 500 || currentGuid === ficheSecuriteModel.get('Responsable').get('Guid')) { %>
+                    <button id="ASEEnvoi" type="submit" class="btn pull-right btn-xs" style="color:#333333">
+                        <span class="glyphicon glyphicon-envelope"></span> Envoi à l'ASE
+                    </button>
+
+                    <span class="pull-right">&nbsp;Puis&nbsp;:&nbsp;</span>
+                    <% } %>
+                    <span class="glyphicon glyphicon-pencil pull-right"></span>
+                    <span class="pull-right">&nbsp;&nbsp;Statut&nbsp;:&nbsp;Le&nbsp;plan&nbsp;d'action&nbsp;doit&nbsp;être&nbsp;complété&nbsp;:&nbsp;</span>
+
+                    <% }else{ %>
+
+                    @*IF CLOTURE = MEME BOUTON (REJET, MAIS MESSAGE CLOTURE)*@
+                    <% if (currentHSERole < 400) { %>
+                    <span class="pull-right">&nbsp;pour&nbsp;amélioration.</span>
+                    <button id="Rejeter" type="submit" class="btn pull-right btn-xs" style="color:#333333">
+                        <span class="glyphicon glyphicon-remove"></span> Rejeter
+                    </button>
+
+                    <span class="pull-right">&nbsp;Vous&nbsp;pouvez&nbsp;le&nbsp;</span>
+                    <% } %>
+                    <span class="glyphicon glyphicon-ok pull-right"></span>
+                    <span class="pull-right">&nbsp;&nbsp;Statut&nbsp;:&nbsp;Le&nbsp;plan&nbsp;d'action&nbsp;est&nbsp;validé&nbsp;:&nbsp;</span>
+
+                    <% }%>
+                    <% }%>
+
+                    <% }%>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- -------------------INFOS CORRECTIVES & PREVENTIVES PANEL BODY--------------------- -->
+        <div id="collapseTwo" class="panel-collapse collapse in">
+            <div class="panel-body">
+
+                <!-- ---------------------------LIGNE ENQUETE----------------------------- -->
+                <div class="panel panel-default">
+
+                    <div class="panel-body">
+
+
+
+                        <% if(ficheSecuriteModel.get('FicheSecuriteTypeId') == 1 || ficheSecuriteModel.get('FicheSecuriteTypeId') == 2 || ficheSecuriteModel.get('FicheSecuriteTypeId') == 3){%>
+                        <div class="row">
+                            <form class="form-horizontal" role="form">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="EnqueteRealisee" class="col-sm-6 label-xs">Enquête&nbsp;réalisée&nbsp;?</label>
+                                        <div class="col-sm-6">
+                                            <input type="checkbox" class="form-control input-xs" id="EnqueteRealisee" <% if (ficheSecuriteModel.get('EnqueteRealisee')=== true) { %> checked <% } %> >
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="DateEnquete" class="col-sm-6 label-xs">Date&nbsp;de&nbsp;l'enquête&nbsp;:</label>
+                                        <div class='input-group date ' id="DateEnquete">
+                                            <input type='text' name="DateEnquete" class="form-control input-xs DateEnquete" id="DateEnqueteInput" value="<%= ficheSecuriteModel.get('EnqueteDateJavascript') %>" />
+                                            <span class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="Protagonistes" class="col-sm-6 label-xs">Enquêteurs&nbsp;:</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control input-xs" id="Protagonistes" value="<%= ficheSecuriteModel.get('EnqueteProtagoniste') %>">
+                                        </div>
+                                    </div>
+
+                                    <% if(ficheSecuriteModel.get('FicheSecuriteTypeId') == 1 || ficheSecuriteModel.get('FicheSecuriteTypeId') == 2){%>
+
+                                    <div class="form-group">
+                                        <label for="CHSCTMembre" class="col-sm-6 label-xs">Membre&nbsp;CHSCT&nbsp;:</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control input-xs" id="CHSCTMembre" value="<%= ficheSecuriteModel.get('CHSCTMembre') %>">
+                                        </div>
+                                    </div>
+
+                                    <% } %>
+                                </div>
+                            </form>
+                            <div class="col-md-3">
+
+                            </div>
+
+                            <div class="col-md-3">
+
+                                <% if (currentHSERole < 500 ) { %>
+                                <button id="CHSCTSave" type="submit" class="btn pull-right btn-xs">
+                                    <span class="glyphicon glyphicon-floppy-disk"></span> Enregistrer
+                                </button>
+                                <% } %>
+
+                            </div>
+
+                        </div>
+                        <% } %>
+
+
+                    </div>
+                </div>
+                <!-- ---------------------------TABLEAU CAUSES / ACTIONS----------------------------- -->
+
+                <div class="panel panel-default">
+
+                    <div class="panel-body">
+                        <!-- ---------------------------TITRES CAUSES (+ BTN AJOUTER CAUSE) / ACTIONS----------------------------- -->
+                        <div id="CauseActionCollapse">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <table class="table table-bordered table-condensed">
+                                        <tbody>
+                                            <tr style="background-color:#808181;color:white">
+                                                <td>
+                                                    CAUSES
+                                                </td>
+                                                <td>
+                                                    <% if (ficheSecuriteModel.get('WorkFlowFicheSecuriteCloturee') == false) {%>
+                                                    <button id="BtnAddCause" type="button" class="btn btn-danger btn-xs accordion-toggle" data-toggle="collapse" data-target="#FormAjoutCause" data-parent="#CauseActionCollapse"><span class="glyphicon glyphicon-plus"></span>&nbsp;Cause</button>
+                                                    <% } %>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="col-md-9"></div>
+                                <div class="col-md-1" style="padding-left:0px;">
+                                    <table class="table table-bordered table-condensed">
+                                        <tbody>
+                                            <tr style="background-color:#DDDDDD;">
+                                                <td>
+                                                    ACTIONS
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- ---------------------------ACCORDION NOUVELLE CAUSE (DEPUIS BTN AJOUTER CAUSE)----------------------------- -->
+                            <div class="accordion-group">
+                                <div class="row">
+
+                                    <div class="col-md-12">
+
+                                        <div class="accordian-body collapse AjoutCauseCollapse" id="FormAjoutCause">
+
+                                            <form role="form">
+                                                <div class="form-group" style="padding:10px;">
+                                                    <label for="AddCauseDescription"> Description de la Cause</label>
+                                                    <div class="row">
+                                                        <div class="col-md-10">
+                                                            <textarea id="AddCauseDescription" class="form-control" rows="2" style="max-width: 100%; "></textarea>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <% if (currentHSERole < 500 || currentGuid === ficheSecuriteModel.get('Responsable').get('Guid')) { %>
+                                                            <button id="BtnSaveAddCause" type="button" class="btn btn-xs"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Enregistrer</button>
+                                                            <% } %>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                                <!-- ---------------------------CAUSES (EACH) (+BTNS : AJOUTER ACTION / EDIT CAUSE / SUPPRESSION CAUSE)----------------------------- -->
+                                <% ficheSecuriteModel.get('causeCollection').each( function(cause){ %>
+
+
+                                <div class="row">
+                                    <div class="col-md-11">
+                                        <div class="row" style="border-width:1px;padding:5px;margin:5px;border-style:solid;border-color:#DDDDDD;background-color:#808181;color:white">
+                                            <div class="col-md-10">
+                                                <%= cause.get('Description') %>
+                                            </div>
+                                            <div class="col-md-2" style="padding:0px;">
+                                                <% if (currentHSERole < 500 || currentGuid === ficheSecuriteModel.get('Responsable').get('Guid')) { %>
+                                                <% if (ficheSecuriteModel.get('WorkFlowFicheSecuriteCloturee') == false) {%>
+                                                <button id="<%= 'BtnDeleteCause'+cause.get('CauseQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>" type="button" class="btn btn-danger btn-xs BtnDeleteCause pull-right"><span class="glyphicon glyphicon-remove"></span></button>
+                                                <% } %>
+                                                <% } %>
+                                                <button id="<%= 'BtnOpenFormEditCause'+cause.get('CauseQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>" type="button" class="btn btn-danger btn-xs accordion-toggle BtnEditCause pull-right" data-toggle="collapse" data-target="<%= '#FormEditCause'+cause.get('CauseQSEId') %>" data-parent="#CauseActionCollapse" style="margin-right:5px;"><span class="glyphicon glyphicon-pencil"></span></button>
+                                                <% if (ficheSecuriteModel.get('WorkFlowFicheSecuriteCloturee') == false) {%>
+                                                <button id="BtnAddAction" type="button" class="btn btn-danger btn-xs accordion-toggle pull-right" data-toggle="collapse" data-target="<%= '#FormAddActionForCause'+cause.get('CauseQSEId') %>" data-parent="#CauseActionCollapse" style="margin-right:5px;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Action</button>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                </div>
+
+                                <!-- ---------------------------ACCORDION NOUVELLE ACTION (DEPUIS BTN AJOUTER ACTION)----------------------------- -->
+
+                                <div class="accordian-body collapse AjoutActionCollapse" id="<%= 'FormAddActionForCause'+cause.get('CauseQSEId') %>">
+                                    <form class="form" role="form">
+                                        <div class="form-group">
+                                            <label for="<%= 'AddActionDescriptionForCause'+cause.get('CauseQSEId') %>"> Description de l'Action&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    <textarea id="<%= 'AddActionDescriptionForCause'+cause.get('CauseQSEId') %>" class="form-control AddActionDescription" data-causeid="<%=cause.get('CauseQSEId') %>" rows="2" style="max-width: 100%; "></textarea>
+                                                </div>
+                                                <% if (currentHSERole < 500 || currentGuid === ficheSecuriteModel.get('Responsable').get('Guid')) { %>
+                                                <div class="col-md-2">
+                                                    <button id="<%= 'BtnSaveAddActionForCause'+cause.get('CauseQSEId') %>" type="button" class="btn btn-xs BtnSaveAddAction" data-causeid="<%=cause.get('CauseQSEId') %>"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Enregistrer</button>
+                                                </div>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="<%= 'AddActionDateButoirInitialeForCause'+cause.get('CauseQSEId') %>">Date butoir initiale&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                    <div class='input-group date AddActionDateButoirInitiale' id="<%= 'AddActionDateButoirInitialeForCause'+cause.get('CauseQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>">
+                                                        <input type='text' name="DateButoirInitiale" class="form-control input-xs AddActionDateButoirInitialeInput" id="<%= 'AddActionDateButoirInitialeInputForCause'+cause.get('CauseQSEId') %>" />
+                                                        <span class="input-group-addon input-xs">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="<%= 'AddActionDateButoirNouvelleForCause'+cause.get('CauseQSEId') %>">Nouvelle date butoir</label>
+                                                    <div class='input-group date AddActionDateButoirNouvelle' id="<%= 'AddActionDateButoirNouvelleForCause'+cause.get('CauseQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>">
+                                                        <input type='text' name="DateButoirNouvelle" class="form-control input-xs AddActionDateButoirNouvelleInput" id="<%= 'AddActionDateButoirNouvelleInputForCause'+cause.get('CauseQSEId') %>" />
+                                                        <span class="input-group-addon input-xs">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="<%= 'AddActionResponsableNomForCause'+cause.get('CauseQSEId') %>">Nom responsable&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                    <div class="input-group input-group-xs">
+                                                        <input type="text" class="form-control input-xs AddActionResponsableNom" id="<%= 'AddActionResponsableNomForCause'+cause.get('CauseQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>" />
+                                                        @*<span class="input-group-addon" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></span></span>*@
+                                                        <span class="input-group-btn">
+                                                            <button id="ActiveDirectoryAddActionResponsableRecherche" data-causeid="<%=cause.get('CauseQSEId') %>" class=" btn btn-default" type="button" data-toggle="modal" @*data-target="#ActiveDirectoryUtilisateurModal"*@>
+                                                                <span class="glyphicon glyphicon-user"></span>
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="<%= 'AddActionResponsablePrenomForCause'+cause.get('CauseQSEId') %>">Prénom&nbsp;responsable&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                                    <input type="text" class="form-control input-xs AddActionResponsablePrenom" id="<%= 'AddActionResponsablePrenomForCause'+cause.get('CauseQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- ---------------------------ACCORDION EDIT CAUSE (DEPUIS BTN EDIT CAUSE)----------------------------- -->
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="accordian-body collapse EditCauseCollapse" id="<%= 'FormEditCause'+cause.get('CauseQSEId') %>">
+                                            <form role="form">
+                                                <div class="form-group" style="padding:10px;">
+                                                    <label for="CauseDescription"> Description de la Cause</label>
+                                                    <div class="row">
+                                                        <div class="col-md-10">
+                                                            <textarea id="CauseDescription" data-causeid="<%=cause.get('CauseQSEId') %>" class="form-control EditCauseDescription" rows="2" style="max-width: 100%; "><%= cause.get('Description') %></textarea>
+                                                        </div>
+                                                        <% if (currentHSERole < 500 || currentGuid === ficheSecuriteModel.get('Responsable').get('Guid')) { %>
+                                                        <div class="col-md-2">
+                                                            <button id="<%= 'BtnEditCause'+cause.get('CauseQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>" type="button" class="btn btn-xs BtnSaveEditCause"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Enregistrer</button>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                                <!-- ---------------------------ACTIONS (EACH) (+BTNS : EDIT ACTION / SUPPRESSION ACTION)----------------------------- -->
+                                <% cause.get('actionCollection').each( function(action){ %>
+
+                                <div class="row">
+
+
+                                    <div class="col-md-1"></div>
+
+                                    <div class="col-md-11">
+                                        <div class="row" style="border-width:1px;padding:5px;margin:5px;border-style:solid;border-color:#DDDDDD;background-color:#DDDDDD;">
+                                            <div class="col-md-6" style="border-width:1px;border-right-style:solid;border-color:#DDDDDD;background-color:#DDDDDD;border-right-color:#808181;">
+                                                <%= action.get('Description') %>
+                                            </div>
+                                            <div class="col-md-2" style="border-width:1px;border-right-style:solid;border-color:#DDDDDD;background-color:#DDDDDD;border-right-color:#808181;">
+                                                <%= action.get('Responsable').get('Prenom') %> &nbsp; <%= action.get('Responsable').get('Nom') %>
+                                            </div>
+                                            <div class="col-md-1" style="text-align:center;padding:0px;border-width:1px;border-right-style:solid;border-color:#DDDDDD;background-color:#DDDDDD;border-right-color:#808181;">
+                                                <%= (action.get('DateButoireNouvelle') == null) ? action.get('DateButoireInitialeJavascript') : action.get('DateButoireNouvelleJavascript') %>
+                                            </div>
+                                            <div class="col-md-2" style="text-align:center;padding:0px;border-width:1px;border-right-style:solid;border-color:#DDDDDD;background-color:#DDDDDD;">
+                                                <% if (action.get('ClotureDate') == null) { %>
+                                                En cours
+                                                <% } else { %>
+                                                &nbsp;<span class="glyphicon glyphicon-ok"></span> Clôturée: <%= action.get('ClotureDateJavascript')%>
+
+                                                <% }%>
+
+
+                                            </div>
+                                            <div class="col-md-1" style="padding:0px;">
+                                                <% if (currentHSERole < 500 || currentGuid === ficheSecuriteModel.get('Responsable').get('Guid')) { %>
+                                                <% if (ficheSecuriteModel.get('WorkFlowFicheSecuriteCloturee') == false) {%>
+                                                <button id="<%= 'BtnDeleteCause'+cause.get('CauseQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" type="button" class="btn btn-danger btn-xs BtnDeleteAction pull-right"><span class="glyphicon glyphicon-remove"></span></button>
+                                                <% } %>
+                                                <% } %>
+                                                <button id="<%= 'BtnOpenFormEditAction'+action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" type="button" class="btn btn-danger btn-xs accordion-toggle BtnEditAction pull-right" data-toggle="collapse" data-target="<%= '#FormEditAction'+action.get('ActionQSEId') %>" data-parent="#CauseActionCollapse" style="margin-right:5px;"><span class="glyphicon glyphicon-pencil"></span></button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- ---------------------------ACCORDION EDIT ACTION (DEPUIS BTN EDIT ACTION)----------------------------- -->
+                                <div class="accordian-body collapse EditActionCollapse" id="<%= 'FormEditAction'+action.get('ActionQSEId') %>">
+                                    <form class="form" role="form">
+                                        <div class="form-group">
+                                            <label for="<%= 'EditActionDescriptionForAction'+action.get('ActionQSEId') %>"> Description de l'Action</label>
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    <textarea id="<%= 'EditActionDescriptionForAction'+action.get('ActionQSEId') %>" class="form-control EditActionDescription" data-actionid="<%=action.get('ActionQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>" rows="2" style="max-width: 100%; "><%= action.get('Description') %></textarea>
+                                                </div>
+                                                <% if (currentHSERole < 500 || currentGuid === ficheSecuriteModel.get('Responsable').get('Guid') || currentGuid === action.get('Responsable').get('Guid')) { %>
+                                                <div class="col-md-2">
+                                                    <button id="<%= 'BtnSaveEditActionForAction'+action.get('ActionQSEId') %>" type="button" class="btn btn-xs BtnSaveEditAction" data-actionid="<%=action.get('ActionQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Enregistrer</button>
+                                                </div>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="<%= 'EditActionDateButoirInitialeForAction'+action.get('ActionQSEId') %>">Date butoir initiale</label>
+                                                    <div class='input-group date EditActionDateButoirInitiale' id="<%= 'EditActionDateButoirInitialeForAction'+action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>">
+                                                        <input type='text' name="DateButoirInitiale" class="form-control input-xs EditActionDateButoirInitiale" id="<%= 'EditActionDateButoirInitialeInputForAction'+action.get('ActionQSEId') %>" value="<%= action.get('DateButoireInitialeJavascript') %> " data-actionid="<%=action.get('ActionQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>" />
+                                                        <span class="input-group-addon input-xs">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="<%= 'EditActionDateButoirNouvelleForAction'+action.get('ActionQSEId') %>">Nouvelle date butoir</label>
+                                                    <div class='input-group date EditActionDateButoirNouvelle' id="<%= 'EditActionDateButoirNouvelleForAction'+action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>">
+                                                        <input type='text' name="DateButoirNouvelle" class="form-control input-xs EditActionDateButoirNouvelle" id="<%= 'EditActionDateButoirNouvelleInputForAction'+action.get('ActionQSEId') %>" value="<%= action.get('DateButoireNouvelleJavascript') %>" data-actionid="<%=action.get('ActionQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>" />
+                                                        <span class="input-group-addon input-xs">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="<%= 'EditActionResponsableNomForAction'+action.get('ActionQSEId') %>">Nom responsable</label>
+                                                    <div class="input-group input-group-xs">
+                                                        <input type="text" class="form-control input-xs EditActionResponsableNom" id="<%= 'EditActionResponsableNomForAction'+action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>" value=" <%= action.get('Responsable').get('Nom') %>" />
+                                                        @*<span class="input-group-addon" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></span></span>*@
+                                                        <span class="input-group-btn">
+                                                            <button id="ActiveDirectoryEditActionResponsableRecherche" data-causeid="<%=cause.get('CauseQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" class=" btn btn-default" type="button" data-toggle="modal" @*data-target="#ActiveDirectoryUtilisateurModal"*@>
+                                                                <span class="glyphicon glyphicon-user"></span>
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="<%= 'EditActionResponsablePrenomForAction'+action.get('ActionQSEId') %>">Prénom&nbsp;responsable&nbsp;:</label>
+                                                    <input type="text" class="form-control input-xs EditActionResponsablePrenom" id="<%= 'EditActionResponsablePrenomForAction'+action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>" value=" <%= action.get('Responsable').get('Prenom') %>">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-9"></div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="<%= 'EditActionClotureDateForAction'+action.get('ActionQSEId') %>">Date&nbsp;de&nbsp;clôture&nbsp;:</label>
+                                                    <div class='input-group date EditActionClotureDate' id="<%= 'EditActionClotureDateForAction'+action.get('ActionQSEId') %>" data-actionid="<%=action.get('ActionQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>">
+                                                        <input type='text' name="ClotureDate" class="form-control input-xs EditActionClotureDate" id="<%= 'EditActionClotureDateInputForAction'+action.get('ActionQSEId') %>" value="<%= action.get('ClotureDateJavascript') %>" data-actionid="<%=action.get('ActionQSEId') %>" data-causeid="<%=cause.get('CauseQSEId') %>" />
+                                                        <span class="input-group-addon input-xs">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <% }); %>
+
+                                <% }); %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+
+
+        <div class="panel-footer" style="background-color: #C42031; color: white">
+            <div class="row">
+
+                <div class="col-md-4">
+                    <% if (ficheSecuriteModel.get('WorkFlowFicheSecuriteCloturee')) { %>
+
+
+                    <% } %>
+                </div>
+                <div class="col-md-8">
+                    <% if (currentHSERole < 400) { %>
+                    <% if (ficheSecuriteModel.get('WorkFlowASEValidee') == true && ficheSecuriteModel.get('WorkFlowCloturee') == true && ficheSecuriteModel.get('WorkFlowFicheSecuriteCloturee') == false) { %>
+
+                    <span class="pull-right">&nbsp;la&nbsp;fiche.</span>
+                    <button id="CloturerFiche" type="submit" class="btn pull-right btn-xs" style="color:#333333">
+                        <span class="glyphicon glyphicon-ok"></span> Clôturer
+                    </button>
+
+                    <span class="pull-right">&nbsp;Vous&nbsp;pouvez&nbsp;</span>
+
+                    <span class="glyphicon glyphicon-ok pull-right"></span>
+                    <span class="pull-right">&nbsp;&nbsp;Statut&nbsp;:&nbsp;Les&nbsp;actions&nbsp;sont&nbsp;clôtur&eacute;es,&nbsp;</span>
+
+                    <% }%>
+
+                    <% if (ficheSecuriteModel.get('WorkFlowFicheSecuriteCloturee') == true) {%>
+
+                    <span class="pull-right">&nbsp;la&nbsp;fiche.</span>
+                    <button id="OuvrirFiche" type="submit" class="btn pull-right btn-xs" style="color:#333333">
+                        <span class="glyphicon glyphicon-ok"></span> Ré-Ouvrir
+                    </button>
+
+                    <span class="pull-right">&nbsp;Vous&nbsp;pouvez&nbsp;</span>
+
+                    <span class="glyphicon glyphicon-ok pull-right"></span>
+                    <span class="pull-right">&nbsp;&nbsp;La&nbsp;Fiche&nbsp;Sécurité&nbsp;est&nbsp;clôturée&nbsp;</span>
+
+                    <% }%>
+                    <% }%>
+                </div>
+
+            </div>
+        </div>
+
+
+
+    </div>
+
+    @*<div class="panel-header" style="background-color: #C42031; color: white">
+            <div class="panel-body">
+
+
+            </div>
+        </div>*@
+
+
+    <% }%>
+
+</script>

@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewBag.Title = "PanierPrint";
+    Layout = "~/Views/IndicateurSI/Shared/_Layout.cshtml";
+}
+
+<div id="printArea"></div>
+
+<script>
+
+    $(document).ready(function () {
+
+        var data = '@(ViewBag.Data)';
+        data = data.replace(/&quot;/g, "\"")
+
+
+        var moisCour;
+        date = new Date;
+        mois = date.getMonth();
+        moisLettre = new Array('Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre');
+        annee = date.getFullYear();
+        anneePrec = date.getFullYear() - 1;
+
+        //var param = window.location.search.slice(1, window.location.search.length);
+
+        //var parametres = param.split("=");
+
+        //var data = parametres[1].replace(/%22/g, "\"").replace(/%20/g, " ").replace(/%7B/g, "{").replace(/%7D/g, "}").replace(/%5B/g, "[").replace(/%5D/g, "]")
+
+        var json = parseJSON(data);
+
+        $('#printArea').append('<div id="container' + json.Data[0] + '" style="width: 1000px; height: 750px; margin: 0 auto"></div>')
+
+
+        if (json.Data[1] == "repartition") {
+
+            reDrawPie(json.Data[0], json.Data[2], json.Data[3]);
+        }
+
+    });
+
+    function reDrawPie(numPage, dateId, SIId) {
+
+        $.ajax({
+            url: "@Url.Action("reDraw", "SupportRepartitionTicket")",
+            data: { dateId: dateId, SIId:SIId },
+            dataType: "json",
+            type: "POST",
+        error: function () {
+            alert("An error occurred.");
+        },
+        success: function (result) {
+
+            var json = parseJSON(result);
+
+            drawPie(numPage, json.Date, json.Resultat, json.TotalTickets);
+        }
+    });
+    }
+
+    function drawPie(numPage, dateId, tab, totalTickets) {
+
+        $('#container' + numPage).highcharts({
+            credits: {
+                enabled:false
+            },
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            title: {
+                text: '<div style="font-size : 30px">Répartition des tickets reçus - ' + moisPrec(dateId) + ' (' + totalTickets + ' tickets)</div>'
+            },
+            tooltip: {
+                pointFormat: '<b>{point.y}</b> {series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                },
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        useHTML: true,
+                        color: '#000000',
+                        connectorColor: '#000000',
+                        format: '<div style="font-size : 20px"><b>{point.name}</b>: {point.percentage:.1f} %</div>'
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'Tickets',
+                data: tab,
+                }]
+
+        });
+
+    }
+
+    function parseJSON(data) {
+        return window.JSON && window.JSON.parse ? window.JSON.parse(data) : (new Function("return " + data))();
+    }
+
+    function moisPrec(nbMois) {
+
+        if (mois >= nbMois)
+            return (moisLettre[mois - nbMois] + ' ' + annee);
+        else return (moisLettre[mois + (12 - nbMois)] + ' ' + anneePrec);
+    }
+
+</script>

@@ -1,0 +1,157 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/IndicateurSI/Shared/_Layout.cshtml";
+}
+
+<br/><br/>
+
+<style>
+    .menu {
+        height: 35px;
+        width: 300px;
+        padding: 5px;
+    }
+</style>
+<div class="row">
+
+
+    <div class="col-md-8" style="padding:5px">
+        <div style="background-color: #AADBE0; padding: 5px; border: solid 3px #23A7AC; ">
+            <h2 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold; text-align:center">Indicateurs SI</h2>
+            <center><img alt="" width="128" src="~/Content/images/IndicateurSI/ICONE_APPLI_SI.png" /></center>
+            <br />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <fieldset>
+                        <legend style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Général</legend>
+
+                        <div class="row">
+                            <div class="col-md-12" style="padding:5px">
+                                <center>
+                                    <a href="/MatriceApplicative/MatriceApplicative">
+                                        <input type="button" class="menu btn btn-default" value="Matrice Applicative">
+                                    </a>
+                                </center>
+                            </div>
+                        </div>
+
+                    </fieldset>
+                    <fieldset>
+                        <legend style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Tickets</legend>
+
+
+                        <div class="row">
+                            <div class="col-md-12" style="padding:5px">
+                                <center>
+                                    <a href="/SupportRepartitionTicket/SupportRepartitionTicket">
+                                        <input type="button" class="menu btn btn-default" value="Répartition des tickets par catégorie">
+                                    </a>
+                                </center>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12" style="padding:5px">
+                                <center>
+                                    <a href="/SupportNombreTicket/SupportNombreTicket">
+                                        <input type="button" class="menu btn btn-default" value="Nombre de tickets">
+                                    </a>
+                                </center>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12" style="padding:5px">
+                                <center>
+                                    <a href="/DelaiMoyenTicket/DelaiMoyenTicket">
+                                        <input type="button" class="menu btn btn-default" value="Temps de traitement moyen des tickets">
+                                    </a>
+                                </center>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12" style="padding:5px">
+                                <center>
+                                    <a href="/SupportDelaiCategorie/SupportDelaiCategorie">
+                                        <input type="button" class="menu btn btn-default" value="Temps de traitement moyen par catégorie">
+                                    </a>
+                                </center>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12" style="padding:5px">
+                                <center>
+                                    <a href="/DegreSatisfaction/DegreSatisfaction">
+                                        <input type="button" class="menu btn btn-default" value="Degré de satisfaction aux tickets">
+                                    </a>
+                                </center>
+                            </div>
+                        </div>
+
+                    </fieldset>
+                </div>
+                <div class="col-md-6">
+                    <fieldset>
+                        <legend style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Projets</legend>
+
+                        <div class="row">
+                            <div class="col-md-12" style="padding:5px">
+                                <center>
+                                    <a href="/ListeProjet/ListeProjet">
+                                        <input type="button" class="menu btn btn-default" value="Liste des projets en cours">
+                                    </a>
+                                </center>
+                            </div>
+                        </div>
+
+                    </fieldset>
+
+                    <fieldset>
+                        <legend style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Infrastructure</legend>
+
+                        <div class="row">
+                            <div class="col-md-12" style="padding:5px">
+                                <center>
+                                    <a href="/Sauvegarde/Sauvegarde">
+                                        <input type="button" class="menu btn btn-default" value="Volume de sauvegarde">
+                                    </a>
+                                </center>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12" style="padding:5px">
+                                <center>
+                                    <a href="/VolumeMail/VolumeMail">
+                                        <input type="button" class="menu btn btn-default" value="Volume e-mail échangés">
+                                    </a>
+                                </center>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12" style="padding:5px">
+                                <center>
+                                    <a href="/Intervention/Intervention">
+                                        <input type="button" class="menu btn btn-default" value="Intervention heures non-ouvrées">
+                                    </a>
+                                </center>
+                            </div>
+                        </div>
+
+
+                    </fieldset>
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+
+    <div class="col-md-2">
+    </div>
+</div>

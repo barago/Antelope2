@@ -1,0 +1,85 @@
+﻿@model string
+<script type="text/template" id="@Model">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Recherche d'un utilisateur dans l'annuaire</h4>
+            </div>
+            <div class="modal-body">
+                <p>Veuillez saisir un nom et/ou un prénom&hellip;&nbsp;Puis selectionner l'utilisateur voulu</p>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            @*style="padding-right:0px;"*@
+                            <label for="NomRecherche" class="label-xs">Nom&nbsp;recherché&nbsp;:&nbsp;</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control input-xs" id="NomRecherche" value="<%= typeof Nom === 'undefined' ? "" : Nom %>">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            @*style="padding-right:0px;"*@
+                            <label for="PrenomRecherche" class="label-xs">Prénom&nbsp;recherché&nbsp;:&nbsp;</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control input-xs" id="PrenomRecherche" value="<%= typeof Prenom === 'undefined' ? "" : Prenom %>">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button id="RechercheADUtilisateur" type="submit" class="btn pull-right btn-xs">
+                            <span class="glyphicon glyphicon-user"></span> Recherche
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <table class="table">
+                        <thead>
+                        <td>
+                            Nom
+                        </td>
+                        <td>
+                            Prénom
+                        </td>
+                        <td>
+                            Choisir
+                        </td>
+                        </thead>
+                        <tbody>
+
+                            <% rechercheActiveDirectoryCollection.each( function(utilisateurActiveDirectory){ %>
+
+                            <% if(utilisateurActiveDirectory.get('IsAnnuaireApplication') == true && utilisateurActiveDirectory.get('IsAnnuaireAD') == false) {%>
+                            <tr style="background-color:#F7E5C5;">
+                                <% } %>
+                                <% if(utilisateurActiveDirectory.get('IsAnnuaireAD') == true) {%>
+                            <tr>
+                                <% } %>
+
+                                <td>
+                                    <%= utilisateurActiveDirectory.get('Nom') %>
+                                </td>
+                                <td>
+                                    <%= utilisateurActiveDirectory.get('Prenom') %>
+                                </td>
+                                <td>
+                                    <button type="button" id="<%= utilisateurActiveDirectory.get('PersonneId') %>" class="BoutonChoixUtilisateurActiveDirectory btn btn-default">
+                                        <span class="glyphicon glyphicon-arrow-right"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</script>

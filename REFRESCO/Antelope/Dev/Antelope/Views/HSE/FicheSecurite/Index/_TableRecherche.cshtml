@@ -1,0 +1,68 @@
+﻿@model string
+<script type="text/template" id="@Model">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="panel panel-primary" style="border-color: #C42031;">
+                <div class="panel-heading" style="background-color: #C42031; color: white">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <% if(paramModel.get('typeRecherche')==="FICHESECURITE") { %> <span style="text-decoration:underline;font-weight:bold;">FICHES SECURITE</span> :  <% } %>
+                            <% if(paramModel.get('typeRecherche')==="ACTION") { %> <span style="text-decoration:underline;font-weight:bold;">ACTIONS</span> :  <% } %>
+                        </div>
+                        @*<div class="col-md-5 pull-right">Click Droit ou Milieu : Ouvrir dans une nouvelle fenêtre</div>*@
+                    </div>
+                </div>
+                <div class="panel-body" oncontextmenu="return false;">
+
+                    <% if(paramModel.get('typeRecherche')==="FICHESECURITE") { %>
+
+                    <table id="Table" class="stripe hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+
+                                <% _.each([0,1,2,3,4,5,6,7,8,9], function(actionIndex) { %>
+                                    <th>Action<%= actionIndex %></th>
+                                <% }) %>
+
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <% } %>
+
+                    <% if(paramModel.get('typeRecherche')==="ACTION") { %>
+
+                    <table id="Table" class="stripe hover">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Numéro FS</th>
+                                <th>Responsable</th>
+                                <th>Description</th>
+                                <th>Date butoir 1</th>
+                                <th>Date butoir 2</th>
+                                <th>Date clôture</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <% } %>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</script>

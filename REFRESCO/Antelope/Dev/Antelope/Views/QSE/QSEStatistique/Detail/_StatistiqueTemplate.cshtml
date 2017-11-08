@@ -1,0 +1,510 @@
+﻿@model string
+<script type="text/template" id="@Model">
+
+    <div class="row" >
+
+        @*<div class="col-md-2">
+            <img src="../../Content/images/HSE/FicheSecurite/stats.jpg" alt="..." style="max-width:100%;">
+        </div>*@
+        <div class="col-md-2">
+
+            <div class='input-group date' id='DateDebut'>
+                <input type='text' name="DateDebut" id="DateDebutInput" class="form-control input-xs" value="<%= paramModel.get('dateDebutJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <div class='input-group date' id='DateFin'>
+                <input type='text' name="DateFin" id="DateFinInput" class="form-control input-xs" value="<%= paramModel.get('dateFinJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <button id="RechercheBouton" type="submit" class="btn btn-default btn-xs pull-right">
+                <span class="glyphicon glyphicon-search"></span> Chercher
+            </button>
+
+            <button id="LegendeButton" type="submit" class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#legendeModale">
+                <span class="glyphicon glyphicon-search"></span> Légende
+            </button>
+        </div>
+
+        <div class="col-md-2">
+            <select id="Site" class="form-control input-xs">
+                <option value="0" <% if (siteId == 0){ %> selected <% } %> ></option>
+                <% siteCollection.each( function(site){ %>
+                <option value="<%= site.get('SiteID') %>"
+                    <% if (site.get('SiteID') == siteId){ %> selected <% } %>
+                    >
+                <%= site.get('Trigramme') %>
+            </option>
+                <% }); %>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select id="Type" class="form-control input-xs">
+                <option value="RESPONSABLE"  <% if (type === 'RESPONSABLE'){ %> selected <%}%> >Responsable</option>
+                <option value="DOMAINE"<% if (type === 'DOMAINE'){ %> selected <%}%>> Domaine </option>
+                <option value="ORIGINE"<% if (type === 'ORIGINE'){ %> selected <%}%>> Origine </option>
+            </select>
+        </div>
+
+    </div>
+
+    <div class="row" style="margin-top:0px;padding-top:0px;">
+
+        @*<div class="col-md-12">*@
+
+            <table id="table" class="StatistiquesPyramideTable">
+                <thead style="border-bottom: 3px solid black;font-size:x-small;">
+                    <tr>
+
+                        <th class="rotate45" >
+                            <div>
+                                <span>
+                                    <%= type  %>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#E567A0; color:white;">
+                                    Nb NC Concernées
+                                </span>
+                            </div>
+                        </th>
+                        @*<th class="rotate45">
+                            <div>
+                                <span style="background-color:#D4E898;">
+                                    Nb NC dont PA est en cours
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#8BAC27;">
+                                    Nb NC dont PA réalisé
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#D4E898;">
+                                    Nb NC vérifiées
+                                </span>
+                            </div>
+                        </th>*@
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#BF62A6; color:white;">
+                                    Nb Actions
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionVerifie">
+                            <div>
+                                <span style="background-color:#459BA8; color:white;">
+                                    Nb Actions vérifiées
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRealise">
+                            <div>
+                                <span style="background-color:#79C267; color:white;">
+                                    Nb Actions réalisées >>>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRealiseToggle">
+                            <div>
+                                <span style="background-color:#E0EEB4; color:grey;">
+                                    Nb Actions réalisées à temps
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRealiseToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2; color:grey;">
+                                    Nb Actions réalisées en retard
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:white; color:black;">
+                                    Nb Actions en cours
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetard">
+                            <div>
+                                <span style="background-color:#F94545; color:white;">
+                                    TOTAL Actions en retard >>>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2; color:grey;">
+                                    Nb Actions retard < 1 mois
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FCDAAA; color:grey;">
+                                    Nb Actions retard de 1 à 3 mois
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FDBBBB; color:grey;">
+                                    Nb Actions retard > 3 mois
+                                </span>
+                            </div>
+                        </th>
+                        @*<th class="rotate45">
+                            <div>
+                                <span style="background-color:#FD9910;">
+                                    % NC clôturées/NC émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#FCD194;">
+                                    % NC PA validé/NC émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#FD9910;">
+                                    % NC PA clôturé/NC émises
+                                </span>
+                            </div>
+                        </th>*@
+                        <th class="rotate45 ActionVerifie">
+                            <div>
+                                <span style="background-color:#459BA8; color:white;">
+                                    % Actions vérifiées/émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRealise">
+                            <div>
+                                <span style="background-color:#79C267; color:white;">
+                                    % Actions réalisées/émises >>>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRealiseToggle">
+                            <div>
+                                <span style="background-color:#E0EEB4; color:grey;">
+                                    % Actions réalisées à temps/émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRealiseToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2; color:grey;">
+                                    % Actions réalisées en retard
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:white; color:black;">
+                                    % Actions en cours
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetard">
+                            <div>
+                                <span style="background-color:#F94545; color:white;">
+                                    % TOTAL Actions retard/émises >>>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2; color:grey;">
+                                    % Actions retard < 1M/émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FCDAAA; color:grey;">
+                                    % Actions retard de 1 à 3M/émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FDBBBB; color:grey;">
+                                    % Actions retard > 3M/émises
+                                </span>
+                            </div>
+                        </th>
+
+
+                    </tr>
+
+                </thead>
+                <tbody style="width:1000px;">
+
+                    <% typeOccurenceCollection.each( function(typeOccurence){ %>
+
+                    <tr style="border: 1px solid black; height:15px;">
+                        <th>
+                            <%= typeOccurence.get('nom') %>
+                        </th>
+                        <th style="background-color:#E567A0; color:white;">
+                            <%= typeOccurence.get('nbNCEmises') %>
+                        </th>
+                        @*<th style="background-color:#D4E898;">
+                            <%= typeOccurence.get('nbNCPAValidees') %>
+                        </th>
+                        <th style="background-color:#8BAC27;">
+                            <%= typeOccurence.get('nbNCPACloturees') %>
+                        </th>
+                        <th style="background-color:#D4E898;">
+                            <%= typeOccurence.get('nbNCCloturees') %>
+                        </th>*@
+                        <th style="background-color:#BF62A6; color:white;">
+                            <%= typeOccurence.get('nbAction') %>
+                        </th>
+                        <th style="background-color:#459BA8; color:white;" class="ActionVerifie">
+                            <%= typeOccurence.get('nbActionVerifiees') %>
+                        </th>
+                        <th style="background-color:#79C267; color:white;" class="ActionRealise">
+                            <%= typeOccurence.get('nbActionRealisees') %>
+                        </th>
+                        <th style="background-color:#D4E898; color:grey;" class="ActionRealiseToggle">
+                            <%= typeOccurence.get('nbActionRealiseesATemps') %>
+                        </th>
+                        <th style="background-color:#FCFCA2; color:grey;" class="ActionRealiseToggle">
+                            <%= typeOccurence.get('nbActionRealiseesEnRetard') %>
+                        </th>
+                        <th style="background-color:white; color:black;">
+                            <%= typeOccurence.get('nbActionEnCours') %>
+                        </th>
+                        <th style="background-color:#F94545; color:white;" class="ActionRetard">
+                            <%= typeOccurence.get('nbActionEnRetard') %>
+                        </th>
+                        <th style="background-color:#FCFCA2; color:grey;" class="ActionRetardToggle">
+                            <%= typeOccurence.get('nbActionDepassees') %>
+                        </th>
+                        <th style="background-color:#FCDAAA; color:grey;" class="ActionRetardToggle">
+                            <%= typeOccurence.get('nbActionDepassees1Mois') %>
+                        </th>
+                        <th style="background-color:#FDBBBB; color:grey;" class="ActionRetardToggle">
+                            <%= typeOccurence.get('nbActionDepassees3Mois') %>
+                        </th>
+                        @*<th style="background-color:#FD9910;">
+                            <%= typeOccurence.get('prctgNCCloturees') %>
+                        </th>
+                        <th style="background-color:#FCD194;">
+                            <%= typeOccurence.get('prctgNCPlanActionValide') %>
+                        </th>
+                        <th style="background-color:#FD9910;">
+                            <%= typeOccurence.get('prctgNCPlanActionCloture') %>
+                        </th>*@
+                        <th style="background-color:#459BA8; color:white;" class="ActionRealise">
+                            <%= typeOccurence.get('prctgActionVerifiees') %>
+                        </th>
+                        <th style="background-color:#79C267; color:white;" class="ActionRealise">
+                            <%= typeOccurence.get('prctgActionRealisees') %>
+                        </th>
+                        <th style="background-color:#E0EEB4; color:grey;" class="ActionRealiseToggle">
+                            <%= typeOccurence.get('prctgActionRealiseesATemps') %>
+                        </th>
+                        <th style="background-color:#FCFCA2; color:grey;" class="ActionRealiseToggle">
+                            <%= typeOccurence.get('prctgActionRealiseesEnRetard') %>
+                        </th>
+                        <th style="background-color:white; color:black;">
+                            <%= typeOccurence.get('prctgActionEnCours') %>
+                        </th>
+                        <th style="background-color:#F94545; color:white;" class="ActionRetard">
+                            <%= typeOccurence.get('prctgActionEnRetard') %>
+                        </th>
+                        <th style="background-color:#FCFCA2; color:grey;" class="ActionRetardToggle">
+                            <%= typeOccurence.get('prctgActionDepassees') %>
+                        </th>
+                        <th style="background-color:#FCDAAA; color:grey;" class="ActionRetardToggle">
+                            <%= typeOccurence.get('prctgActionDepassees1Mois') %>
+                        </th>
+                        <th style="background-color:#FDBBBB; color:grey;" class="ActionRetardToggle">
+                            <%= typeOccurence.get('prctgActionDepassees3Mois') %>
+                        </th>
+
+                    </tr>
+
+                    <% }) %>
+
+                </tbody>
+            </table>
+
+        @*</div>*@
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="legendeModale" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-admin" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Légende des statistiques :</h4>
+                </div>
+                <div class="modal-body">
+                   
+                    <h4>FILTRES : </h4><br/>
+
+                    <table>
+                        <tbody>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td>
+                                    -Dates (début / fin) :
+                                </td>
+                                <td>
+                                    Recherche les actions par rapport à la date de la Non-Conformité à laquelle elles appartiennent.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td>
+                                    -Site :
+                                </td>
+                                <td>
+                                    Recherche les actions par site
+                                </td>
+
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td>
+                                    -Type :
+                                </td>
+                                <td>
+                                    Recherche par Responsable / Domaine / Origine
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br />
+                    Lors d'une recherche par Responsable, le Nombre de NC concernée n'est pas renseigné, car la personne est responsable d'une action et non pas d'une NC<br />
+                    <br/>
+                    <h4>STATISTIQUES : </h4><br /> 
+                    (s'entendent pour le site et le type choisi dans les filtres): <br />
+
+                    <table>
+                        <tbody>
+                            <tr style ="border:dashed;border-width:1px;">
+                                <td style="background-color:#E567A0;color:white;">
+                                    <span>Nb NC Concernées</span> :
+                                </td>
+                                <td>
+                                    Nb de NC entre les dates début et fin.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#BF62A6;color:white;">
+                                    <span>Nb Actions</span> :
+                                </td>
+                                <td>
+                                    Nb d'actions dont la NC (à laquelle elles appartiennent) est entre les date début et fin. (les stats suivantes se comportent à l'identique concernant les dates)
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#459BA8;color:white;">
+                                    <span>Nb Actions vérifiées</span> :
+                                </td>
+                                <td>
+                                    Nb d'actions réalisées ET vérifiées.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#79C267;color:white;">
+                                    <span>Nb Actions réalisées</span> :
+                                </td>
+                                <td>
+                                    Nb d'actions réalisées MAIS non vérifiées.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#D4E898;">
+                                    <span>Nb Actions réalisées à temps</span> :
+                                </td>
+                                <td>
+                                    Réalisées dont la date de réalisation est inférieure à la date butoir initiale ou à la nouvelle date butoir si il y en a une.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#FCFCA2;">
+                                    <span>Nb Actions réalisées en retard</span> :
+                                </td>
+                                <td>
+                                    Réalisées dont la date de réalisation est supérieure à la date butoir initiale ou à la nouvelle date butoir si il y en a une.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td>
+                                    <span>Nb Actions en cours</span> :
+                                </td>
+                                <td>
+                                    Nb d'actions dont la date butoir initiale, ou la nouvelle date butoir si elle existe, n'est pas encore atteinte. (supérieure ou égale à la date du jour)
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#F94545;color:white;">
+                                    <span>Nb Actions en retard</span> :
+                                </td>
+                                <td>
+                                    Nb d'actions dont la date butoir initiale, ou la nouvelle date butoir si elle existe, est atteinte. (inférieure à la date du jour)
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#FCFCA2;">
+                                    <span>Nb Actions retard < 1 mois</span> :
+                                </td>
+                                <td>
+                                    Nb Actions en retard dont la date butoir initiale, ou la nouvelle date butoir si elle existe, est atteinte depuis moins d'1 mois.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#FCDAAA;">
+                                    <span>Nb Actions retard de 1 à 3 mois</span> :
+                                </td>
+                                <td>
+                                    Nb Actions en retard dont la date butoir initiale, ou la nouvelle date butoir si elle existe, est atteinte depuis plus d'1 mois et moins de 3 mois.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#FDBBBB;">
+                                    <span>Nb Actions > 3 mois</span> :
+                                </td>
+                                <td>
+                                    Nb Actions en retard dont la date butoir initiale, ou la nouvelle date butoir si elle existe, est atteinte depuis plus de 3 mois.
+                                </td>
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+                  
+                    <br />
+                    Tous les %age liés à ces données sont calculés par rapport au <span style="background-color:#BF62A6;color:white;">nombre d'actions</span><br />
+
+</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</script>

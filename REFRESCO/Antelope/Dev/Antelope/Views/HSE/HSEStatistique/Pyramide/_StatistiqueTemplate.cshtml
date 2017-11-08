@@ -1,0 +1,686 @@
+﻿@model string
+<script type="text/template" id="@Model">
+
+    <div class="row" style="margin-bottom:20px;">
+
+        <div class="col-md-2">
+            <img src="../../Content/images/HSE/FicheSecurite/pyramid2.jpg" alt="..." style="max-width:100%;">
+        </div>
+        <div class="col-md-2">
+
+            <div class='input-group date' id='DateDebut'>
+                <input type='text' name="DateDebut" id="DateDebutInput" class="form-control input-xs" value="<%= paramModel.get('dateDebutJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <div class='input-group date' id='DateFin'>
+                <input type='text' name="DateFin" id="DateFinInput" class="form-control input-xs" value="<%= paramModel.get('dateFinJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <button id="RechercheBouton" type="submit" class="btn btn-default btn-xs pull-right">
+                <span class="glyphicon glyphicon-search"></span> Chercher
+            </button>
+        </div>
+
+        <div class="col-md-2">
+            <select id="Site" class="form-control input-xs">
+                <option value="0" <% if (siteId == 0){ %> selected <% } %> ></option>
+                <% siteCollection.each( function(site){ %>
+                <option value="<%= site.get('SiteID') %>"
+                    <% if (site.get('SiteID') == siteId){ %> selected <% } %>
+                    >
+                <%= site.get('Trigramme') %>
+            </option>
+                <% }); %>
+            </select>
+        </div>
+
+        </div>
+
+    <div class="row" >
+
+        <div class="col-md-12">
+
+            <% if (siteId === 0) { %>
+
+            <table class="StatistiquesPyramideTable" style="width:100%;">
+                <thead style="width:100%;border: 3px solid black; padding:10px ">
+                    <tr>
+                        <th>
+                            Type
+                        </th>
+                        <th style="text-align:center;">
+                            RFS
+                        </th>
+                        <th style="text-align:center;">
+                            DLF
+                        </th>
+                        <th style="text-align:center;">
+                            STA
+                        </th>
+                        <th style="text-align:center;">
+                            NSG
+                        </th>
+                        <th style="text-align:center;">
+                            LQN
+                        </th>
+                        <th style="text-align:center;">
+                            Total
+                        </th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <tr style="width:100%;border: 1px solid black; background-color:#FF0000; padding:10px">
+                        <th>
+                            ATAA
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.RFS.ATAA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.DLF.ATAA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.STA.ATAA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.NSG.ATAA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.LQN.ATAA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.TOTAL.ATAA()  %>
+                        </th>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#FFC000; ">
+                        <th>
+                            ATSA
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.RFS.ATSA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.DLF.ATSA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.STA.ATSA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.NSG.ATSA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.LQN.ATSA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.TOTAL.ATSA()  %>
+                        </th>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#FFFF00; ">
+                        <th>
+                            Soins
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.RFS.Soins %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.DLF.Soins %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.STA.Soins %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.NSG.Soins %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.LQN.Soins %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.TOTAL.Soins() %>
+                        </th>
+                    </tr>
+                    @*<tr style="width:100%;border: 1px solid black; background-color:#D9D9D9; color:grey">
+                        <th>
+                            Sous-Total 1
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalAccidentRFS %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalAccidentDLF %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalAccidentSTA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalAccidentNSG %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalAccidentLQN %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalAccident %>
+                        </th>
+                    </tr>*@
+                    <tr style="width:100%;border: 1px solid black; background-color:#00FF00; ">
+                        <th>
+                            Presque-Accidents
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.RFS.PresqueAccident %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.DLF.PresqueAccident %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.STA.PresqueAccident %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.NSG.PresqueAccident %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.LQN.PresqueAccident %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.TOTAL.PresqueAccident() %>
+                        </th>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#92D050;">
+                        <th>
+                            Situations Dangereuses
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.RFS.SituationDangereuse %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.DLF.SituationDangereuse %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.STA.SituationDangereuse %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.NSG.SituationDangereuse %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.LQN.SituationDangereuse %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.TOTAL.SituationDangereuse() %>
+                        </th>
+                    </tr>
+                    @*<tr style="width:100%;border: 1px solid black; background-color:#D9D9D9; color:grey; ">
+                        <th>
+                            Sous-Total 2
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalDangerRFS %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalDangerDLF %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalDangerSTA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalDangerNSG %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalDangerLQN %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalDanger %>
+                        </th>
+                    </tr>*@
+                    <tr style="width:100%;border: 1px solid black; background-color:#808080; ">
+                        <th>
+                            Total
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.RFS.Total() %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.DLF.Total() %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.STA.Total() %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.NSG.Total() %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.LQN.Total() %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurSites.TOTAL.Total() %>
+                        </th>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#808080; ">
+                        <th>
+                            Dialogues Sécurité
+                        </th>
+                        <th style="text-align:center;">
+                            <%= dialogueSecurite.RFS %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= dialogueSecurite.DLF %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= dialogueSecurite.STA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= dialogueSecurite.NSG %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= dialogueSecurite.LQN %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= dialogueSecurite.TOTAL() %>
+                        </th>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <% } %>
+
+            <% if (siteId != 0) { %>
+
+            <table class="StatistiquesPyramideTable" style="width:100%;">
+                <thead style="width:100%;border: 3px solid black; padding:10px ">
+                    <tr>
+
+                        <th>
+                            Type
+                        </th>
+
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('ZoneType').Nom %>
+                        </th>
+
+                        <% }) %>
+
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <tr style="width:100%;border: 1px solid black; background-color:#FF0000; padding:10px">
+                        <th>
+                            ATAA
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('ATAA') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#FFC000; ">
+                        <th>
+                            ATSA
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('ATSA') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#FFFF00; ">
+                        <th>
+                            Soins
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('Soins') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+                    @*<tr style="width:100%;border: 1px solid black; background-color:#D9D9D9; color:grey; ">
+                        <th>
+                            Sous-Total 1
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('Accident') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>*@
+                    <tr style="width:100%;border: 1px solid black; background-color:#00FF00; ">
+                        <th>
+                            Presque-Accidents
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('PresqueAccident') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#92D050; ">
+                        <th>
+                            Situations Dangereuses
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('SituationDangereuse') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+                    @*<tr style="width:100%;border: 1px solid black; background-color:#D9D9D9; color:grey; ">
+                        <th>
+                            Sous-Total 2
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('Danger') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>*@
+                    <tr style="width:100%;border: 1px solid black; background-color:#808080; ">
+                        <th>
+                            Total
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('Total') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+
+                    <tr style="width:100%;border: 1px solid black; background-color:#808080; ">
+                        <th>
+                            Dialogue Sécurité
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('DialogueSecurite') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+
+                </tbody>
+            </table>
+                <% } %>
+        </div>
+    </div>
+     
+
+    <div class="row" style="margin-top:10px">
+        <div class="col-md-12">
+            <table class="StatistiquesPyramideTable" style="width:100%;">
+                <thead style="width:100%;border: 3px solid black; padding:10px ">
+                    <tr>
+                        <th style="text-align:center;">
+                            Dangers
+                        </th>
+                        <% if (siteId === 0) { %>
+                        <th style="text-align:center;">
+                            RFS
+                        </th>
+                        <th style="text-align:center;">
+                            DLF
+                        </th>
+                        <th style="text-align:center;">
+                            STA
+                        </th>
+                        <th style="text-align:center;">
+                            NSG
+                        </th>
+                        <th style="text-align:center;">
+                            LQN
+                        </th>
+                        <th style="text-align:center;">
+                            Total
+                        </th>
+                        <% } %>
+
+                        <% if (siteId != 0) { %>
+
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('ZoneType').Nom %>
+                        </th>
+                        <% }) %>
+
+                        <% } %>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <% var dangerIndex = 0; %>
+                    <% _.each(GroupDangers, function(dangers) { %>
+
+                    <tr style="width:100%;border: 1px solid black;">
+                        <th>
+                            <% var currentDangerName = Object.keys(GroupDangers)[dangerIndex]; %>
+                            <%= currentDangerName %>
+                        </th>
+                        
+                        <% if (siteId === 0) { %>
+
+                        <% _.each(['RFS','DLF','STA','NSG','LQN','Total'], function(site) { %>
+                        <th style="text-align:center;">
+                            <% if (dangers.hasOwnProperty(site)) { %>
+                            <%= dangers[site] %>
+                            <% } else { %>
+                            <%= 0 %>
+                            <% } %>
+                        </th>
+                        <% }) %>
+
+                        <% } %>
+                        <% if (siteId != 0) { %>
+                        
+                        <% _.each(zoneCollectionForSite.models, function(zone) { %>
+                        <th style="text-align:center;">
+                            <% if (zone.get("Danger") && zone.get("Danger").hasOwnProperty(currentDangerName)) { %>
+                            <%= zone.get("Danger")[currentDangerName] %>
+                            <% } else { %>
+                            <%= 0 %>
+                            <% } %>
+                        </th>
+                        <% }) %>
+
+                        <% } %>
+
+                    </tr>
+                    <% dangerIndex++; %>
+                    <% }) %>
+
+                </tbody>
+            </table>
+            
+         
+        </div>
+    </div>
+     
+    <div class="row" style="margin-top:10px">
+        <div class="col-md-12">
+            <table class="StatistiquesPyramideTable" style="width:100%;">
+                <thead style="width:100%;border: 3px solid black; padding:10px ">
+                    <tr>
+                        <th style="text-align:center;">
+                            Lésions
+                        </th>
+                        <% if (siteId === 0) { %>
+                        <th style="text-align:center;">
+                            RFS
+                        </th>
+                        <th style="text-align:center;">
+                            DLF
+                        </th>
+                        <th style="text-align:center;">
+                            STA
+                        </th>
+                        <th style="text-align:center;">
+                            NSG
+                        </th>
+                        <th style="text-align:center;">
+                            LQN
+                        </th>
+                        <th style="text-align:center;">
+                            Total
+                        </th>
+                        <% } %>
+
+                        <% if (siteId != 0) { %>
+
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('ZoneType').Nom %>
+                        </th>
+                        <% }) %>
+
+                        <% } %>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <% var corpsHumainZoneIndex = 0; %>
+                    <% _.each(GroupCorpsHumainZones, function(corpsHumainZone) { %>
+
+                    <tr style="width:100%;border: 1px solid black;">
+                        <th>
+                            <% var currentCorpsHumainZoneName = Object.keys(GroupCorpsHumainZones)[corpsHumainZoneIndex]; %>
+                            <%= currentCorpsHumainZoneName %> 
+                        </th>
+                        
+                        <% if (siteId === 0) { %>
+
+                        <% _.each(['RFS','DLF','STA','NSG','LQN','Total'], function(site) { %>
+                        <th style="text-align:center;">
+                            <% if (corpsHumainZone.hasOwnProperty(site)) { %>
+                            <%= corpsHumainZone[site] %>
+                            <% } else { %>
+                            <%= 0 %>
+                            <% } %>
+                        </th>
+                        <% }) %>
+
+                        <% } %>
+                        <% if (siteId != 0) { %>
+                        
+                        <% _.each(zoneCollectionForSite.models, function(zone) { %>
+                        <th style="text-align:center;">
+                            <% if (zone.get("CorpsHumainZone") && zone.get("CorpsHumainZone").hasOwnProperty(currentCorpsHumainZoneName)) { %>
+                            <%= zone.get("CorpsHumainZone")[currentCorpsHumainZoneName] %>
+                            <% } else { %>
+                            <%= 0 %>
+                            <% } %>
+                        </th>
+                        <% }) %>
+
+                        <% } %>
+
+                        
+                    </tr>
+                    <% corpsHumainZoneIndex++; %>
+                    <% }) %>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+     
+    <div class="row" style="margin-top:10px">
+        <div class="col-md-12">
+            <table class="StatistiquesPyramideTable" style="width:100%;">
+                <thead style="width:100%;border: 3px solid black; padding:10px ">
+                    <tr>
+                        <th style="text-align:center;">
+                            Services
+                        </th>
+                        <% if (siteId === 0) { %>
+                        <th style="text-align:center;">
+                            RFS
+                        </th>
+                        <th style="text-align:center;">
+                            DLF
+                        </th>
+                        <th style="text-align:center;">
+                            STA
+                        </th>
+                        <th style="text-align:center;">
+                            NSG
+                        </th>
+                        <th style="text-align:center;">
+                            LQN
+                        </th>
+                        <th style="text-align:center;">
+                            Total
+                        </th>
+                        <% } %>
+
+                        <% if (siteId != 0) { %>
+
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('ZoneType').Nom %>
+                        </th>
+                        <% }) %>
+
+                        <% } %>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <% var serviceIndex = 0; %>
+                    <% _.each(GroupServices, function(service) { %>
+
+                    <tr style="width:100%;border: 1px solid black;">
+                        <th>
+                            <% var currentServiceName = Object.keys(GroupServices)[serviceIndex]; %>
+                            <%= currentServiceName %>
+                        </th>
+
+                        <% if (siteId === 0) { %>
+
+                        <% _.each(['RFS','DLF','STA','NSG','LQN','Total'], function(site) { %>
+                        <th style="text-align:center;">
+                            <% if (service.hasOwnProperty(site)) { %>
+                            <%= service[site] %>
+                            <% } else { %>
+                            <%= 0 %>
+                            <% } %>
+                        </th>
+                        <% }) %>
+
+                        <% } %>
+                        <% if (siteId != 0) { %>
+                        
+                        <% _.each(zoneCollectionForSite.models, function(zone) { %>
+                        <th style="text-align:center;">
+                            <% if (zone.get("Service") && zone.get("Service").hasOwnProperty(currentServiceName)) { %>
+                            <%= zone.get("Service")[currentServiceName] %>
+                            <% } else { %>
+                            <%= 0 %>
+                            <% } %>
+                        </th>
+                        <% }) %> 
+
+                        <% } %>
+
+                        
+                    </tr>
+                    <% serviceIndex++; %>
+                    <% }) %>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</script>

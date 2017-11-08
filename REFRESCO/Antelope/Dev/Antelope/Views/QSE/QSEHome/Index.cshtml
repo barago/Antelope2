@@ -1,0 +1,86 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/QSE/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    body {
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 90% 100%;
+        background-attachment: fixed;
+        background-image: url(/Content/images/FOND_INTRANET_SANS_POMME.jpg);
+    }
+</style>
+
+<script type="text/javascript" src="/Scripts/spin.min.js"></script>
+
+
+<div class="row">
+    <div class="col-md-4">
+
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-danger" style="border-color: #006573;">
+            <div class="panel-heading" style="border-color:#006573;background-color: #006573; color: white">QUALITE</div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-8">
+                        <a href="#" class="thumbnail">
+                            <img src="~/Content/images/ICONE_APPLI_QSE.png" alt="...">
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-10 text-center">
+                        @Html.ActionLink("Liste des Actions", "Index", "NonConformite", null, new { @class = "btn-lg btn-danger", @style = "background-color: #006573; color: white;" })
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="row">
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-10 text-center">
+                        @Html.ActionLink("Nouvelle Non-Conformite", "Create", "NonConformite", null, new { @class = "btn-lg btn-danger", @style = "background-color: #006573; color: white" })
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="row">
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-10 text-center">
+                        @Html.ActionLink("Statistiques", "Detail", "QSEStatistique", null, new { @class = "btn-lg btn-danger", @style = "background-color: #006573; color: white" })
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />

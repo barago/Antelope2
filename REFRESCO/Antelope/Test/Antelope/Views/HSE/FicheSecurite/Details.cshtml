@@ -1,0 +1,151 @@
+﻿@model Antelope.Domain.Models.FicheSecurite
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    console.log("tatatata");
+</script>
+
+<h2>Details</h2>
+
+<div>
+    <h4>FicheSecurite</h4>
+	<hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Site.Nom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Site.Nom)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Code)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Code)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Nom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nom)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Prenom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Prenom)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PosteDeTravail)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PosteDeTravail)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Service)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Service)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Responsable)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Responsable)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateCreation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateCreation)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Zone.Nom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Zone.Nom)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Lieu.Nom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Lieu.Nom)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PersonnesConcernees)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PersonnesConcernees)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CotationFrequence)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CotationFrequence)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CotationGravite)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CotationGravite)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CotationVolume)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CotationVolume)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.FicheSecuriteID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,754 @@
+﻿@{
+    ViewBag.Title = "Statistiques Dialogue Sécurité";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript" src="/Scripts/underscore.js"></script>
+<script type="text/javascript" src="/Scripts/backbone.js"></script>
+
+<script type="text/javascript" src="~/Scripts/jquery.scrollTableBody-1.0.0.js"></script>
+
+<script type="text/javascript" src="/Scripts/HighStock/highstock.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.ddslick.min.js"></script>
+
+<script type="text/javascript" src="/Scripts/Application/Socle/SiteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/ZoneModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/ServiceModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/Socle/ServiceTypeModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/HSE/FicheSecurite/FicheSecuriteTypeModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/HSE/DialogueSecurite/ThematiqueModel.js"></script>
+
+<script type="text/javascript" src="/Scripts/moment-with-langs.js"></script>
+<link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/Scripts/bootstrap-datetimepicker.min.js"></script>
+
+<script type="text/template" id="StatistiqueTemplate">
+
+    @*-------------------------------------------------  BARRE DE RECHERCHE  ----------------------------------------------------*@
+
+    <div class="row">
+
+        <div class="col-md-2">
+
+            <div class='input-group date' id='DateDebut'>
+                <input type='text' name="DateDebut" id="DateDebutInput" class="form-control input-xs" value="<%= paramModel.get('dateDebutJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <div class='input-group date' id='DateFin'>
+                <input type='text' name="DateFin" id="DateFinInput" class="form-control input-xs" value="<%= paramModel.get('dateFinJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <button id="RechercheBouton" type="submit" class="btn btn-default btn-xs pull-right">
+                <span class="glyphicon glyphicon-search"></span> Chercher
+            </button>
+        </div>
+
+        <div class="col-md-2">
+            <select id="Site" class="form-control input-xs">
+                <option value="0" <% if (paramModel.get('siteId') == 0){ %> selected <% } %> ></option>
+                <% siteCollection.each( function(site){ %>
+                <option value="<%= site.get('SiteID') %>"
+                    <% if (site.get('SiteID') == paramModel.get('siteId')){ %> selected <% } %>
+                    >
+                <%= site.get('Trigramme') %>
+            </option>
+                <% }); %>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select id="ServiceType" class="form-control input-xs">
+                <option value="0" <% if (paramModel.get('serviceTypeId') == 0){ %> selected <% } %> ></option>
+                <% serviceTypeCollection.each( function(serviceType){ %>
+                <option value="<%= serviceType.get('ServiceTypeId') %>"
+
+                    <% if (serviceType.get('ServiceTypeId') == paramModel.get('serviceTypeId')){ %> selected <% } %>
+                    >
+                <%= serviceType.get('Nom') %>
+            </option>
+                <% }); %>
+            </select>
+        </div>
+
+
+
+    </div>
+
+    @*------------------------------------------------- // BARRE DE RECHERCHE  ----------------------------------------------------*@
+
+
+    <div class="row" style="margin-top:5px;padding-top:0px;">
+        <div class="row" style="margin-top:5px;padding-top:0px;">
+            <div class="col-md-3" style="padding:0px;text-align:center;font-weight: bold;">
+              TOTAL DES FICHES POUR LE SITE : <%= responseModel.get('totalNbDSFicheEmis') %>
+            </div>
+            <div class="col-md-9" style="padding:0px;text-align:center;">
+              /!\ Le filtre "service" n'est pas chargé par rapport au site choisit, car des personnes de différents sites (différents services) peuvent dialoguer ensemble. /!\
+            </div>
+        </div>
+        <div class="col-md-3" style="padding:0px;">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="text-align:center;background-color :#EB8C07; color: white;">
+                    SERVICE
+                </div>
+                <div class="panel-body">
+
+                    <div id="ChartService" style="min-width: 310px; height: 500px; max-width: 600px; margin: 0 auto">
+
+
+
+                    </div>
+
+                    <table class="DSStatTable" style=" margin-left: auto; margin-right: auto;">
+                        <thead style="border:3px solid black">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Nbre DS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% typeOccurenceCollectionForServiceType.each( function(typeOccurenceService){ %>
+                            <tr>
+                                <th>
+                                    <%= typeOccurenceService.get('nom') %>
+                                </th>
+
+                                <th style="text-align:center;">
+                                    <%= typeOccurenceService.get('nbDSEmis') %>
+                                </th>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                        <tfoot style="border:3px solid black">
+                            <tr>
+                                <th>
+                                    TOTAL
+                                </th>
+                                <th style="text-align:center;">
+                                    <%= responseModel.get('totalNbDSEmis') %>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" style="padding:0px;">
+            <div class="panel panel-default">
+                <div class="panel-heading" style=" text-align:center;background-color :#EB8C07; color: white;">
+                    THEMATIQUE
+                </div>
+                <div class="panel-body">
+
+                    <div id="ChartThematique" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
+
+
+
+                    </div>
+
+                    <table class="DSStatTable" style=" margin-left: auto; margin-right: auto;">
+                        <thead style="border:3px solid black">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Nbre DS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% typeOccurenceCollectionForThematique.each( function(typeOccurenceThematique){ %>
+                            <tr>
+                                <th>
+                                    <%= typeOccurenceThematique.get('nom') %>
+                                </th>
+
+                                <th style="text-align:center;">
+                                    <%= typeOccurenceThematique.get('nbDSEmis') %>
+                                </th>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                        <tfoot style="border:3px solid black">
+                            <tr>
+                                <th>
+                                    TOTAL
+                                </th>
+                                <th style="text-align:center;">
+                                    <%= responseModel.get('totalNbDSEmis') %>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" style="padding:0px;">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="text-align:center;background-color :#EB8C07; color: white;">
+                    DIALOGUEUR
+                </div>
+                <div class="panel-body">
+
+                    <table class="DSStatTable" style=" margin-left: auto; margin-right: auto;">
+                        <thead style="border:3px solid black">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Nbre DS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% typeOccurenceCollectionForDialogueur.each( function(typeOccurenceDialogueur){ %>
+                            <tr>
+                                <th>
+                                    <%= typeOccurenceDialogueur.get('nom') %>
+                                </th>
+
+                                <th style="text-align:center;">
+                                    <%= typeOccurenceDialogueur.get('nbDSEmis') %>
+                                </th>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                        <tfoot style="border:3px solid black">
+                            <tr>
+                                <th>
+                                    TOTAL
+                                </th>
+                                <th style="text-align:center;">
+                                    <%= responseModel.get('totalNbDSDialogueur') %>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" style="padding:0px;">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="text-align:center;background-color :#EB8C07; color: white;">
+                    DIALOGU&Eacute;
+                </div>
+                <div class="panel-body">
+                    <table class="DSStatTable" style=" margin-left: auto; margin-right: auto;">
+                        <thead style="border:3px solid black">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Nbre DS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% typeOccurenceCollectionForEntretenu.each( function(typeOccurenceEntretenu){ %>
+                            <tr>
+                                <th>
+                                    <%= typeOccurenceEntretenu.get('nom') %>
+                                </th>
+
+                                <th style="text-align:center;">
+                                    <%= typeOccurenceEntretenu.get('nbDSEmis') %>
+                                </th>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                        <tfoot style="border:3px solid black">
+                            <tr>
+                                <th>
+                                    TOTAL
+                                </th>
+                                <th style="text-align:center;">
+                                    <%= responseModel.get('totalNbDSEntretenu') %>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<div id="PrincipalDiv">
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        function dateFormatJS(date) {
+            var dateFormated = '';
+            if (date != null) {
+                dateFormated = date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+            }
+            return dateFormated;
+        };
+
+        ParamModel = Backbone.Model.extend({});
+        //FicheSecuriteModel = Backbone.Model.extend({});
+        //FicheSecuriteCollection = Backbone.Collection.extend({ model: FicheSecuriteModel });
+
+        DialogueSecuriteModel = Backbone.Model.extend({});
+        DialogueSecuriteCollection = Backbone.Collection.extend({ model: DialogueSecuriteModel });
+
+        ResponseModel = Backbone.Model.extend({
+            url: '/api/DialogueSecuriteStatistique/',
+            id: 0
+        });
+
+        responseModel = new ResponseModel();
+
+        responseModel.fetch({ async: false, wait: true });
+
+        responseModel.set({ "paramModel": new ParamModel(responseModel.get('ParamModel')) });
+        responseModel.get('paramModel').set({ 'dateDebutJavascript': dateFormatJS(responseModel.get('ParamModel').DateDebut) });
+        responseModel.get('paramModel').set({ 'dateFinJavascript': dateFormatJS(responseModel.get('ParamModel').DateFin) });
+        responseModel.get('paramModel').set({ 'siteId': 0 });
+        responseModel.get('paramModel').set({ 'serviceTypeId': 0 });
+
+        responseModel.set({ 'dialogueSecuriteCollection': new DialogueSecuriteCollection(responseModel.get('AllDialogueSecurite')) });
+        responseModel.set({ 'siteCollection': new SiteCollection(responseModel.get('AllSite')) });
+        responseModel.set({ 'zoneCollection': new ZoneCollection(responseModel.get('AllZone')) });
+        responseModel.set({ 'thematiqueCollection': new ThematiqueCollection(responseModel.get('AllThematique')) });
+        responseModel.set({ 'serviceCollection': new ServiceCollection(responseModel.get('AllService')) });
+        responseModel.set({ 'serviceTypeCollection': new ServiceTypeCollection(responseModel.get('AllServiceType')) });
+        responseModel.set({ 'siteId': 0 });
+        responseModel.set({ 'serviceTypeId': 0 });
+
+        responseModel.get('dialogueSecuriteCollection').forEach(function (DS) {
+            DS.TimeStamp *= 1000;
+        });
+
+        TypeOccurenceModel = Backbone.Model.extend({});
+        TypeOccurenceCollection = Backbone.Collection.extend({
+            model: TypeOccurenceModel
+        });
+
+        responseModel.set({ 'site': 'ALL' });
+        responseModel.set({ 'service': 'ALL' });
+        responseModel.set({ 'typeOccurenceCollection': new TypeOccurenceCollection });
+        responseModel.set({ 'typeOccurenceCollectionForServiceType': new TypeOccurenceCollection });
+        responseModel.set({ 'typeOccurenceCollectionForThematique': new TypeOccurenceCollection });
+        responseModel.set({ 'typeOccurenceCollectionForDialogueur': new TypeOccurenceCollection });
+        responseModel.set({ 'typeOccurenceCollectionForEntretenu': new TypeOccurenceCollection });
+        responseModel.set({ 'totalNbDSEmis': 0 });
+
+        calculTableauGeneral(responseModel);
+
+
+        StatistiqueView = Backbone.View.extend({
+            id: 'StatistiqueDiv',
+            template: _.template($('#StatistiqueTemplate').html()),
+            render: function () {
+                this.$el.html(this.template(this.model.toJSON()));
+
+                //this.buildChart();
+
+                $('#DateDebut').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateFin').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+
+                //On écoute les changements sur le DatePicker pour les passer à la fonction Backbone
+                $('#DateDebut').on("dp.change", $.proxy(this.changeDateDebut, this));
+                // TODO : Mettre des dp.hide sur tous les DateTimePickers ! >> Si on ne selectionne rien, il choisit date et heure du jour.
+                $('#DateDebut').on("dp.hide", $.proxy(this.changeDateDebut, this));
+                $('#DateFin').on("dp.change", $.proxy(this.changeDateFin, this));
+                $('#DateFin').on("dp.hide", $.proxy(this.changeDateFin, this));
+
+                //$('#table').scrollTableBody({ rowsToDisplay: 25 });
+
+                $(".FS").click(function () {
+                    $(".FSToggle").toggle();
+                });
+
+                $(".ActionCloture").click(function () {
+                    $(".ActionClotureToggle").toggle();
+                });
+
+                $(".ActionRetard").click(function () {
+                    $(".ActionRetardToggle").toggle();
+                });
+
+                $(".FSToggle").toggle();
+                $(".ActionClotureToggle").toggle();
+                $(".ActionRetardToggle").toggle();
+
+                var typeOccurenceCollectionForThematiqueTransformed = JSON.stringify(this.model.get('typeOccurenceCollectionForThematique'));
+
+                typeOccurenceCollectionForThematiqueTransformed = typeOccurenceCollectionForThematiqueTransformed.replace(/"nom":/g, '"name":');
+                typeOccurenceCollectionForThematiqueTransformed = typeOccurenceCollectionForThematiqueTransformed.replace(/"nbDSEmis":/g, '"y":');
+
+                typeOccurenceCollectionForThematiqueTransformed = JSON.parse(typeOccurenceCollectionForThematiqueTransformed)
+
+
+                var typeOccurenceCollectionForServiceTypeTransformed = JSON.stringify(this.model.get('typeOccurenceCollectionForServiceType'));
+
+                typeOccurenceCollectionForServiceTypeTransformed = typeOccurenceCollectionForServiceTypeTransformed.replace(/"nom":/g, '"name":');
+                typeOccurenceCollectionForServiceTypeTransformed = typeOccurenceCollectionForServiceTypeTransformed.replace(/"nbDSEmis":/g, '"y":');
+
+                typeOccurenceCollectionForServiceTypeTransformed = JSON.parse(typeOccurenceCollectionForServiceTypeTransformed)
+
+                $('#ChartThematique').highcharts({
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        type: 'pie'
+                    },
+                    title: {
+                        text: 'Dialogues par thématique'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false
+                            },
+                            showInLegend: true
+                        }
+                    },
+                    series: [{
+                        name: 'Brands',
+                        colorByPoint: true,
+                        data: typeOccurenceCollectionForThematiqueTransformed
+                       }]
+                });
+
+                $('#ChartService').highcharts({
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        type: 'pie'
+                    },
+                    title: {
+                        text: 'Dialogues par service'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false
+                            },
+                            showInLegend: true
+                        }
+                    },
+                    series: [{
+                        name: 'Brands',
+                        colorByPoint: true,
+                        data: typeOccurenceCollectionForServiceTypeTransformed
+                    }]
+                });
+           
+
+
+
+
+                return this;
+            },
+            initialize: function () {
+
+
+                this.render();
+            },
+            events: {
+                "change #Site": "changeSite",
+                "change #ServiceType": "changeServiceType",
+                "keyup #DateDebutInput": "changeDateDebut",
+                "keyup #DateFinInput": "changeDateFin",
+                "click #RechercheBouton": "recherche",
+                "click #BaseFS": "changeBase",
+                "click #BaseACTION": "changeBase"
+            },
+            recherche: function () {
+                this.model.get('dialogueSecuriteCollection').fetch({
+                    async: false, wait: true,
+                    url: '/api/action/DialogueSecuriteStatistique/GetByParameters/',
+                    type: "post",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(this.model.get('paramModel'))
+                });
+
+                calculTableauGeneral(this.model);
+
+                this.render();
+
+            },
+            changeBase: function (e) {
+                switch (e.currentTarget.id) {
+                    case "BaseFS":
+                        this.model.set({ 'base': 'FS' })
+                        break;
+                    case "BaseACTION":
+                        this.model.set({ 'base': 'ACTION' })
+                        break;
+                }
+                calculTableauGeneral(this.model);
+                this.render();
+            },
+            changeSite: function () {
+
+                this.model.get('paramModel').set({ 'siteId': parseInt($('#Site').val()) });
+
+                //this.model.get('dialogueSecuriteCollection').fetch({
+                //    async: false, wait: true,
+                //    url: '/api/action/DialogueSecuriteStatistique/GetByParameters/',
+                //    type: "post",
+                //    contentType: "application/json; charset=utf-8",
+                //    dataType: "json",
+                //    data: JSON.stringify(this.model.get('paramModel')) //this.model.get('paramModel')
+                //});
+
+
+                // Ajout de l'ID de l'URL, voir si il n'y a pas moyen de l'ajouter directement dans le fetch d'une collection Backbone ...
+                //this.model.get('dialogueSecuriteCollection').url = '/api/action/DialogueSecurite/GetBySiteId/' + responseModel.get('siteId') + "/" + responseModel.get('paramModel').get('DateDebut') + "/" + responseModel.get('paramModel').get('DateFin');
+                // /!\ ASYNC : FALSE >>> Si true, la page se raffraichie sans attendre la mise à jour du model (anciennes données affichées)
+                //this.model.get('dialogueSecuriteCollection').fetch({ async: false });
+
+                calculTableauGeneral(this.model);
+
+                this.render();
+
+            },
+            changeServiceType: function () {
+                console.log($('#ServiceType').val());
+                this.model.get('paramModel').set({ 'serviceTypeId': parseInt($('#ServiceType').val()) });
+
+                calculTableauGeneral(this.model);
+
+                this.render();
+
+            },
+            changeDateDebut: function () {
+                this.model.get('paramModel').set({ 'DateDebut': this.dateFormatMVC($('#DateDebutInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('paramModel').set({ 'dateDebutJavascript': $('#DateDebutInput').val() });
+            },
+            changeDateFin: function () {
+                this.model.get('paramModel').set({ 'DateFin': this.dateFormatMVC($('#DateFinInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('paramModel').set({ 'dateFinJavascript': $('#DateFinInput').val() });
+            },
+            dateFormatMVC: function (date) {
+                // De date FR à DateTime
+                var dateFormated = date.substring(6, 10) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2);
+                return dateFormated;
+            },
+
+        });
+
+        var statistiqueView = new StatistiqueView({
+            el: $("#PrincipalDiv"),
+            model: responseModel
+        });
+
+        function calculTableauGeneral(responseModel) {
+
+            responseModel.set({ 'totalNbDSEmis': 0 });
+            responseModel.set({ 'totalNbDSFicheEmis': 0 });
+            responseModel.set({ 'totalNbDSDialogueur': 0 });
+            responseModel.set({ 'totalNbDSEntretenu': 0 });
+
+            responseModel.get('typeOccurenceCollection').reset();
+
+            responseModel.get('typeOccurenceCollectionForServiceType').reset();
+            responseModel.get('typeOccurenceCollectionForThematique').reset();
+            responseModel.get('typeOccurenceCollectionForDialogueur').reset();
+            responseModel.get('typeOccurenceCollectionForEntretenu').reset();
+
+
+            responseModel.get('serviceCollection').forEach(function (service) {
+                if (service.get('SiteId') === responseModel.get('siteId') || responseModel.get('siteId') === 0) {
+                    responseModel.get('typeOccurenceCollectionForServiceType').add(new TypeOccurenceModel({
+                        'nom': service.get('ServiceType').Nom,
+                        'id': service.get('ServiceTypeId'),
+                        'nbDSEmis': 0
+                    }));
+
+                }
+            });
+
+            responseModel.get('thematiqueCollection').forEach(function (thematique) {
+
+                responseModel.get('typeOccurenceCollectionForThematique').add(new TypeOccurenceModel({
+                    'nom': thematique.get('Nom'),
+                    'id': thematique.get('ThematiqueId'),
+                    'nbDSEmis': 0
+                }));
+
+            });
+
+            responseModel.get('dialogueSecuriteCollection').forEach(function (DS) {
+                if (DS.get('SiteId') === responseModel.get('paramModel').get('siteId') || responseModel.get('paramModel').get('siteId') === 0) {
+                    responseModel.set({ 'totalNbDSFicheEmis': responseModel.get('totalNbDSFicheEmis') + 1 });
+                    // if (DS.get('ServiceId') === responseModel.get('serviceId') || responseModel.get('serviceId') === 0) {
+
+                    if (DS.get('ServiceTypeDialogueur1Id') != 0 && DS.get('ServiceTypeDialogueur1Id') != null) {
+                        if (DS.get('ServiceTypeDialogueur1Id') === responseModel.get('paramModel').get('serviceTypeId') || responseModel.get('paramModel').get('serviceTypeId') === 0) {
+
+                            var typeOccurenceServiceType = responseModel.get('typeOccurenceCollectionForServiceType').findWhere({ 'id': DS.get('ServiceTypeDialogueur1Id') });
+                            typeOccurenceServiceType.set({ 'nbDSEmis': typeOccurenceServiceType.get('nbDSEmis') + 1 })
+
+                            var typeOccurenceThematique = responseModel.get('typeOccurenceCollectionForThematique').findWhere({ 'id': DS.get('ThematiqueId') });
+                            typeOccurenceThematique.set({ 'nbDSEmis': typeOccurenceThematique.get('nbDSEmis') + 1 })
+
+                            var typeOccurenceForDialogueur1 = responseModel.get('typeOccurenceCollectionForDialogueur').findWhere({ 'nom': DS.get('Dialogueur1').Nom + ' ' + DS.get('Dialogueur1').Prenom });
+                            if (typeOccurenceForDialogueur1 === undefined) {
+                                responseModel.get('typeOccurenceCollectionForDialogueur').add(new TypeOccurenceModel({
+                                    'nom': DS.get('Dialogueur1').Nom + ' ' + DS.get('Dialogueur1').Prenom,
+                                    'id': DS.get('Dialogueur1Id'),
+                                    'nbDSEmis': 1
+                                }))
+                            }
+                            else {
+                                typeOccurenceForDialogueur1.set({ 'nbDSEmis': typeOccurenceForDialogueur1.get('nbDSEmis') + 1 })
+                            };
+                            responseModel.set({ 'totalNbDSEmis': responseModel.get('totalNbDSEmis') + 1 });
+                            responseModel.set({ 'totalNbDSDialogueur': responseModel.get('totalNbDSDialogueur') + 1 });
+                        }
+                    }
+
+                    if (DS.get('ServiceTypeDialogueur2Id') != 0 && DS.get('ServiceTypeDialogueur2Id') != null) {
+                        if (DS.get('ServiceTypeDialogueur2Id') === responseModel.get('paramModel').get('serviceTypeId') || responseModel.get('paramModel').get('serviceTypeId') === 0) {
+                            var typeOccurenceServiceType = responseModel.get('typeOccurenceCollectionForServiceType').findWhere({ 'id': DS.get('ServiceTypeDialogueur2Id') });
+                            typeOccurenceServiceType.set({ 'nbDSEmis': typeOccurenceServiceType.get('nbDSEmis') + 1 })
+
+                            var typeOccurenceThematique = responseModel.get('typeOccurenceCollectionForThematique').findWhere({ 'id': DS.get('ThematiqueId') });
+                            typeOccurenceThematique.set({ 'nbDSEmis': typeOccurenceThematique.get('nbDSEmis') + 1 })
+
+                            var typeOccurenceForDialogueur2 = responseModel.get('typeOccurenceCollectionForDialogueur').findWhere({ 'nom': DS.get('Dialogueur2').Nom + ' ' + DS.get('Dialogueur2').Prenom });
+                            if (typeOccurenceForDialogueur2 === undefined) {
+                                responseModel.get('typeOccurenceCollectionForDialogueur').add(new TypeOccurenceModel({
+                                    'nom': DS.get('Dialogueur2').Nom + ' ' + DS.get('Dialogueur2').Prenom,
+                                    'id': DS.get('Dialogueur2Id'),
+                                    'nbDSEmis': 1
+                                }))
+                            }
+                            else {
+                                typeOccurenceForDialogueur2.set({ 'nbDSEmis': typeOccurenceForDialogueur2.get('nbDSEmis') + 1 })
+                            };
+                            responseModel.set({ 'totalNbDSEmis': responseModel.get('totalNbDSEmis') + 1 });
+                            responseModel.set({ 'totalNbDSDialogueur': responseModel.get('totalNbDSDialogueur') + 1 });
+                        }
+                    }
+
+                    if (DS.get('ServiceTypeDialogueur3Id') != 0 && DS.get('ServiceTypeDialogueur3Id') != null) {
+                        if (DS.get('ServiceTypeDialogueur3Id') === responseModel.get('paramModel').get('serviceTypeId') || responseModel.get('paramModel').get('serviceTypeId') === 0) {
+                            var typeOccurenceServiceType = responseModel.get('typeOccurenceCollectionForServiceType').findWhere({ 'id': DS.get('ServiceTypeDialogueur3Id') });
+                            typeOccurenceServiceType.set({ 'nbDSEmis': typeOccurenceServiceType.get('nbDSEmis') + 1 })
+
+                            var typeOccurenceThematique = responseModel.get('typeOccurenceCollectionForThematique').findWhere({ 'id': DS.get('ThematiqueId') });
+                            typeOccurenceThematique.set({ 'nbDSEmis': typeOccurenceThematique.get('nbDSEmis') + 1 })
+
+                            var typeOccurenceForDialogueur3 = responseModel.get('typeOccurenceCollectionForDialogueur').findWhere({ 'nom': DS.get('Dialogueur3').Nom + ' ' + DS.get('Dialogueur3').Prenom });
+                            if (typeOccurenceForDialogueur3 === undefined) {
+                                responseModel.get('typeOccurenceCollectionForDialogueur').add(new TypeOccurenceModel({
+                                    'nom': DS.get('Dialogueur3').Nom + ' ' + DS.get('Dialogueur3').Prenom,
+                                    'id': DS.get('Dialogueur3Id'),
+                                    'nbDSEmis': 1
+                                }))
+                            }
+                            else {
+                                typeOccurenceForDialogueur3.set({ 'nbDSEmis': typeOccurenceForDialogueur3.get('nbDSEmis') + 1 })
+                            };
+                            responseModel.set({ 'totalNbDSEmis': responseModel.get('totalNbDSEmis') + 1 });
+                            responseModel.set({ 'totalNbDSDialogueur': responseModel.get('totalNbDSDialogueur') + 1 });
+                        }
+                    }
+
+                    if (DS.get('ServiceTypeEntretenu1Id') != 0 && DS.get('ServiceTypeEntretenu1Id') != null) {
+                        if (DS.get('ServiceTypeEntretenu1Id') === responseModel.get('paramModel').get('serviceTypeId') || responseModel.get('paramModel').get('serviceTypeId') === 0) {
+                            var typeOccurenceServiceType = responseModel.get('typeOccurenceCollectionForServiceType').findWhere({ 'id': DS.get('ServiceTypeEntretenu1Id') });
+                            typeOccurenceServiceType.set({ 'nbDSEmis': typeOccurenceServiceType.get('nbDSEmis') + 1 })
+
+                            var typeOccurenceThematique = responseModel.get('typeOccurenceCollectionForThematique').findWhere({ 'id': DS.get('ThematiqueId') });
+                            typeOccurenceThematique.set({ 'nbDSEmis': typeOccurenceThematique.get('nbDSEmis') + 1 })
+
+                            var typeOccurenceForEntretenu1 = responseModel.get('typeOccurenceCollectionForEntretenu').findWhere({ 'nom': DS.get('Entretenu1').Nom + ' ' + DS.get('Entretenu1').Prenom });
+                            if (typeOccurenceForEntretenu1 === undefined) {
+                                responseModel.get('typeOccurenceCollectionForEntretenu').add(new TypeOccurenceModel({
+                                    'nom': DS.get('Entretenu1').Nom + ' ' + DS.get('Entretenu1').Prenom,
+                                    'id': DS.get('Entretenu1Id'),
+                                    'nbDSEmis': 1
+                                }))
+                            }
+                            else {
+                                typeOccurenceForEntretenu1.set({ 'nbDSEmis': typeOccurenceForEntretenu1.get('nbDSEmis') + 1 })
+                            };
+                            responseModel.set({ 'totalNbDSEmis': responseModel.get('totalNbDSEmis') + 1 });
+                            responseModel.set({ 'totalNbDSEntretenu': responseModel.get('totalNbDSEntretenu') + 1 });
+                        }
+                    }
+
+                    if (DS.get('ServiceTypeEntretenu2Id') != 0 && DS.get('ServiceTypeEntretenu2Id') != null) {
+                        if (DS.get('ServiceTypeEntretenu2Id') === responseModel.get('paramModel').get('serviceTypeId') || responseModel.get('paramModel').get('serviceTypeId') === 0) {
+                            var typeOccurenceServiceType = responseModel.get('typeOccurenceCollectionForServiceType').findWhere({ 'id': DS.get('ServiceTypeEntretenu2Id') });
+                            typeOccurenceServiceType.set({ 'nbDSEmis': typeOccurenceServiceType.get('nbDSEmis') + 1 })
+
+                            var typeOccurenceThematique = responseModel.get('typeOccurenceCollectionForThematique').findWhere({ 'id': DS.get('ThematiqueId') });
+                            typeOccurenceThematique.set({ 'nbDSEmis': typeOccurenceThematique.get('nbDSEmis') + 1 })
+
+                            var typeOccurenceForEntretenu2 = responseModel.get('typeOccurenceCollectionForEntretenu').findWhere({ 'nom': DS.get('Entretenu2').Nom + ' ' + DS.get('Entretenu2').Prenom });
+                            if (typeOccurenceForEntretenu2 === undefined) {
+                                responseModel.get('typeOccurenceCollectionForEntretenu').add(new TypeOccurenceModel({
+                                    'nom': DS.get('Entretenu2').Nom + ' ' + DS.get('Entretenu2').Prenom,
+                                    'id': DS.get('Entretenu2Id'),
+                                    'nbDSEmis': 1
+                                }))
+                            }
+                            else {
+                                typeOccurenceForEntretenu2.set({ 'nbDSEmis': typeOccurenceForEntretenu2.get('nbDSEmis') + 1 })
+                            };
+                            responseModel.set({ 'totalNbDSEmis': responseModel.get('totalNbDSEmis') + 1 });
+                            responseModel.set({ 'totalNbDSEntretenu': responseModel.get('totalNbDSEntretenu') + 1 });
+                        }
+                    }
+
+                    if (DS.get('ServiceTypeEntretenu3Id') != 0 && DS.get('ServiceTypeEntretenu3Id') != null) {
+                        if (DS.get('ServiceTypeEntretenu3Id') === responseModel.get('paramModel').get('serviceTypeId') || responseModel.get('paramModel').get('serviceTypeId') === 0) {
+                            var typeOccurenceServiceType = responseModel.get('typeOccurenceCollectionForServiceType').findWhere({ 'id': DS.get('ServiceTypeEntretenu3Id') });
+                            typeOccurenceServiceType.set({ 'nbDSEmis': typeOccurenceServiceType.get('nbDSEmis') + 1 })
+
+                            var typeOccurenceThematique = responseModel.get('typeOccurenceCollectionForThematique').findWhere({ 'id': DS.get('ThematiqueId') });
+                            typeOccurenceThematique.set({ 'nbDSEmis': typeOccurenceThematique.get('nbDSEmis') + 1 })
+
+                            var typeOccurenceForEntretenu3 = responseModel.get('typeOccurenceCollectionForEntretenu').findWhere({ 'nom': DS.get('Entretenu3').Nom + ' ' + DS.get('Entretenu3').Prenom });
+                            if (typeOccurenceForEntretenu3 === undefined) {
+                                responseModel.get('typeOccurenceCollectionForEntretenu').add(new TypeOccurenceModel({
+                                    'nom': DS.get('Entretenu3').Nom + ' ' + DS.get('Entretenu3').Prenom,
+                                    'id': DS.get('Entretenu3Id'),
+                                    'nbDSEmis': 1
+                                }))
+                            }
+                            else {
+                                typeOccurenceForEntretenu3.set({ 'nbDSEmis': typeOccurenceForEntretenu3.get('nbDSEmis') + 1 })
+                            };
+                            responseModel.set({ 'totalNbDSEmis': responseModel.get('totalNbDSEmis') + 1 });
+                            responseModel.set({ 'totalNbDSEntretenu': responseModel.get('totalNbDSEntretenu') + 1 });
+                        }
+                    }
+                }
+            })
+        };
+    });
+
+</script>

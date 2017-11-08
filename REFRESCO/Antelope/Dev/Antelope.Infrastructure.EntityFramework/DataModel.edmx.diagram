@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="7d794ec244e642b5864379294f2a3cbc" Name="Diagram1" ZoomLevel="57">
+        <EntityTypeShape EntityType="AntelopeModel.ActionQSE" Width="1.5" PointX="6.875" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.ActionSecurite" Width="1.5" PointX="13.125" PointY="12.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.ADRole" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.CauseQSE" Width="1.5" PointX="9.625" PointY="10.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.CorpsHumainZone" Width="1.5" PointX="15.25" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.Danger" Width="1.5" PointX="15.25" PointY="2.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.FicheSecurite" Width="2.25" PointX="11.875" PointY="4.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.FicheSecuriteType" Width="1.875" PointX="15.25" PointY="0.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.Intervention" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.Lieu" Width="2.25" PointX="16.5" PointY="18.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.Personne" Width="1.5" PointX="8.75" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.PlageHoraire" Width="1.5" PointX="15.25" PointY="6.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.PosteDeTravail" Width="1.5" PointX="9.875" PointY="16.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.Projet" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.Risque" Width="1.5" PointX="15.25" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.RisqueType" Width="1.5" PointX="17.5" PointY="9.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.Sauvegarde" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.Service" Width="1.5" PointX="15.25" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.ServiceType" Width="2" PointX="7.125" PointY="15.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.Site" Width="1.5" PointX="6.25" PointY="19.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.Zone" Width="1.5" PointX="9.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AntelopeModel.ZoneType" Width="1.5" PointX="9.75" PointY="23.875" IsExpanded="true" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_ActionQSEs_dbo_Personnes_ResponsableId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_ActionQSEs_dbo_Personnes_VerificateurId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_ActionSecurites_dbo_FicheSecurites_FicheSecuriteId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_CauseQSEs_dbo_FicheSecurites_FicheSecuriteId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_FicheSecurites_dbo_CorpsHumainZones_CorpsHumainZoneId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_FicheSecurites_dbo_Dangers_DangerId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_FicheSecurites_dbo_FicheSecuriteTypes_FicheSecuriteTypeId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_FicheSecurites_dbo_Lieux_LieuId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_FicheSecurites_dbo_Personnes_PersonneConcerneeId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_FicheSecurites_dbo_Personnes_ResponsableId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_FicheSecurites_dbo_PlageHoraires_PlageHoraireId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_FicheSecurites_dbo_PosteDeTravails_PosteDeTravailId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_FicheSecurites_dbo_Risques_RisqueId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_FicheSecurites_dbo_Services_ServiceId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_FicheSecurites_dbo_Sites_SiteId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_FicheSecurites_dbo_Zones_ZoneId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_Lieux_dbo_Zones_ZoneId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_PosteDeTravails_dbo_Zones_ZoneId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_Risques_dbo_RisqueTypes_RisqueTypeId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_Services_dbo_ServiceTypes_ServiceTypeId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_Services_dbo_Sites_SiteId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_Zones_dbo_Sites_SiteId" ManuallyRouted="false" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_Zones_dbo_ZoneTypes_ZoneTypeId" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="AntelopeModel.ParametrageHSE" Width="2.125" PointX="0.75" PointY="4.375" />
+        <EntityTypeShape EntityType="AntelopeModel.NonConformiteDomaine" Width="1.5" PointX="1.25" PointY="9.5" />
+        <EntityTypeShape EntityType="AntelopeModel.NonConformiteGravite" Width="1.5" PointX="1.25" PointY="11.75" />
+        <EntityTypeShape EntityType="AntelopeModel.NonConformiteOrigine" Width="1.5" PointX="1.25" PointY="7.375" />
+        <EntityTypeShape EntityType="AntelopeModel.NonConformite" Width="2.125" PointX="3.875" PointY="7.75" />
+        <AssociationConnector Association="AntelopeModel.FK_ActionQSEs_NonConformites" />
+        <AssociationConnector Association="AntelopeModel.FK_NonConformite_NonConformiteDomaines" />
+        <AssociationConnector Association="AntelopeModel.FK_NonConformites_NonConformiteGravites" />
+        <AssociationConnector Association="AntelopeModel.FK_NonConformites_NonConformiteOrigines" />
+        <AssociationConnector Association="AntelopeModel.FK_NonConformites_Sites" />
+        <EntityTypeShape EntityType="AntelopeModel.ParametrageQSE" Width="2.25" PointX="3.5" PointY="4.375" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_ActionQSEs_dbo_CauseQSEs_CauseQSEId" />
+        <EntityTypeShape EntityType="AntelopeModel.C__RefactorLog" Width="1.5" PointX="17.625" PointY="6.375" />
+        <EntityTypeShape EntityType="AntelopeModel.ImportAction" Width="1.5" PointX="3" PointY="23.125" />
+        <EntityTypeShape EntityType="AntelopeModel.ImportNonConformite" Width="1.5" PointX="0.75" PointY="23.75" />
+        <AssociationConnector Association="AntelopeModel.FK_ImportActions_ImportNonConformites" />
+        <EntityTypeShape EntityType="AntelopeModel.FilePath" Width="1.5" PointX="9.625" PointY="0.75" />
+        <AssociationConnector Association="AntelopeModel.FK_FilePaths_FicheSecurites" />
+        <AssociationConnector Association="AntelopeModel.FK_FilePaths_NonConformites" />
+        <EntityTypeShape EntityType="AntelopeModel.DialogueSecurite" Width="1.625" PointX="6.125" PointY="23.5" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Sites_SiteId" />
+        <AssociationConnector Association="AntelopeModel.FK_NonConformiteOrigines_ServiceTypes" />
+        <AssociationConnector Association="AntelopeModel.FK_NonConformites_ServiceTypes" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Lieux_LieuId" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur1_PersonneId" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur2_PersonneId" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur3_PersonneId" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu1_PersonneId" ></AssociationConnector>
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu2_PersonneId" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu3_PersonneId" />
+        <EntityTypeShape EntityType="AntelopeModel.Thematique" Width="2" PointX="13" PointY="18.625" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Thematiques_ThematiqueId" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Zones_ZoneId" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur1_PersonneId" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur2_PersonneId" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur3_PersonneId" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu1_PersonneId" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu2_PersonneId" />
+        <AssociationConnector Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu3_PersonneId" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,956 @@
+﻿@{
+    ViewBag.Title = "NbFSChrono";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript" src="/Scripts/underscore.js"></script>
+<script type="text/javascript" src="/Scripts/backbone.js"></script>
+
+<script type="text/javascript" src="/Scripts/HighStock/highstock.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.ddslick.min.js"></script>
+
+<script type="text/javascript" src="/Scripts/Application/Socle/SiteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/ZoneModel.js"></script>
+
+<script type="text/javascript" src="/Scripts/moment-with-langs.js"></script>
+<link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/Scripts/bootstrap-datetimepicker.min.js"></script>
+
+<script type="text/template" id="StatistiqueTemplate">
+
+    <div class="row" style="margin-bottom:20px;">
+
+        <div class="col-md-2">
+            <img src="../../Content/images/HSE/FicheSecurite/pyramid2.jpg" alt="..." style="max-width:100%;">
+        </div>
+        <div class="col-md-2">
+
+            <div class='input-group date' id='DateDebut'>
+                <input type='text' name="DateDebut" id="DateDebutInput" class="form-control input-xs" value="<%= paramModel.get('dateDebutJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <div class='input-group date' id='DateFin'>
+                <input type='text' name="DateFin" id="DateFinInput" class="form-control input-xs" value="<%= paramModel.get('dateFinJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <button id="RechercheBouton" type="submit" class="btn btn-default btn-xs pull-right">
+                <span class="glyphicon glyphicon-search"></span> Chercher
+            </button>
+        </div>
+
+        <div class="col-md-2">
+            <select id="Site" class="form-control input-xs">
+                <option value="0" <% if (siteId == 0){ %> selected <% } %> ></option>
+                <% siteCollection.each( function(site){ %>
+                <option value="<%= site.get('SiteID') %>"
+                    <% if (site.get('SiteID') == siteId){ %> selected <% } %>
+                    >
+                <%= site.get('Trigramme') %>
+            </option>
+                <% }); %>
+            </select>
+        </div>
+
+        </div>
+
+    <div class="row" >
+
+        <div class="col-md-12">
+
+            <% if (siteId === 0) { %>
+
+            <table class="StatistiquesPyramideTable" style="width:100%;">
+                <thead style="width:100%;border: 3px solid black; padding:10px ">
+                    <tr>
+                        <th>
+                            Type
+                        </th>
+                        <th style="text-align:center;">
+                            RFS
+                        </th>
+                        <th style="text-align:center;">
+                            DLF
+                        </th>
+                        <th style="text-align:center;">
+                            STA
+                        </th>
+                        <th style="text-align:center;">
+                            NSG
+                        </th>
+                        <th style="text-align:center;">
+                            LQN
+                        </th>
+                        <th style="text-align:center;">
+                            Total
+                        </th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <tr style="width:100%;border: 1px solid black; background-color:#FF0000; padding:10px">
+                        <th>
+                            ATAA
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalATAARFS %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalATAADLF %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalATAASTA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalATAANSG %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalATAALQN %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalATAA %>
+                        </th>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#FFC000; ">
+                        <th>
+                            ATSA
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalATSARFS %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalATSADLF %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalATSASTA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalATSANSG %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalATSALQN %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalATSA %>
+                        </th>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#FFFF00; ">
+                        <th>
+                            Soins
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalSoinRFS %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalSoinDLF %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalSoinSTA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalSoinNSG %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalSoinLQN %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalSoin %>
+                        </th>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#D9D9D9; color:grey">
+                        <th>
+                            Sous-Total 1
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalAccidentRFS %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalAccidentDLF %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalAccidentSTA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalAccidentNSG %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalAccidentLQN %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalAccident %>
+                        </th>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#00FF00; ">
+                        <th>
+                            Presque-Accidents
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalPARFS %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalPADLF %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalPASTA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalPANSG %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalPALQN %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalPA %>
+                        </th>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#92D050;">
+                        <th>
+                            Situations Dangereuses
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalSituationDangereuseRFS %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalSituationDangereuseDLF %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalSituationDangereuseSTA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalSituationDangereuseNSG %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalSituationDangereuseLQN %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalSituationDangereuse %>
+                        </th>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#D9D9D9; color:grey; ">
+                        <th>
+                            Sous-Total 2
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalDangerRFS %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalDangerDLF %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalDangerSTA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalDangerNSG %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalDangerLQN %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalDanger %>
+                        </th>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#808080; ">
+                        <th>
+                            Total
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalRFS %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalDLF %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalSTA %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalNSG %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotalLQN %>
+                        </th>
+                        <th style="text-align:center;">
+                            <%= compteurTotal %>
+                        </th>
+                    </tr>
+
+
+                </tbody>
+
+            </table>
+
+            <% } %>
+
+            <% if (siteId != 0) { %>
+
+            <table class="StatistiquesPyramideTable" style="width:100%;">
+                <thead style="width:100%;border: 3px solid black; padding:10px ">
+                    <tr>
+
+                        <th>
+                            Type
+                        </th>
+
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('ZoneType').Nom %>
+                        </th>
+
+                        <% }) %>
+
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <tr style="width:100%;border: 1px solid black; background-color:#FF0000; padding:10px">
+                        <th>
+                            ATAA
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('ATAA') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#FFC000; ">
+                        <th>
+                            ATSA
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('ATSA') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#FFFF00; ">
+                        <th>
+                            Soins
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('Soin') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#D9D9D9; color:grey; ">
+                        <th>
+                            Sous-Total 1
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('Accident') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#00FF00; ">
+                        <th>
+                            Presque-Accidents
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('PA') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#92D050; ">
+                        <th>
+                            Situations Dangereuses
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('SituationDangereuse') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#D9D9D9; color:grey; ">
+                        <th>
+                            Sous-Total 2
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('Danger') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+                    <tr style="width:100%;border: 1px solid black; background-color:#808080; ">
+                        <th>
+                            Total
+                        </th>
+                        <% zoneCollectionForSite.each( function(zone){ %>
+                        <th style="text-align:center;">
+                            <%= zone.get('Total') %>
+                        </th>
+
+                        <% }) %>
+                    </tr>
+                </tbody>
+                </table>
+
+                <% } %>
+
+</div>
+    </div>
+
+</script>
+
+<div id="PrincipalDiv">
+</div>
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+
+        function dateFormatJS(date) {
+            var dateFormated = '';
+            if (date != null) {
+                dateFormated = date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+            }
+            return dateFormated;
+        };
+
+        ParamModel = Backbone.Model.extend({});
+        FicheSecuriteModel = Backbone.Model.extend({});
+        FicheSecuriteCollection = Backbone.Collection.extend({model : FicheSecuriteModel});
+
+        ResponseModel = Backbone.Model.extend({
+            url: '/api/HSEStatistique/',
+            id: 0
+        });
+
+        responseModel = new ResponseModel();
+
+        responseModel.fetch({ async: false, wait: true/*, url: 'api/action/GetHSEStatistique' */});
+
+        responseModel.set({ "paramModel": new ParamModel(responseModel.get('ParamModel')) });
+
+        responseModel.get('paramModel').set({ 'dateDebutJavascript': dateFormatJS(responseModel.get('ParamModel').DateDebut) });
+        responseModel.get('paramModel').set({ 'dateFinJavascript': dateFormatJS(responseModel.get('ParamModel').DateFin) });
+
+        responseModel.set({ 'ficheSecuriteCollection': new FicheSecuriteCollection(responseModel.get('AllFicheSecurite')) });
+        responseModel.set({ 'siteCollection': new SiteCollection(responseModel.get('AllSite')) });
+        responseModel.set({ 'zoneCollection': new ZoneCollection(responseModel.get('AllZone')) });
+        responseModel.set({ 'siteId': 0 });
+
+        responseModel.get('ficheSecuriteCollection').forEach(function (FS) {
+            FS.TimeStamp *= 1000;
+        });
+
+        console.log(responseModel);
+
+        calculTableauGeneral(responseModel);
+
+
+
+        StatistiqueView = Backbone.View.extend({
+            id: 'StatistiqueDiv',
+            template: _.template($('#StatistiqueTemplate').html()),
+            render: function () {
+                this.$el.html(this.template(this.model.toJSON()));
+
+                //this.buildChart();
+
+                $('#DateDebut').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateFin').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+
+                //On écoute les changements sur le DatePicker pour les passer à la fonction Backbone
+                $('#DateDebut').on("dp.change", $.proxy(this.changeDateDebut, this));
+                // TODO : Mettre des dp.hide sur tous les DateTimePickers ! >> Si on ne selectionne rien, il choisit date et heure du jour.
+                $('#DateDebut').on("dp.hide", $.proxy(this.changeDateDebut, this));
+                $('#DateFin').on("dp.change", $.proxy(this.changeDateFin, this));
+                $('#DateFin').on("dp.hide", $.proxy(this.changeDateFin, this));
+
+                return this;
+            },
+            initialize: function () {
+
+
+
+                this.render();
+            },
+            events: {
+                "change #Site": "changeSite",
+                "keyup #DateDebutInput": "changeDateDebut",
+                "keyup #DateFinInput": "changeDateFin",
+                "click #RechercheBouton" : "recherche"
+
+            },
+            recherche: function(){
+                console.log('0');
+                this.model.get('ficheSecuriteCollection').fetch({
+                    async: false, wait: true,
+                    url: '/api/action/HSEStatistique/statistiqueFiltered/',
+                    type: "post",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(this.model.get('paramModel')),
+                });
+
+                console.log('1');
+                calculTableauGeneral(this.model);
+                console.log('2');
+     
+                console.log(this.model.get('siteId'));
+                if(this.model.get('siteId') != 0){
+                    calculTableauSite(this.model);
+                }
+                console.log('3');
+                this.render();
+                
+            },
+            changeSite: function () {
+                this.model.set({ 'siteId': parseInt($('#Site').val()) });
+
+                calculTableauSite(this.model);
+
+                this.render();
+
+            },
+            changeDateDebut: function () {
+                this.model.get('paramModel').set({ 'DateDebut': this.dateFormatMVC($('#DateDebutInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('paramModel').set({ 'dateDebutJavascript': $('#DateDebutInput').val() });
+            },
+            changeDateFin: function () {
+                this.model.get('paramModel').set({ 'DateFin': this.dateFormatMVC($('#DateFinInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('paramModel').set({ 'dateFinJavascript': $('#DateFinInput').val() });
+            },
+            dateFormatMVC: function (date) {
+                // De date FR à DateTime
+                var dateFormated = date.substring(6, 10) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2);
+                return dateFormated;
+            },
+
+        });
+
+
+        var statistiqueView = new StatistiqueView({
+            el: $("#PrincipalDiv"),
+            model: responseModel
+        });
+
+        function calculTableauSite(responseModel){
+            
+            responseModel.set({ "zoneCollectionForSite": new ZoneCollection() });
+            //responseModel.set({ "ATAACollectionForSite": new zoneCollection() });
+
+            responseModel.get("zoneCollection").each(function (zone) {
+                zone.set({ "ATAA": 0 });
+                zone.set({ "ATSA": 0 });
+                zone.set({ "Soin": 0 });
+                zone.set({ "Accident": 0 });
+                zone.set({ "PA": 0 });
+                zone.set({ "SituationDangereuse": 0 });
+                zone.set({ "Danger": 0 });
+                zone.set({ "Total": 0 });
+
+                if (zone.get("SiteId") == responseModel.get("siteId")) {
+
+                    responseModel.get("zoneCollectionForSite").add(zone);
+                    //responseModel.get("ATAACollectionForSite").add(zone);
+
+                }
+            });
+
+            var totalATAA = 0;
+            var totalATSA = 0;
+            var totalSoin = 0;
+            var totalAccident = 0;
+            var totalPA = 0;
+            var totalSituationDangereuse = 0;
+            var totalDanger = 0;
+            var totalTotal = 0;
+
+            responseModel.get('ficheSecuriteCollection').forEach(function (FS) {
+
+                if (FS.get('SiteId') == responseModel.get("siteId")) {
+                    
+                    responseModel.get("zoneCollectionForSite").each(function (zone) {
+                        
+                        if (FS.get('ZoneId') == zone.get('ZoneID')) {
+
+                            switch (FS.get('FicheSecuriteType')) {
+                                case "ATAA":
+                                    zone.set({"ATAA":zone.get("ATAA")+1});
+                                    zone.set({"Accident":zone.get("Accident")+1});
+                                    zone.set({ "Total": zone.get("Total") + 1 });
+                                    totalATAA++;
+                                    totalAccident++;
+                                    totalTotal++;
+                                    break;
+                                case "ATSA":
+                                    zone.set({ "ATSA": zone.get("ATSA")+1 });
+                                    zone.set({ "Accident": zone.get("Accident")+1 });
+                                    zone.set({ "Total": zone.get("Total") + 1 });
+                                    totalATSA++;
+                                    totalAccident++;
+                                    totalTotal++;
+                                    break;
+                                case "Soins":
+                                    zone.set({ "Soin": zone.get("Soin")+1 });
+                                    zone.set({ "Accident": zone.get("Accident")+1 });
+                                    zone.set({ "Total": zone.get("Total") + 1 });
+                                    totalSoin++;
+                                    totalAccident++;
+                                    totalTotal++;
+                                    break;
+                                case "Presque Accident":
+                                    zone.set({ "PA": zone.get("PA")+1 });
+                                    zone.set({ "Danger": zone.get("Danger")+1 });
+                                    zone.set({ "Total": zone.get("Total") + 1 });
+                                    totalPA++;
+                                    totalDanger++;
+                                    totalTotal++;
+                                    break;
+                                case "Situation Dangereuse":
+                                    zone.set({ "SituationDangereuse": zone.get("SituationDangereuse")+1 });
+                                    zone.set({ "Danger": zone.get("Danger")+1 });
+                                    zone.set({ "Total": zone.get("Total") + 1 });
+                                    totalSituationDangereuse++;
+                                    totalDanger++;
+                                    totalTotal++;
+                                    break;
+                            }
+                               
+                        }
+
+
+                    });
+
+                }
+
+            });
+
+            var ZoneTypeModel = Backbone.Model.extend({});
+
+            responseModel.get("zoneCollectionForSite").add(new ZoneModel({ "ZoneType": {"Nom":"Total"}, "ATAA": totalATAA, "ATSA": totalATSA, "Soin": totalSoin, "Accident": totalAccident, "PA": totalPA, "SituationDangereuse": totalSituationDangereuse, "Danger": totalDanger, "Total": totalTotal }))
+
+
+        }
+
+
+        function calculTableauGeneral(responseModel) {
+
+
+
+            var compteurTotalATAARFS = 0;
+            var compteurTotalATSARFS = 0;
+            var compteurTotalSoinRFS = 0;
+            var compteurTotalAccidentRFS = 0;
+            var compteurTotalPARFS = 0;
+            var compteurTotalSituationDangereuseRFS = 0;
+            var compteurTotalDangerRFS = 0;
+            var compteurTotalRFS = 0;
+
+            var compteurTotalATAADLF = 0;
+            var compteurTotalATSADLF = 0;
+            var compteurTotalSoinDLF = 0;
+            var compteurTotalAccidentDLF = 0;
+            var compteurTotalPADLF = 0;
+            var compteurTotalSituationDangereuseDLF = 0;
+            var compteurTotalDangerDLF = 0;
+            var compteurTotalDLF = 0;
+
+            var compteurTotalATAASTA = 0;
+            var compteurTotalATSASTA = 0;
+            var compteurTotalSoinSTA = 0;
+            var compteurTotalAccidentSTA = 0;
+            var compteurTotalPASTA = 0;
+            var compteurTotalSituationDangereuseSTA = 0;
+            var compteurTotalDangerSTA = 0;
+            var compteurTotalSTA = 0;
+
+            var compteurTotalATAANSG = 0;
+            var compteurTotalATSANSG = 0;
+            var compteurTotalSoinNSG = 0;
+            var compteurTotalAccidentNSG = 0;
+            var compteurTotalPANSG = 0;
+            var compteurTotalSituationDangereuseNSG = 0;
+            var compteurTotalDangerNSG = 0;
+            var compteurTotalNSG = 0;
+
+            var compteurTotalATAALQN = 0;
+            var compteurTotalATSALQN = 0;
+            var compteurTotalSoinLQN = 0;
+            var compteurTotalAccidentLQN = 0;
+            var compteurTotalPALQN = 0;
+            var compteurTotalSituationDangereuseLQN = 0;
+            var compteurTotalDangerLQN = 0;
+            var compteurTotalLQN = 0;
+
+            var compteurTotalATAA = 0;
+            var compteurTotalATSA = 0;
+            var compteurTotalSoin = 0;
+            var compteurTotalAccident = 0;
+            var compteurTotalPA = 0;
+            var compteurTotalSituationDangereuse = 0;
+            var compteurTotalDanger = 0;
+            var compteurTotal = 0;
+
+            responseModel.get('ficheSecuriteCollection').forEach(function (FS) {
+               
+                switch (FS.get('Site')) {
+                    case "RFS":
+                        switch (FS.get('FicheSecuriteType')) {
+                            case "ATAA":
+                                compteurTotalATAARFS++;
+                                compteurTotalAccidentRFS++;
+                                compteurTotalATAA++;
+                                compteurTotalAccident++;
+                                break;
+                            case "ATSA":
+                                compteurTotalATSARFS++;
+                                compteurTotalAccidentRFS++;
+                                compteurTotalATSA++;
+                                compteurTotalAccident++;
+                                break;
+                            case "Soins":
+                                compteurTotalSoinRFS++;
+                                compteurTotalAccidentRFS++;
+                                compteurTotalSoin++;
+                                compteurTotalAccident++;
+                                break;
+                            case "Presque Accident":
+                                compteurTotalPARFS++;
+                                compteurTotalDangerRFS++;
+                                compteurTotalPA++;
+                                compteurTotalDanger++;
+                                break;
+                            case "Situation Dangereuse":
+                                compteurTotalSituationDangereuseRFS++;
+                                compteurTotalDangerRFS++;
+                                compteurTotalSituationDangereuse++;
+                                compteurTotalDanger++;
+                                break;
+                        }
+                        compteurTotalRFS++;
+                        break;
+                    case "DLF":
+                        switch (FS.get('FicheSecuriteType')) {
+                            case "ATAA":
+                                compteurTotalATAADLF++;
+                                compteurTotalAccidentDLF++;
+                                compteurTotalATAA++;
+                                compteurTotalAccident++;
+                                break;
+                            case "ATSA":
+                                compteurTotalATSADLF++;
+                                compteurTotalAccidentDLF++;
+                                compteurTotalATSA++;
+                                compteurTotalAccident++;
+                                break;
+                            case "Soins":
+                                compteurTotalSoinDLF++;
+                                compteurTotalAccidentDLF++;
+                                compteurTotalSoin++;
+                                compteurTotalAccident++;
+                                break;
+                            case "Presque Accident":
+                                compteurTotalPADLF++;
+                                compteurTotalDangerDLF++;
+                                compteurTotalPA++;
+                                compteurTotalDanger++;
+                                break;
+                            case "Situation Dangereuse":
+                                compteurTotalSituationDangereuseDLF++;
+                                compteurTotalDangerDLF++;
+                                compteurTotalSituationDangereuse++;
+                                compteurTotalDanger++;
+                                break;
+                        }
+                        compteurTotalDLF++;
+                        break;
+                    case "STA":
+                        switch (FS.get('FicheSecuriteType')) {
+                            case "ATAA":
+                                compteurTotalATAASTA++;
+                                compteurTotalAccidentSTA++;
+                                compteurTotalATAA++;
+                                compteurTotalAccident++;
+                                break;
+                            case "ATSA":
+                                compteurTotalATSASTA++;
+                                compteurTotalAccidentSTA++;
+                                compteurTotalATSA++;
+                                compteurTotalAccident++;
+                                break;
+                            case "Soins":
+                                compteurTotalSoinSTA++;
+                                compteurTotalAccidentSTA++;
+                                compteurTotalSoin++;
+                                compteurTotalAccident++;
+                                break;
+                            case "Presque Accident":
+                                compteurTotalPASTA++;
+                                compteurTotalDangerSTA++;
+                                compteurTotalPA++;
+                                compteurTotalDanger++;
+                                break;
+                            case "Situation Dangereuse":
+                                compteurTotalSituationDangereuseSTA++;
+                                compteurTotalDangerSTA++;
+                                compteurTotalSituationDangereuse++;
+                                compteurTotalDanger++;
+                                break;
+                        }
+                        compteurTotalSTA++;
+                        break;
+                    case "NSG":
+                        switch (FS.get('FicheSecuriteType')) {
+                            case "ATAA":
+                                compteurTotalATAANSG++;
+                                compteurTotalAccidentNSG++;
+                                compteurTotalATAA++;
+                                compteurTotalAccident++;
+                                break;
+                            case "ATSA":
+                                compteurTotalATSANSG++;
+                                compteurTotalAccidentNSG++;
+                                compteurTotalATSA++;
+                                compteurTotalAccident++;
+                                break;
+                            case "Soins":
+                                compteurTotalSoinNSG++;
+                                compteurTotalAccidentNSG++;
+                                compteurTotalSoin++;
+                                compteurTotalAccident++;
+                                break;
+                            case "Presque Accident":
+                                compteurTotalPANSG++;
+                                compteurTotalDangerNSG++;
+                                compteurTotalPA++;
+                                compteurTotalDanger++;
+                                break;
+                            case "Situation Dangereuse":
+                                compteurTotalSituationDangereuseNSG++;
+                                compteurTotalDangerNSG++;
+                                compteurTotalSituationDangereuse++;
+                                compteurTotalDanger++;
+                                break;
+                        }
+                        compteurTotalNSG++;
+                        break;
+                    case "LQN":
+                        switch (FS.get('FicheSecuriteType')) {
+                            case "ATAA":
+                                compteurTotalATAALQN++;
+                                compteurTotalAccidentLQN++;
+                                compteurTotalATAA++;
+                                compteurTotalAccident++;
+                                break;
+                            case "ATSA":
+                                compteurTotalATSALQN++;
+                                compteurTotalAccidentLQN++;
+                                compteurTotalATSA++;
+                                compteurTotalAccident++;
+                                break;
+                            case "Soins":
+                                compteurTotalSoinLQN++;
+                                compteurTotalAccidentLQN++;
+                                compteurTotalSoin++;
+                                compteurTotalAccident++;
+                                break;
+                            case "Presque Accident":
+                                compteurTotalPALQN++;
+                                compteurTotalDangerLQN++;
+                                compteurTotalPA++;
+                                compteurTotalDanger++;
+                                break;
+                            case "Situation Dangereuse":
+                                compteurTotalSituationDangereuseLQN++;
+                                compteurTotalDangerLQN++;
+                                compteurTotalSituationDangereuse++;
+                                compteurTotalDanger++;
+                                break;
+                        }
+                        compteurTotalLQN++;
+                        break;
+                    default:
+                        break;
+                }
+                compteurTotal++;
+
+            });
+
+            responseModel.set({ "compteurTotalATAARFS": compteurTotalATAARFS });
+            responseModel.set({ "compteurTotalATSARFS": compteurTotalATSARFS });
+            responseModel.set({ "compteurTotalSoinRFS": compteurTotalSoinRFS });
+            responseModel.set({ "compteurTotalAccidentRFS": compteurTotalAccidentRFS });
+            responseModel.set({ "compteurTotalPARFS": compteurTotalPARFS });
+            responseModel.set({ "compteurTotalSituationDangereuseRFS": compteurTotalSituationDangereuseRFS });
+            responseModel.set({ "compteurTotalDangerRFS": compteurTotalDangerRFS });
+            responseModel.set({ "compteurTotalRFS": compteurTotalRFS });
+
+            responseModel.set({ "compteurTotalATAADLF": compteurTotalATAADLF });
+            responseModel.set({ "compteurTotalATSADLF": compteurTotalATSADLF });
+            responseModel.set({ "compteurTotalSoinDLF": compteurTotalSoinDLF });
+            responseModel.set({ "compteurTotalAccidentDLF": compteurTotalAccidentDLF });
+            responseModel.set({ "compteurTotalPADLF": compteurTotalPADLF });
+            responseModel.set({ "compteurTotalSituationDangereuseDLF": compteurTotalSituationDangereuseDLF });
+            responseModel.set({ "compteurTotalDangerDLF": compteurTotalDangerDLF });
+            responseModel.set({ "compteurTotalDLF": compteurTotalDLF });
+
+            responseModel.set({ "compteurTotalATAASTA": compteurTotalATAASTA });
+            responseModel.set({ "compteurTotalATSASTA": compteurTotalATSASTA });
+            responseModel.set({ "compteurTotalSoinSTA": compteurTotalSoinSTA });
+            responseModel.set({ "compteurTotalAccidentSTA": compteurTotalAccidentSTA });
+            responseModel.set({ "compteurTotalPASTA": compteurTotalPASTA });
+            responseModel.set({ "compteurTotalSituationDangereuseSTA": compteurTotalSituationDangereuseSTA });
+            responseModel.set({ "compteurTotalDangerSTA": compteurTotalDangerSTA });
+            responseModel.set({ "compteurTotalSTA": compteurTotalSTA });
+
+            responseModel.set({ "compteurTotalATAANSG": compteurTotalATAANSG });
+            responseModel.set({ "compteurTotalATSANSG": compteurTotalATSANSG });
+            responseModel.set({ "compteurTotalSoinNSG": compteurTotalSoinNSG });
+            responseModel.set({ "compteurTotalAccidentNSG": compteurTotalAccidentNSG });
+            responseModel.set({ "compteurTotalPANSG": compteurTotalPANSG });
+            responseModel.set({ "compteurTotalSituationDangereuseNSG": compteurTotalSituationDangereuseNSG });
+            responseModel.set({ "compteurTotalDangerNSG": compteurTotalDangerNSG });
+            responseModel.set({ "compteurTotalNSG": compteurTotalNSG });
+
+            responseModel.set({ "compteurTotalATAALQN": compteurTotalATAALQN });
+            responseModel.set({ "compteurTotalATSALQN": compteurTotalATSALQN });
+            responseModel.set({ "compteurTotalSoinLQN": compteurTotalSoinLQN });
+            responseModel.set({ "compteurTotalAccidentLQN": compteurTotalAccidentLQN });
+            responseModel.set({ "compteurTotalPALQN": compteurTotalPALQN });
+            responseModel.set({ "compteurTotalSituationDangereuseLQN": compteurTotalSituationDangereuseLQN });
+            responseModel.set({ "compteurTotalDangerLQN": compteurTotalDangerLQN });
+            responseModel.set({ "compteurTotalLQN": compteurTotalLQN });
+
+            responseModel.set({ "compteurTotalATAA": compteurTotalATAA });
+            responseModel.set({ "compteurTotalATSA": compteurTotalATSA });
+            responseModel.set({ "compteurTotalSoin": compteurTotalSoin });
+            responseModel.set({ "compteurTotalAccident": compteurTotalAccident });
+            responseModel.set({ "compteurTotalPA": compteurTotalPA });
+            responseModel.set({ "compteurTotalSituationDangereuse": compteurTotalSituationDangereuse });
+            responseModel.set({ "compteurTotalDanger": compteurTotalDanger });
+            responseModel.set({ "compteurTotal": compteurTotal });
+
+            //console.log(responseModel);
+
+        }
+
+
+
+    });
+
+
+</script>

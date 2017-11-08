@@ -1,0 +1,253 @@
+﻿@model string
+<script type="text/template" id="@Model">
+
+    @*-------------------------------------------------  BARRE DE RECHERCHE  ----------------------------------------------------*@
+
+    <div class="row">
+
+        <div class="col-md-2">
+
+            <div class='input-group date' id='DateDebut'>
+                <input type='text' name="DateDebut" id="DateDebutInput" class="form-control input-xs" value="<%= paramModel.get('dateDebutJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <div class='input-group date' id='DateFin'>
+                <input type='text' name="DateFin" id="DateFinInput" class="form-control input-xs" value="<%= paramModel.get('dateFinJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <button id="RechercheBouton" type="submit" class="btn btn-default btn-xs pull-right">
+                <span class="glyphicon glyphicon-search"></span> Chercher
+            </button>
+        </div>
+
+        <div class="col-md-2">
+            <select id="Site" class="form-control input-xs">
+                <option value="0" <% if (paramModel.get('siteId') == 0){ %> selected <% } %> ></option>
+                <% siteCollection.each( function(site){ %>
+                <option value="<%= site.get('SiteID') %>"
+                    <% if (site.get('SiteID') == paramModel.get('siteId')){ %> selected <% } %>
+                    >
+                <%= site.get('Trigramme') %>
+            </option>
+                <% }); %>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select id="ServiceType" class="form-control input-xs">
+                <option value="0" <% if (paramModel.get('serviceTypeId') == 0){ %> selected <% } %> ></option>
+                <% serviceTypeCollection.each( function(serviceType){ %>
+                <option value="<%= serviceType.get('ServiceTypeId') %>"
+
+                    <% if (serviceType.get('ServiceTypeId') == paramModel.get('serviceTypeId')){ %> selected <% } %>
+                    >
+                <%= serviceType.get('Nom') %>
+            </option>
+                <% }); %>
+            </select>
+        </div>
+
+
+
+    </div>
+
+    @*------------------------------------------------- // BARRE DE RECHERCHE  ----------------------------------------------------*@
+
+
+    <div class="row" style="margin-top:5px;padding-top:0px;">
+        <div class="row" style="margin-top:5px;padding-top:0px;">
+            <div class="col-md-3" style="padding:0px;text-align:center;font-weight: bold;">
+              TOTAL DES FICHES POUR LE SITE : <%= responseModel.get('totalNbDSFicheEmis') %>
+            </div>
+            <div class="col-md-9" style="padding:0px;text-align:center;">
+              /!\ Le filtre "service" n'est pas chargé par rapport au site choisit, car des personnes de différents sites (différents services) peuvent dialoguer ensemble. /!\
+            </div>
+        </div>
+        <div class="col-md-3" style="padding:0px;">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="text-align:center;background-color :#EB8C07; color: white;">
+                    SERVICE
+                </div>
+                <div class="panel-body">
+
+                    <div id="ChartService" style="min-width: 310px; height: 500px; max-width: 600px; margin: 0 auto">
+
+
+
+                    </div>
+
+                    <table class="DSStatTable" style=" margin-left: auto; margin-right: auto;">
+                        <thead style="border:3px solid black">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Nbre DS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% typeOccurenceCollectionForServiceType.each( function(typeOccurenceService){ %>
+                            <tr>
+                                <th>
+                                    <%= typeOccurenceService.get('nom') %>
+                                </th>
+
+                                <th style="text-align:center;">
+                                    <%= typeOccurenceService.get('nbDSEmis') %>
+                                </th>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                        <tfoot style="border:3px solid black">
+                            <tr>
+                                <th>
+                                    TOTAL
+                                </th>
+                                <th style="text-align:center;">
+                                    <%= responseModel.get('totalNbDSEmis') %>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" style="padding:0px;">
+            <div class="panel panel-default">
+                <div class="panel-heading" style=" text-align:center;background-color :#EB8C07; color: white;">
+                    THEMATIQUE
+                </div>
+                <div class="panel-body">
+
+                    <div id="ChartThematique" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
+
+
+
+                    </div>
+
+                    <table class="DSStatTable" style=" margin-left: auto; margin-right: auto;">
+                        <thead style="border:3px solid black">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Nbre DS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% typeOccurenceCollectionForThematique.each( function(typeOccurenceThematique){ %>
+                            <tr>
+                                <th>
+                                    <%= typeOccurenceThematique.get('nom') %>
+                                </th>
+
+                                <th style="text-align:center;">
+                                    <%= typeOccurenceThematique.get('nbDSEmis') %>
+                                </th>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                        <tfoot style="border:3px solid black">
+                            <tr>
+                                <th>
+                                    TOTAL
+                                </th>
+                                <th style="text-align:center;">
+                                    <%= responseModel.get('totalNbDSEmis') %>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" style="padding:0px;">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="text-align:center;background-color :#EB8C07; color: white;">
+                    DIALOGUEUR
+                </div>
+                <div class="panel-body">
+
+                    <table class="DSStatTable" style=" margin-left: auto; margin-right: auto;">
+                        <thead style="border:3px solid black">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Nbre DS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% typeOccurenceCollectionForDialogueur.each( function(typeOccurenceDialogueur){ %>
+                            <tr>
+                                <th>
+                                    <%= typeOccurenceDialogueur.get('nom') %>
+                                </th>
+
+                                <th style="text-align:center;">
+                                    <%= typeOccurenceDialogueur.get('nbDSEmis') %>
+                                </th>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                        <tfoot style="border:3px solid black">
+                            <tr>
+                                <th>
+                                    TOTAL
+                                </th>
+                                <th style="text-align:center;">
+                                    <%= responseModel.get('totalNbDSDialogueur') %>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" style="padding:0px;">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="text-align:center;background-color :#EB8C07; color: white;">
+                    DIALOGU&Eacute;
+                </div>
+                <div class="panel-body">
+                    <table class="DSStatTable" style=" margin-left: auto; margin-right: auto;">
+                        <thead style="border:3px solid black">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Nbre DS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% typeOccurenceCollectionForEntretenu.each( function(typeOccurenceEntretenu){ %>
+                            <tr>
+                                <th>
+                                    <%= typeOccurenceEntretenu.get('nom') %>
+                                </th>
+
+                                <th style="text-align:center;">
+                                    <%= typeOccurenceEntretenu.get('nbDSEmis') %>
+                                </th>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                        <tfoot style="border:3px solid black">
+                            <tr>
+                                <th>
+                                    TOTAL
+                                </th>
+                                <th style="text-align:center;">
+                                    <%= responseModel.get('totalNbDSEntretenu') %>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</script>

@@ -1,0 +1,391 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+
+<link href="~/Scripts/DataTables-1.10.7/media/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="~/Scripts/DataTables-1.10.7/media/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="~/Scripts/DataTables-1.10.7/extensions/TableTools/js/dataTables.tableTools.min.js"></script>
+<link href="~/Scripts/DataTables-1.10.7/extensions/TableTools/css/dataTables.tableTools.min.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="~/Scripts/Application/HSE/DialogueSecurite/DialogueSecuriteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/SiteModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/HSE/DialogueSecurite/Recherche/ViewModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/HSE/DialogueSecurite/Recherche/RechercheDialogueSecuriteParamModel.js"></script>
+ 
+<link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/Scripts/bootstrap-datetimepicker.min.js"></script> 
+
+@Html.Partial("~/Views/HSE/DialogueSecurite/Index/_TableFiltre.cshtml", "TableFiltre")
+<div id="TableFiltreDiv"></div>
+
+@Html.Partial("~/Views/HSE/DialogueSecurite/Index/_TableRecherche.cshtml", "TableRecherche")
+<div id="TableRechercheDiv"></div>
+
+<script type="text/javascript">
+
+    $(document)
+        .ready(function() {
+
+            var viewModel = new ViewModel();
+
+            viewModel.fetch({
+                async: false
+            });
+
+            viewModel.set({
+                'rechercheDialogueSecuriteParamModel': new
+                    RechercheDialogueSecuriteParamModel(viewModel.get('RechercheDialogueSecuriteParamModel'))
+            });
+
+            viewModel.set({ 'siteCollection': new SiteCollection(viewModel.get('AllSite')) });
+
+            viewModel.get('rechercheDialogueSecuriteParamModel')
+                .set({
+                    'DateDebutJavascript': dateTimeUtils
+                        .dateFormatJS(viewModel.get('rechercheDialogueSecuriteParamModel').get('DateDebut'))
+                });
+            viewModel.get('rechercheDialogueSecuriteParamModel')
+                .set({
+                    'DateFinJavascript': dateTimeUtils
+                        .dateFormatJS(viewModel.get('rechercheDialogueSecuriteParamModel').get('DateFin'))
+                });
+
+            viewModel.get('rechercheDialogueSecuriteParamModel').set({ 'typeRecherche': 'DIALOGUESECURITE' });
+
+            Backbone.applicationEvents = _.extend({}, Backbone.Events);
+
+            var FiltreTableView = Backbone.View.extend({
+                id: 'FiltreTableDialogueSecurite',
+                template: _.template($('#TableFiltre').html()),
+                render: function() {
+
+                    this.$el.html(this.template(this.model.toJSON()));
+
+                    $('#DateDebut')
+                        .datetimepicker({
+                            pickTime: false,
+                            language: 'fr'
+                        });
+                    $('#DateFin')
+                        .datetimepicker({
+                            pickTime: false,
+                            language: 'fr'
+                        });
+
+                    $('#DateDebut').on("dp.change", $.proxy(this.changeDateDebut, this));
+                    $('#DateDebut').on("dp.hide", $.proxy(this.changeDateDebut, this));
+                    $('#DateFin').on("dp.change", $.proxy(this.changeDateFin, this));
+                    $('#DateFin').on("dp.hide", $.proxy(this.changeDateFin, this));
+
+                    return this;
+                },
+                initialize: function() {
+                    this.render();
+
+                },
+                events: {
+                    "change #Site": "changeSite",
+                    "click #RechercheBouton": "recherche",
+                    "click #RechercheDialogueSecuriteBouton": "rechercheDialogueSecurite",
+                    "keyup #DateDebutInput": "changeDateDebut",
+                    "keyup #DateFinInput": "changeDateFin",
+                    "keyup #Atelier": "changeAtelier",
+
+                },
+                triggerRechercheSurEntree: function(e) {
+                    Backbone.applicationEvents.trigger('rechercheDialogueSecurite');
+                    //if (e.which === 13) {
+                    //    if (viewModel.get('paramModel').get('typeRecherche') === 'NONCONFORMITE') {
+                    //        Backbone.applicationEvents.trigger('rechercheNonConformite');
+                    //    }
+                    //    if (viewModel.get('paramModel').get('typeRecherche') === 'ACTION') {
+                    //        Backbone.applicationEvents.trigger('recherche');
+                    //    }
+                    //}
+                },
+                rechercheDialogueSecurite: function() {
+                    viewModel.get('rechercheDialogueSecuriteParamModel').set({ 'typeRecherche': 'DIALOGUESECURITE' });
+                    Backbone.applicationEvents.trigger('rechercheDialogueSecurite');
+                },
+                //recherche: function () {
+                //    viewModel.get('rechercheNonConformiteParamModel').set({ 'typeRecherche': 'ACTION' });
+                //    Backbone.applicationEvents.trigger('recherche');
+                //},
+                changeAtelier: function(e) {
+                    this.model.get('rechercheDialogueSecuriteParamModel').set({ 'Atelier': $('#Atelier').val() });
+
+                    //this.triggerRechercheSurEntree(e);
+                },
+                changeDateDebut: function(e) {
+                    this.model.get('rechercheDialogueSecuriteParamModel')
+                        .set({ 'DateDebut': this.dateFormatMVC($('#DateDebutInput').val()) + 'T' + '00:00:00.0' });
+                    this.model.get('rechercheDialogueSecuriteParamModel')
+                        .set({ 'DateDebutJavascript': $('#DateDebutInput').val() });
+
+                    //this.triggerRechercheSurEntree(e);
+                },
+                changeDateFin: function(e) {
+                    this.model.get('rechercheDialogueSecuriteParamModel')
+                        .set({ 'DateFin': this.dateFormatMVC($('#DateFinInput').val()) + 'T' + '00:00:00.0' });
+                    this.model.get('rechercheDialogueSecuriteParamModel')
+                        .set({ 'DateFinJavascript': $('#DateFinInput').val() });
+
+                    //this.triggerRechercheSurEntree(e);
+                },
+                changeSite: function() {
+                    this.model.get('rechercheDialogueSecuriteParamModel').set({ 'SiteId': parseInt($('#Site').val()) });
+                },
+                dateFormatMVC: dateTimeUtils.dateFormatMVC
+            })
+
+
+            var RechercheDialogueSecuriteTableView = Backbone.View.extend({
+                id: 'RechercheTableDialogueSecurite',
+                template: _.template($('#TableRecherche').html()),
+                render: function() {
+                    this.$el.html(this.template(this.model.toJSON()));
+
+                    this.buildDataTable();
+
+                    return this;
+                },
+                initialize: function() {
+
+                    Backbone.applicationEvents.on('rechercheDialogueSecurite',
+                        function() {
+                            this.rechercheDialogueSecurite();
+                        },
+                        this);
+
+                    this.render();
+
+                },
+                events: {
+                    // "click #RechercheNonConformiteBouton": "rechercheNonConformite"
+            
+                },
+                buildDataTable: function() {
+                    // /!\ Les fonctions d'ajout de 'datas' supplémentaires de DataTables ne fonctionnent pas très bien
+                    // Donc à chaque recherche, nous réinstancions le tableau
+                    // A chaque recherche, les paramètres de tri ne sont donc pas sauvegardés ... A voir si c'est grâve.
+
+                    $("#Table").DataTable().destroy();
+
+                    var datatableLength = datatableUtils.getDatatableLength();
+
+                    table = $("#Table")
+                        .DataTable({
+                            dom: 'T<"clear">lfrtip',
+                            "tableTools": {
+                                "sSwfPath": "Scripts/DataTables-1.10.7/extensions/TableTools/swf/copy_csv_xls_pdf.swf",
+                                "aButtons": [
+                                    {
+                                        "sExtends": "pdf",
+                                        "mColumns": "all"
+                                    },
+                                    {
+                                        "sExtends": "csv",
+                                        "mColumns": "all"
+                                    },
+                                    {
+                                        "sExtends": "print",
+                                        "mColumns": [1, 2, 3, 4]
+                                    },
+                                    {
+                                        "sExtends": "copy",
+                                        "mColumns": [1, 2, 3, 4]
+                                    }
+                                ]
+                            },
+                            "scrollY": "400px",
+                            "autoWidth": false,
+                            "serverSide": true,
+                            "processing": true,
+                            "filter": false,
+                            "ajax": {
+                                "url": "/api/DialogueSecurite",
+                                "data": {
+                                    "siteId": this.model.get('rechercheDialogueSecuriteParamModel').get('SiteId'),
+                                    "atelier": this.model.get('rechercheDialogueSecuriteParamModel').get('Atelier'),
+                                    "dateDebut": this.model.get('rechercheDialogueSecuriteParamModel').get('DateDebut'),
+                                    "dateFin": this.model.get('rechercheDialogueSecuriteParamModel').get('DateFin'),
+                                }
+
+                            },
+                            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tous"]],
+                            "pageLength": datatableLength,
+                            "columns": [
+                                {
+                                    "mData": "Id",
+                                    "sTitle": "Id",
+                                    "visible": false,
+                                    "orderable": false,
+                                },
+                                {
+                                    "mData": "Code",
+                                    "sTitle": "Code",
+                                    "orderable": false,
+                                    "width": "10%"
+                                },
+                                {
+                                    "mData": "Date",
+                                    "sTitle": "Date",
+                                    "sType": "date",
+                                    "mRender": function(date, type, full) {
+                                        //return new Date(date).toLocaleString();
+                                        return date.substring(8, 10) +
+                                            '/' +
+                                            date.substring(5, 7) +
+                                            '/' +
+                                            date.substring(0, 4);
+                                    },
+                                    "orderable": false,
+                                    "width": "10%"
+                                },
+                                {
+                                    "mData": "Atelier",
+                                    "sTitle": "Lieu",
+                                    "orderable": false
+                                },
+                                {
+                                    "mData": "Contexte",
+                                    "sTitle": "Contexte",
+                                    "orderable": false
+                                },
+                                {
+                                    "mData": "Id",
+                                    "sTitle": "Action",
+                                    "orderable": false,
+                                    "width": "5%",
+                                    "mRender": function(date, type, full) {
+
+                                        var links = '<a id="deleteDialogueSecurite" data-id="' +
+                                            full.Id +
+                                            '" class="glyphicon glyphicon-remove"></a></div>';
+
+                                        return links;
+                                    }
+                                }
+                            ],
+                            "oLanguage": {
+                                "sUrl": "Scripts/datatables_lang_fr.js"
+                            }
+                        });
+
+
+                    table.$('tr.selected').removeClass('selected');
+
+                    $('#Table tbody')
+                        .on('mousedown',
+                            'tr',
+                            function(e) {
+
+                                // !!! Triche >> Pour raison X, le click sur un élément la ligne ou un élément de celle-ci se joue deux fois
+                                // On n'active donc le code qu'une fois sur deux (Ce n'est pas une question de propagation Bubbling ... )
+                                var i = 0;
+                                i++
+                                if (i % 2 > 0) {
+
+                                    if (e.button == 0) {
+
+                                        if (e.target.id == "deleteDialogueSecurite") {
+
+                                            var id = e.target.getAttribute("data-id");
+                                            var confirmation =
+                                                confirm("Êtes-vous sûr de vouloir supprimer ce dialogue sécurité ?");
+                                            if (confirmation == true) {
+                                                var dialogueSecuriteToDeleteModel = new
+                                                    DialogueSecuriteModel({ "Id": id })
+                                                dialogueSecuriteToDeleteModel.destroy({
+                                                    async: false,
+                                                    wait: true,
+                                                    success: _.bind(function(model, repsonse) {
+                                                            //Backbone.applicationEvents.trigger('validFicheSecurite', 'la cause a été supprimée');
+                                                        },
+                                                        this)
+                                                });
+                                                table.ajax.reload(null, false);
+                                            }
+                                        } else {
+                                            // CODE POUR OUVRIR DANS MEME FENETRE NE PAS SUPPRIMER
+                                            @*var aData = $("#Table").dataTable().fnGetData(this);
+                                var url = '@Url.Action("Edit", "FicheSecurite", new { id = "__id__" })';
+                                window.location.href = url.replace('__id__', aData.FicheSecuriteID);*@
+
+                                            var aData = $("#Table").dataTable().fnGetData(this);
+                                            var url = '@Url.Action("Edit", "DialogueSecurite", new { id = "__id__" })';
+                                            var realUrl = url.replace('__id__', aData.Id)
+                                            window.open(realUrl, "_blank");
+                                        }
+                                    }
+
+                                    e.preventDefault();
+
+                                    if (e.button == 2 || e.button == 1) {
+                                        var aData = $("#Table").dataTable().fnGetData(this);
+                                        var url = '@Url.Action("Edit", "DialogueSecurite", new { id = "__id__" })';
+                                        var realUrl = url.replace('__id__', aData.Id)
+                                        window.open(realUrl, "_blank");
+                                    }
+
+                                }
+                            });
+
+                    @*$('#Table tbody').on('click', 'tr', function () {
+
+                    var aData = $("#Table").dataTable().fnGetData(this);
+                    var url = '@Url.Action("Edit", "NonConformite", new { id = "__id__" })';
+                    window.location.href = url.replace('__id__', aData.Id);
+
+                    // TODO : Faire un premier clic de selection, puis le deuxième envoi sur la page
+                    // Ne marche pas car les tr sont selected après le Destray, alors que dans le DOM ils ne sont pas selected ...
+
+                    @*if ($(this).hasClass('selected')) {
+
+                            var aData = $("#Table").dataTable().fnGetData(this);
+
+                            var url = '@Url.Action("Create", "NonConformite", new { id = "__id__" })';
+                            window.location.href = url.replace('__id__', aData.Id);
+                        }
+                    else {
+                        table.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                    }
+                });
+
+                $('#Table tbody').on('mousedown', 'tr', function (e) {
+                    e.preventDefault();
+                    if (e.button == 2 || e.button == 1) {
+                        var aData = $("#Table").dataTable().fnGetData(this);
+                        var url = '@Url.Action("Edit", "NonConformite", new { id = "__id__" })';
+                        var realUrl = url.replace('__id__', aData.Id)
+                        window.open(realUrl);
+                    }
+                });*@
+
+                },
+                rechercheDialogueSecurite: function() {
+                    viewModel.get('rechercheDialogueSecuriteParamModel').set({ 'typeRecherche': 'DIALOGUESECURITE' });
+                    this.render();
+                    //this.buildDataTable();
+                }
+
+            });
+
+
+            var filtreTableView = new FiltreTableView({
+                el: $("#TableFiltreDiv"),
+                model: viewModel
+            });
+
+            var rechercheDialogueSecuriteTableView = new RechercheDialogueSecuriteTableView({
+                el: $("#TableRechercheDiv"),
+                model: viewModel
+            });
+
+        });
+
+
+</script>

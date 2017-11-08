@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+   
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Antelope - Refresco.fr</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+
+    <div class="navbar-xs hidden-print">
+        <div class="navbar-primary">
+            <div class="navbar navbar-fixed-top small-margin" style="background-color: #7F7F7F;">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#firstNavbar">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        @Html.ActionLink("Refresco", "Index", "Home", null, new { @class = "navbar-brand", @style = "color:white" })
+                    </div>
+                    <div id="firstNavbar" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li>@Html.ActionLink("Accueil", "Index", "Home", null, new { @style = "color:white" })</li>
+                            <li>@Html.ActionLink("À propos de", "About", "Home", null, new { @style = "color:white" })</li>
+                            <li>@Html.ActionLink("Contact", "Contact", "Home", null, new { @style = "color:white" })</li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right" style="line-height: 28px;">
+                            <li style="color:white">Bonjour, @User.Identity.Name</li> @*class="navbar-text"*@
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+            <div class="container-fluid body-content" style="max-width:1440px">
+
+                @*@Scripts.Render("~/bundles/jquery")
+                    @Scripts.Render("~/bundles/bootstrap")*@
+
+                @*TODO : Rebundle ces Javascripts ?*@
+
+                <script type="text/javascript" src="/Scripts/jquery-1.10.2.min.js"></script>
+                <script type="text/javascript" src="/Scripts/bootstrap.min.js"></script>
+
+                @RenderBody()
+
+
+
+            </div>
+
+
+
+            @RenderSection("scripts", required: false)
+</body>
+</html>

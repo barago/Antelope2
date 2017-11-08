@@ -1,0 +1,59 @@
+﻿@model string
+<script type="text/template" id="@Model">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="panel panel-primary" style="border-color: #006573;">
+                <div class="panel-heading" style="background-color :#006573; color: white">
+                    <% if(rechercheNonConformiteParamModel.get('typeRecherche')==="NONCONFORMITE") { %> <span style="text-decoration:underline;font-weight:bold;">NON CONFORMITES</span> :  <% } %>
+                    <% if(rechercheNonConformiteParamModel.get('typeRecherche')==="ACTION") { %> <span style="text-decoration:underline;font-weight:bold;">ACTIONS</span> :  <% } %>
+                </div>
+                <div class="panel-body">
+
+                    <% if(rechercheNonConformiteParamModel.get('typeRecherche')==="ACTION") { %>
+
+                    <table id="Table" class="stripe hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <% } %>
+
+                    <% if(rechercheNonConformiteParamModel.get('typeRecherche')==="NONCONFORMITE") { %>
+
+                    <table id="Table" class="stripe hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <% } %>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

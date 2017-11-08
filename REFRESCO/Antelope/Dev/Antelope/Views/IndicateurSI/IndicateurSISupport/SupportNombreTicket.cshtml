@@ -1,0 +1,229 @@
+﻿@{
+    ViewBag.Title = "SupportNombreTicket";
+    Layout = "~/Views/IndicateurSI/Shared/_Layout.cshtml";
+}
+
+<h2><img alt="" width="32" height="32" src="~/Content/images/IndicateurSI/histogramme.png"/> Nombre de tickets reçus</h2>
+
+<div class="row" style="background-color: #AADBE0; border-color: black; border-width: 1px; border-style: solid; padding:0px">
+    <div class="col-md-4">
+        <div id="selectGranularite"></div><div id="periode"></div><div id="containerTextField"></div><div id="buttonChercher"></div><br />
+    </div>
+    <div class="col-md-4">
+        <div id="selectSI"></div><br />
+    </div>
+    <div class="col-md-4">
+        <br /><button class='regular pull-right' name='buttonNavigation'
+                      onclick="this.getElementsByTagName('span')[0].innerHTML = (this.getElementsByTagName('span')[0].innerHTML == 'Passer à: navigation avancée' ? 'Passer à: navigation rapide' : 'Passer à: navigation avancée'); MAJNavigation();">
+            <img alt="" width="20" height="20" src="~/Content/images/IndicateurSI/img_loupe.png" />  <span>Passer à: navigation avancée</span>
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="container" style="height: 400px; min-width: 310px"></div>
+    </div>
+</div>
+
+
+<script>
+
+    navigation = 0;
+
+    $(document).ready(function () {
+
+        var tabGranularite = new Array();
+        tabGranularite = ["Jour", "Semaine", "Mois", "Année"];
+
+        $(function () {
+
+            $.ajax({
+                url: "@Url.Action("StartPage", "SupportNombreTicket")",
+                dataType: "json",
+                type: "POST",
+                error: function () {
+                    alert("An error occurred.");
+                },
+                success: function (tab) {
+
+                    json = parseJSON(tab);
+                    draw(json.ticketOuvert, json.ticketResolu);
+                            
+                }
+            });
+        });
+
+        // Récupération noms services SI
+        $.ajax({
+            url: "@Url.Action("recupNameSI", "SupportRepartitionTicket")",
+            data: {},
+        dataType: "json",
+        type: "POST",
+        error: function () {
+            alert("An error occurred.");
+        },
+        success: function (data) {
+        
+            var json = parseJSON(data);
+            valSelectSI = '<h3 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection service SI</h3><select id="SelSI">'
+            for (var i = 0; i < json.name.length; i++) {
+                valSelectSI += '<option ';
+                if (json.name[i] == "SAP / Fonctionnel") valSelectSI += 'selected '
+                valSelectSI += 'value="' + json.name[i] + '">' + json.name[i] + '</option>';
+            }
+            valSelectSI += '</select>';
+            document.getElementById('selectSI').innerHTML = valSelectSI;
+        }
+    });
+
+        resultat = '<h3 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Selection granularité</h3><select id="mySelGranularite">';
+        for (var i = 0; i < tabGranularite.length; i++)
+        {
+            resultat = resultat + '<option ';
+            if (i == 2) resultat += 'selected ';
+            resultat += 'value=' + i + '>' + tabGranularite[i] + '</option>';
+        }
+        resultat = resultat + '</select>';
+        document.getElementById('selectGranularite').innerHTML = resultat;
+
+        $('#buttonChercher').on('click', function () {
+            var GranulariteID = $('#mySelGranularite').find(":selected").val();
+            var SIId = $('#SelSI').find(":selected").val();
+            DateD = document.getElementById("DateD").value;
+            DateF = document.getElementById("DateF").value;
+            reloadAvancee(GranulariteID, DateD, DateF, SIId);
+            if (DateD != "" && DateF != "")
+                document.getElementById('periode').innerHTML = '<span>Du <b>' + DateD + '</b> au <b>' + DateF + '</b></span>';
+            document.getElementById("DateD").value = "";
+            document.getElementById("DateF").value = "";
+        });
+
+        $('#selectGranularite').on('change', function () {
+            recharge();
+        });
+
+        $('#selectSI').on('change', function () {
+            recharge();
+        });
+
+    });
+
+    function recharge() {
+        var GranulariteID = $('#mySelGranularite').find(":selected").val();
+        var SIId = $('#SelSI').find(":selected").val();
+
+        if (navigation == 1) { }
+        else { reload(GranulariteID, SIId); }
+    }
+
+    function parseJSON(data) {
+        return window.JSON && window.JSON.parse ? window.JSON.parse(data) : (new Function("return " + data))();
+    }
+
+    function MAJNavigation() {
+        navigation = (navigation + 1) % 2;
+        if (navigation == 1) {
+            document.getElementById('containerTextField').innerHTML = '<div class="GranulariteSelector">Date début de période : <INPUT type="text" id="DateD" name="DateD" value="" size="8"> (aaaa-mm-jj)<br/>Date fin de période :   <INPUT type="text" id="DateF" name="DateF" value="" size="8"> (aaaa-mm-jj)<br/></div>';
+            document.getElementById('buttonChercher').innerHTML = '<button id="buttonRecherche" class="GranulariteSelector">Rechercher !</button>';
+        }
+        else {
+            $('.GranulariteSelector').remove();
+            $('#periode').remove();
+        }
+    }
+
+    function draw(tabTicketOuvert, tabTicketResolu) {
+        $('#container').highcharts('StockChart', {
+            credits: {
+                enabled: false
+            },
+
+
+            rangeSelector: {
+                selected: 5,
+                inputEnabled: $('#container').width() > 480
+            },
+
+            legend: {
+                enabled: true,
+                reversed: true
+            },
+
+            yAxis: { min: 0 },
+
+            title: {
+                text: 'Nombre de tickets reçus par le Support'
+            },
+            series: [{
+                color: 'rgba(255, 128, 0, 0.7)',
+                name: 'Nombre de tickets résolus',
+                data: tabTicketResolu,
+                type: 'area',
+                threshold: null,
+                tooltip: {
+                    valueDecimals: 0
+                },
+                fillColor: {
+                    linearGradient: [0, 0, 0, 0],
+                    stops: [
+                      [0, 'rgba(255, 128, 0, 0.2)']
+                    ]
+                }
+            },{
+                color: 'rgba(35,167,172, 0.7)',
+                name: 'Nombre de tickets ouverts',
+                data: tabTicketOuvert,
+                type: 'area',
+                threshold: null,
+                tooltip: {
+                    valueDecimals: 0
+                },
+                fillColor: {
+                    linearGradient: [0, 0, 0, 0],
+                    stops: [
+                      [0, 'rgba(35,167,172,0.1)']
+                    ]
+                }
+                
+            }]
+        });
+    }
+
+    function reload(GranulariteID, SIId)
+    {
+        $.ajax({
+            url: "@Url.Action("reDraw", "SupportNombreTicket")",
+            data: { GranulariteID: GranulariteID , SIId: SIId},
+        dataType: "json",
+        type: "POST",
+        error: function () {
+            alert("An error occurred.");
+        },
+        success: function (tab) {
+
+            json = parseJSON(tab);
+            draw(json.ticketOuvert, json.ticketResolu);
+        }        
+                   
+        });
+    }
+
+    function reloadAvancee(GranulariteID, DateD, DateF, SIId) {
+        $.ajax({
+            url: "@Url.Action("reDrawAvancee", "SupportNombreTicket")",
+            data: { GranulariteID: GranulariteID, DateD:DateD, DateF: DateF, SIId: SIId },
+        dataType: "json",
+        type: "POST",
+        error: function () {
+            alert("An error occurred.");
+        },
+        success: function (tab) {
+
+            json = parseJSON(tab);
+            draw(json.ticketOuvert, json.ticketResolu);
+        }        
+                   
+    });
+    }
+
+</script>

@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "Indicateur SI";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#secondNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            @Html.ActionLink("Indicateurs SI", "Index", "IndicateurSIHome", null, new { @class = "navbar-brand" })
+        </div>
+        <div id="secondNavbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tickets <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header" style="color:#088A08"><h5><span class="glyphicon glyphicon-stats"></span><b> Graphiques</b></h5></li>
+                        <li>@Html.ActionLink("Répartition des tickets par catégorie", "SupportRepartitionTicket", "SupportRepartitionTicket")</li>
+                        <li>@Html.ActionLink("Nombre de tickets", "SupportNombreTicket", "SupportNombreTicket")</li>
+                        <li>@Html.ActionLink("Délai de réaction moyen aux tickets", "DelaiMoyenTicket", "DelaiMoyenTicket")</li>
+                        <li>@Html.ActionLink("Délai de réaction aux tickets par catégorie", "SupportDelaiCategorie", "SupportDelaiCategorie")</li>
+                        <li>@Html.ActionLink("Degré de satisfaction", "DegreSatisfaction", "DegreSatisfaction")</li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    @Html.ActionLink("Projets", "ListeProjet", "ListeProjet")
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Infrastructure <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header" style="color:#088A08"><h5><span class="glyphicon glyphicon-stats"></span><b> Graphiques</b></h5></li>
+                        <li>@Html.ActionLink("Volume de sauvegarde", "Sauvegarde", "Sauvegarde")</li>
+                        <li>@Html.ActionLink("Volume e-mails échangés", "VolumeMail", "VolumeMail")</li>
+                        <li>@Html.ActionLink("Intervention heures non-ouvrées", "Intervention", "Intervention")</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@RenderBody()
+
+@Scripts.Render("~/Scripts/HighStock/highstock.js")
+@Scripts.Render("~/Scripts/jquery.ddslick.min.js")

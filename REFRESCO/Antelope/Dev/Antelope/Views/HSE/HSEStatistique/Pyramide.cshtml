@@ -1,0 +1,455 @@
+﻿@{
+    ViewBag.Title = "NbFSChrono";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript" src="/Scripts/HighStock/highstock.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.ddslick.min.js"></script>
+<link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/Scripts/bootstrap-datetimepicker.min.js"></script>
+
+<script type="text/javascript" src="/Scripts/Application/Socle/SiteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/ZoneModel.js"></script>
+
+@Html.Partial("~/Views/HSE/HSEStatistique/Pyramide/_StatistiqueTemplate.cshtml", "StatistiqueTemplate")
+<div id="PrincipalDiv"></div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var ParamModel = Backbone.Model.extend({});
+        var FicheSecuriteModel = Backbone.Model.extend({});
+        var FicheSecuriteCollection = Backbone.Collection.extend({ model: FicheSecuriteModel });
+
+        var DialogueSecuriteModel = Backbone.Model.extend({});
+        var DialogueSecuriteCollection = Backbone.Collection.extend({ model: DialogueSecuriteModel });
+
+        var ResponseModel = Backbone.Model.extend({
+            url: '/api/HSEStatistique/',
+            id: 0
+        });
+
+        var responseModel = new ResponseModel();
+
+        responseModel.fetch({ async: false, wait: true/*, url: 'api/action/GetHSEStatistique' */ });
+
+        responseModel.set({ "paramModel": new ParamModel(responseModel.get('ParamModel')) });
+
+        responseModel.get('paramModel').set({ 'dateDebutJavascript': dateTimeUtils.dateFormatJS(responseModel.get('ParamModel').DateDebut) });
+        responseModel.get('paramModel').set({ 'dateFinJavascript': dateTimeUtils.dateFormatJS(responseModel.get('ParamModel').DateFin) });
+
+        responseModel.set({ 'ficheSecuriteCollection': new FicheSecuriteCollection(responseModel.get('AllFicheSecurite')) });
+        responseModel.set({ 'dialogueSecuriteCollection': new DialogueSecuriteCollection(responseModel.get('AllDialogueSecurite')) });
+
+        responseModel.set({ 'siteCollection': new SiteCollection(responseModel.get('AllSite')) });
+        responseModel.set({ 'zoneCollection': new ZoneCollection(responseModel.get('AllZone')) });
+        responseModel.set({ 'dangerCollection': new Backbone.Collection(responseModel.get('AllDangers')) });
+        responseModel.set({ 'corpsHumainZoneCollection': new Backbone.Collection(responseModel.get('AllCorpsHumainZones')) });
+        responseModel.set({ 'serviceCollection': new Backbone.Collection(responseModel.get('AllService')) });
+
+        calculateTotal(responseModel, "GroupDangers");
+        calculateTotal(responseModel, "GroupServices");
+        calculateTotal(responseModel, "GroupCorpsHumainZones");
+
+        responseModel.set({ 'siteId': 0 }); 
+
+        calculTableauGeneral(responseModel);
+
+        StatistiqueView = Backbone.View.extend({
+            id: 'StatistiqueDiv',
+            template: _.template($('#StatistiqueTemplate').html()),
+            render: function () {
+                this.$el.html(this.template(this.model.toJSON()));
+
+                $('#DateDebut').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateFin').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+
+                //On écoute les changements sur le DatePicker pour les passer à la fonction Backbone
+                $('#DateDebut').on("dp.change", $.proxy(this.changeDateDebut, this));
+                // TODO : Mettre des dp.hide sur tous les DateTimePickers ! >> Si on ne selectionne rien, il choisit date et heure du jour.
+                $('#DateDebut').on("dp.hide", $.proxy(this.changeDateDebut, this));
+                $('#DateFin').on("dp.change", $.proxy(this.changeDateFin, this));
+                $('#DateFin').on("dp.hide", $.proxy(this.changeDateFin, this));
+
+                return this;
+            },
+            initialize: function () {
+
+                this.render();
+            },
+            events: {
+                "change #Site": "changeSite",
+                "keyup #DateDebutInput": "changeDateDebut",
+                "keyup #DateFinInput": "changeDateFin",
+                "click #RechercheBouton": "recherche"
+
+            },
+            recherche: function () {
+
+                var currentRecherche = new Backbone.Model();
+                currentRecherche.fetch({
+                    async: false, wait: true,
+                    url: '/api/action/HSEStatistique/statistiqueFiltered/',
+                    type: "post",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(this.model.get('paramModel'))
+                });
+
+                responseModel.set({ 'ficheSecuriteCollection': new FicheSecuriteCollection(currentRecherche.get('AllFicheSecurite')) });
+                responseModel.set({ 'GroupDangers': currentRecherche.get('GroupDangers') });
+                responseModel.set({ 'GroupServices': currentRecherche.get('GroupServices') });
+                responseModel.set({ 'GroupCorpsHumainZones': currentRecherche.get('GroupCorpsHumainZones') });
+
+                calculateTotal(responseModel, "GroupDangers");
+
+                calculateTotal(responseModel, "GroupServices");
+
+                calculateTotal(responseModel, "GroupCorpsHumainZones");
+
+                this.model.get('dialogueSecuriteCollection').fetch({
+                    async: false, wait: true,
+                    url: '/api/action/HSEStatistique/DialogueSecuriteFiltered/',
+                    type: "post",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(this.model.get('paramModel')),
+                });
+
+                calculTableauGeneral(this.model);
+
+                if (this.model.get('siteId') != 0) {
+                    calculTableauSite(this.model);
+                }
+
+                this.render();
+
+            },
+            changeSite: function () {
+                this.model.set({ 'siteId': parseInt($('#Site').val()) });
+
+                calculTableauSite(this.model);
+
+                this.render();
+
+            },
+            changeDateDebut: function () {
+                this.model.get('paramModel').set({ 'DateDebut': this.dateFormatMVC($('#DateDebutInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('paramModel').set({ 'dateDebutJavascript': $('#DateDebutInput').val() });
+            },
+            changeDateFin: function () {
+                this.model.get('paramModel').set({ 'DateFin': this.dateFormatMVC($('#DateFinInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('paramModel').set({ 'dateFinJavascript': $('#DateFinInput').val() });
+            },
+            dateFormatMVC: dateTimeUtils.dateFormatMVC
+        });
+
+
+        var statistiqueView = new StatistiqueView({
+            el: $("#PrincipalDiv"),
+            model: responseModel
+        });
+
+        function calculTableauSite(responseModel) {
+
+            responseModel.set({ "zoneCollectionForSite": new ZoneCollection() });
+
+            responseModel.get("zoneCollection").each(function (zone) {
+                zone.set({ "ATAA": 0 });
+                zone.set({ "ATSA": 0 });
+                zone.set({ "Soins": 0 });
+                zone.set({ "Accident": 0 });
+                zone.set({ "PresqueAccident": 0 });
+                zone.set({ "SituationDangereuse": 0 });
+                zone.set({ "CorpsHumainZone": {} });
+                zone.set({ "Danger": {} });
+                zone.set({ "Service": {} });
+                zone.set({ "Total": 0 });
+
+                if (zone.get("SiteId") === responseModel.get("siteId")) {
+                    responseModel.get("zoneCollectionForSite").add(zone);
+                }
+            });
+
+            var totalBySite = {
+                ATAA: 0,
+                ATSA: 0,
+                Soins: 0,
+                PresqueAccident: 0,
+                SituationDangereuse: 0,
+                SousTotalAccident: function () {
+                    return this.ATAA + this.ATSA + this.Soins;
+                },
+                SousTotalDanger: function () {
+                    return this.PresqueAccident + this.SituationDangereuse;
+                },
+                Total: function () {
+                    return this.ATAA + this.ATSA + this.Soins + this.PresqueAccident + this.SituationDangereuse;
+                },
+                DialogueSecurite: 0
+            };
+
+            responseModel.get('dialogueSecuriteCollection').forEach(function (ds) {
+                responseModel.get("zoneCollectionForSite").each(function (zone) {
+                    if (!zone.get("DialogueSecurite")) {
+                        zone.set({ "DialogueSecurite": 0 });
+                    }
+                    if (ds.get('SiteId') === responseModel.get("siteId") && ds.get('ZoneId') === zone.get('ZoneID')) {
+                        zone.set({ "DialogueSecurite": zone.get("DialogueSecurite") + 1 });
+                        totalBySite.DialogueSecurite++; // dialogueSecuriteTotal
+                    }
+                });
+            });
+
+            var siteFicheSecurite = _.filter(responseModel.get('ficheSecuriteCollection').models,
+                function (ficheSecurite) {
+                    if (ficheSecurite.get('SiteId') === responseModel.get("siteId")) {
+                        return ficheSecurite;
+                    }
+                });
+
+            siteFicheSecurite.forEach(function (ficheSecurite) {
+
+                var zone = _.find(responseModel.get("zoneCollectionForSite").models,
+                    function (xZone) {
+                        return ficheSecurite.get('ZoneId') === xZone.get('ZoneID');
+                    });
+
+                var currentFicheSecuriteType = ficheSecurite.get('FicheSecuriteType');
+                var currentFicheSecuriteTypeFormated = currentFicheSecuriteType.replace(/\s+/g, '');
+                totalBySite[currentFicheSecuriteTypeFormated]++;
+
+                var map = {};
+                map[currentFicheSecuriteTypeFormated] = zone.get(currentFicheSecuriteTypeFormated) + 1;
+                zone.set(map);
+                zone.set({ "Total": zone.get("Total") + 1 });
+
+            });
+
+            calculateBySite(responseModel, siteFicheSecurite, "Service");
+            calculateBySite(responseModel, siteFicheSecurite, "Danger");
+            calculateBySite(responseModel, siteFicheSecurite, "CorpsHumainZone");
+
+            var serviceByZoneTotal = calculateZoneTotalBySite(responseModel, "Service");
+            var dangerByZoneTotal = calculateZoneTotalBySite(responseModel, "Danger");
+            var corpsHumainZoneByZoneTotal = calculateZoneTotalBySite(responseModel, "CorpsHumainZone");
+
+            /******/
+
+            responseModel.get("zoneCollectionForSite")
+                .add(
+                    new ZoneModel(
+                    {
+                        "ZoneType": { "Nom": "Total" },
+                        "ATAA": totalBySite.ATAA,
+                        "ATSA": totalBySite.ATSA,
+                        "Soins": totalBySite.Soins,
+                        "Accident": totalBySite.SousTotalAccident,
+                        "PresqueAccident": totalBySite.PresqueAccident,
+                        "SituationDangereuse": totalBySite.SituationDangereuse,
+                        //"Danger": totalBySite.SousTotalDanger,
+                        "Total": totalBySite.Total(),
+                        "DialogueSecurite": totalBySite.DialogueSecurite,
+                        "Service": serviceByZoneTotal,
+                        "Danger": dangerByZoneTotal,
+                        "CorpsHumainZone": corpsHumainZoneByZoneTotal
+                    }
+                ));
+        }
+
+        function calculTableauGeneral(responseModel) {
+
+            var dialogueSecuriteCounters = {
+                RFS: 0,
+                DLF: 0,
+                STA: 0,
+                NSG: 0,
+                LQN: 0,
+                TOTAL: function () {
+                    return this.RFS + this.DLF + this.STA + this.NSG + this.LQN;
+                }
+            };
+
+            responseModel.get('dialogueSecuriteCollection').forEach(function (ds) {
+                var currentSite = ds.get('Site');
+                dialogueSecuriteCounters[currentSite]++;
+            });
+
+            responseModel.set({ "dialogueSecurite": dialogueSecuriteCounters });
+
+            var Compteur = function () {
+                this.ATAA = 0;
+                this.ATSA = 0;
+                this.Soins = 0;
+                this.PresqueAccident = 0;
+                this.SituationDangereuse = 0;
+
+                this.SousTotalAccident = function () {
+                    return this.ATAA + this.ATSA + this.Soins;
+                };
+                this.SousTotalDanger = function () {
+                    return this.PresqueAccident + this.SituationDangereuse;
+                };
+                this.Total = function () {
+                    return this.ATAA +
+                        this.ATSA +
+                        this.Soins +
+                        this.PresqueAccident +
+                        this.SituationDangereuse;
+                };
+            }
+
+            var compteurSites = {
+                RFS: new Compteur(),
+                DLF: new Compteur(),
+                STA: new Compteur(),
+                NSG: new Compteur(),
+                LQN: new Compteur(),
+                TOTAL: {
+                    ATAA: function () {
+                        return compteurSites.RFS.ATAA + compteurSites.DLF.ATAA + compteurSites.STA.ATAA + compteurSites.NSG.ATAA + compteurSites.LQN.ATAA;
+                    },
+                    ATSA: function () {
+                        return compteurSites.RFS.ATSA + compteurSites.DLF.ATSA + compteurSites.STA.ATSA + compteurSites.NSG.ATSA + compteurSites.LQN.ATSA;
+                    },
+                    Soins: function () {
+                        return compteurSites.RFS.Soins + compteurSites.DLF.Soins + compteurSites.STA.Soins + compteurSites.NSG.Soins + compteurSites.LQN.Soins;
+                    },
+                    PresqueAccident: function () {
+                        return compteurSites.RFS.PresqueAccident + compteurSites.DLF.PresqueAccident + compteurSites.STA.PresqueAccident + compteurSites.NSG.PresqueAccident + compteurSites.LQN.PresqueAccident;
+                    },
+                    SituationDangereuse: function () {
+                        return compteurSites.RFS.SituationDangereuse + compteurSites.DLF.SituationDangereuse + compteurSites.STA.SituationDangereuse + compteurSites.NSG.SituationDangereuse + compteurSites.LQN.SituationDangereuse;
+                    },
+                    SousTotalAccident: function () {
+                        return compteurSites.RFS.SousTotalAccident() + compteurSites.DLF.SousTotalAccident() + compteurSites.STA.SousTotalAccident() + compteurSites.NSG.SousTotalAccident() + compteurSites.LQN.SousTotalAccident();
+                    },
+                    SousTotalDanger: function () {
+                        return compteurSites.RFS.SousTotalDanger() + compteurSites.DLF.SousTotalDanger() + compteurSites.STA.SousTotalDanger() + compteurSites.NSG.SousTotalDanger() + compteurSites.LQN.SousTotalDanger();
+                    },
+                    Total: function () {
+                        return compteurSites.RFS.Total() + compteurSites.DLF.Total() + compteurSites.STA.Total() + compteurSites.NSG.Total() + compteurSites.LQN.Total();
+                    }
+                }
+            };
+
+            try {
+                responseModel.get('ficheSecuriteCollection').forEach(function (ficheSecurite) {
+
+                    var currentSite = ficheSecurite.get('Site');
+                    var currentFicheSecuriteType = ficheSecurite.get('FicheSecuriteType');
+                    var currentFicheSecuriteTypeFormated = currentFicheSecuriteType.replace(/\s+/g, '');
+                    compteurSites[currentSite][currentFicheSecuriteTypeFormated]++;
+
+
+                });
+
+            } catch (ex) {
+                console.log('Erreur');
+            }
+
+            responseModel.set({ "compteurSites": compteurSites });
+        }
+    });
+
+    function calculateTotal(responseModel, propertyString) {
+
+        var totalCount = 0;
+        var siteTotal = {};
+        var group = responseModel.get(propertyString);
+        for (var item in group) {
+            if (!group.hasOwnProperty(item)) {
+                continue;
+            }
+
+            var groupDetails = group[item];
+            var currentCount = 0;
+
+            for (var currentItemSite in groupDetails) {
+                if (!groupDetails.hasOwnProperty(currentItemSite)) {
+                    continue;
+                }
+                currentCount += groupDetails[currentItemSite];
+
+                if (siteTotal.hasOwnProperty(currentItemSite)) {
+                    siteTotal[currentItemSite] += groupDetails[currentItemSite];
+                } else {
+                    siteTotal[currentItemSite] = groupDetails[currentItemSite];
+                }
+
+            }
+            responseModel.get(propertyString)[item].Total = currentCount;
+            totalCount += currentCount;
+        }
+        siteTotal["Total"] = totalCount;
+        group["Total"] = siteTotal;
+    }
+
+    function calculateBySite(responseModel, siteFicheSecurite, itemName) {
+
+        siteFicheSecurite.forEach(function (ficheSecurite) {
+
+            var zone = _.find(responseModel.get("zoneCollectionForSite").models,
+                       function (xZone) {
+                           return ficheSecurite.get('ZoneId') === xZone.get('ZoneID');
+                       });
+
+            var currentFicheSecuriteService = ficheSecurite.get(itemName);
+            var currentItemCount = 1;
+            if (zone.get(itemName)) {
+                if (zone.get(itemName)[currentFicheSecuriteService]) {
+                    currentItemCount = zone.get(itemName)[currentFicheSecuriteService] + 1;
+                }
+            }
+            if (!zone.get(itemName)) {
+                var map = {};
+                map[itemName] = {};
+                zone.set(map);
+            }
+            zone.get(itemName)[currentFicheSecuriteService] = currentItemCount;
+        });
+    }
+
+    function calculateZoneTotalBySite(responseModel, itemName) {
+
+        var totalCount = 0;
+        var itemTypeTotal = {};
+
+        responseModel.get("zoneCollectionForSite").each(function (zone) {
+            var currentZoneServices = zone.get(itemName);
+
+            var currentCount = 0;
+            for (var currentZoneService in currentZoneServices) {
+                if (currentZoneServices.hasOwnProperty(currentZoneService)) {
+                    currentCount += currentZoneServices[currentZoneService];
+
+                    if (itemTypeTotal.hasOwnProperty(currentZoneService)) {
+                        itemTypeTotal[currentZoneService] += currentZoneServices[currentZoneService];
+                    } else {
+                        itemTypeTotal[currentZoneService] = currentZoneServices[currentZoneService];
+                    }
+                }
+            }
+
+            if (!zone.get(itemName)) {
+                var map = {};
+                map[itemName] = {};
+                zone.set(map);
+            }
+
+            zone.get(itemName)['Total'] = currentCount;
+            totalCount += currentCount;
+        });
+
+        itemTypeTotal["Total"] = totalCount;
+
+        return itemTypeTotal;
+    }
+</script>

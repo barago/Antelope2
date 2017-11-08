@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+<h2>
+    <img alt="" width="32" height="32" src="/Content/images/IndicateurSI/histogramme.png">
+    Tableaux de statistiques
+</h2>
+
+
+<div class="row">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10 text-center">
+       @Html.ActionLink("Nombre de Fiches Sécurité", "NbFSChrono", "HSEStatistique", null, new { @class = "btn-lg btn-default" })
+    </div>
+    <div class="col-md-1">
+    </div>
+</div>
+<br />
+<br />
+<div class="row">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10 text-center">
+       @Html.ActionLink("Pyramide Sécurité", "Pyramide", "HSEStatistique", null, new { @class = "btn-lg btn-default" })
+    </div>
+    <div class="col-md-1">
+    </div>
+</div>
+<br />
+<br />
+<div class="row">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10 text-center">
+        @Html.ActionLink("Statistiques détaillées", "Detail", "HSEStatistique", null, new { @class = "btn-lg btn-default" })
+    </div>
+    <div class="col-md-1">
+    </div>
+</div>
+@*<br />
+<br />
+<div class="row">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10 text-center">
+        @Html.ActionLink("Statistiques Dialogue Sécurité", "DialogueSecurite", "HSEStatistique", null, new { @class = "btn-lg btn-default" })
+    </div>
+    <div class="col-md-1">
+    </div>
+</div>*@

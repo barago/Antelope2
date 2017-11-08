@@ -1,0 +1,1538 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Scripts/DataTables-1.10.10/datatables.min.css" />
+<script type="text/javascript" src="~/Scripts/DataTables-1.10.10/datatables.min.js"></script>
+
+<script type="text/javascript" src="/Scripts/underscore.js"></script>
+<script type="text/javascript" src="/Scripts/backbone.js"></script>
+
+<script type="text/javascript" src="/Scripts/Application/Socle/SiteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/ActionModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/FicheSecuriteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/PersonneConcerneeModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/Recherche/ViewModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/Recherche/ParamModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/ZoneModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/LieuModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/ServiceModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/PosteDeTravailModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/FicheSecuriteTypeModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/PlageHoraireModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/DangerModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/CorpsHumainZoneModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/RisqueModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/HSE/FicheSecurite/RisqueTypeModel.js"></script>
+
+<script type="text/javascript" src="/Scripts/moment-with-langs.js"></script>
+<link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/Scripts/bootstrap-datetimepicker.min.js"></script>
+
+
+<script type="text/template" id="TableFiltre">
+
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="panel panel-primary" style="border-color: #C42031;">
+                <div class="panel-heading" style="background-color :#C42031; color: white">
+
+                    <div class="row">
+
+                        <div class="col-md-7">
+                            FILTRES&nbsp;:
+                        </div>
+                        <div class="col-md-5">
+
+                            <button id="RechercheActionBouton" type="submit" class="btn btn-default btn-xs pull-right">
+                                <span class="glyphicon glyphicon-search"></span> Chercher les Actions
+                            </button>
+
+                            <button id="RechercheBouton" type="submit" class="btn btn-default btn-xs pull-right" style="margin-right:10px">
+                                <span class="glyphicon glyphicon-search"></span> Chercher les Fiches Sécurité
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body" style="padding:0px;">
+
+                    <ul id="myTab" class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#FicheSecurite" id="FicheSecurite-tab" role="tab" data-toggle="tab" aria-controls="FicheSecurite" aria-expanded="true">Fiches Sécurité</a></li>
+                        <li role="presentation"><a href="#Action" role="tab" id="Action-tab" data-toggle="tab" aria-controls="Action">Actions</a></li>
+                    </ul>
+                    <div id="myTabContent" class="tab-content">
+                        <div role="tabpanel" class="tab-pane fade in active" id="FicheSecurite" aria-labelledby="FicheSecurite-tab">
+                            <div class="col-md-4" style="margin-top:5px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="Site" class="label-xs">Site&nbsp;:</label>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <select id="Site" class="form-control input-xs">
+                                            <option value="0" <% if (paramModel.get('SiteId') == 0){ %> selected <% } %> ></option>
+                                            <% siteCollection.each( function(site){ %>
+                                            <option value="<%= site.get('SiteID') %>"
+                                            <% if (paramModel.get('SiteId') == site.get('SiteID')){ %> selected <% } %> >
+                                            <%= site.get('Trigramme') %>
+                                        </option>
+                                            <% }); %>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Zone" class="col-sm-4 label-xs">Zone&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="Zone">
+                                                <option value="0" <% if (paramModel.get('ZoneId') == 0){ %> selected <% } %> ></option>
+                                                <% zoneCollection.each( function(zone){ %>
+                                                <option value="<%= zone.get('ZoneID') %>"
+                                                    <% if (paramModel.get('ZoneId') == zone.get('ZoneID')){ %> selected <% } %> >
+                                                <%= zone.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Lieu" class="col-sm-4 label-xs">Lieu&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="Lieu">
+                                                <option value="0" <% if (paramModel.get('LieuId') == 0){ %> selected <% } %> ></option>
+                                                <% lieuCollection.each( function(lieu){ %>
+                                                <option value="<%= lieu.get('LieuID') %>"
+                                                    <% if (paramModel.get('LieuId') == lieu.get('LieuID')){ %> selected <% } %> >
+                                                <%= lieu.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="PosteDeTravail" class="col-sm-4 label-xs">Poste&nbsp;de&nbsp;travail&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="PosteDeTravail">
+                                                <option value="0" <% if (paramModel.get('PosteDeTravailId') == 0){ %> selected <% } %> ></option>
+                                                <% posteDeTravailCollection.each( function(posteDeTravail){ %>
+                                                <option value="<%= posteDeTravail.get('PosteDeTravailId') %>"
+                                                    <% if (paramModel.get('PosteDeTravailId') == posteDeTravail.get('PosteDeTravailId')){ %> selected <% } %> >
+                                                <%= posteDeTravail.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Service" class="col-sm-4 label-xs">Service&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="Service">
+                                                <option value="0" <% if (paramModel.get('ServiceId') == 0){ %> selected <% } %> ></option>
+                                                <% serviceCollection.each( function(service){ %>
+                                                <option value="<%= service.get('ServiceID') %>"
+                                                    <% if (paramModel.get('ServiceId') == service.get('ServiceID')){ %> selected <% } %> >
+                                                <%= service.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="Code" class="label-xs">Numéro FS&nbsp;:</label>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="Code" class="form-control input-xs" value="<%= paramModel.get('Code') %>" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="Age" class="label-xs">Age&nbsp;:</label>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="Age" class="form-control input-xs" value="<%= paramModel.get('Age') %>" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4" style="margin-top:5px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="Type" class="label-xs">Type&nbsp;:</label>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <select id="Type" class="form-control input-xs">
+                                            <option value="0" <% if (paramModel.get('FicheSecuriteTypeId') == 0){ %> selected <% } %> ></option>
+                                            <% ficheSecuriteTypeCollection.each( function(type){ %>
+                                            <option value="<%= type.get('FicheSecuriteTypeID') %>"
+                                                <% if (paramModel.get('FicheSecuriteTypeId') == type.get('FicheSecuriteTypeID')){ %> selected <% } %> >
+                                                <%= type.get('Nom') %>
+                                            </option>
+                                            <% }); %>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="DateEvenementDebut" class="label-xs">Date&nbsp;Evnmt&nbsp;Début&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        @*<div class="form-group">*@
+                                        <div class='input-group date' id='DateEvenementDebut'>
+                                            <input type='text' name="DateEvenementDebut" id="DateEvenementDebutInput" class="form-control input-xs" value="<%= paramModel.get('DateEvenementDebutJavascript') %>" />
+                                            <div class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </div>
+                                        </div>
+                                        @*</div>*@
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="label-xs">Date&nbsp;Evnmt&nbsp;Fin&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        @*<div class="form-group">*@
+                                        <div class='input-group date' id='DateEvenementFin'>
+                                            <input type='text' name="DateEvenementFin" id="DateEvenementFinInput" class="form-control input-xs" value="<%= paramModel.get('DateEvenementFinJavascript') %>" />
+                                            <span class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                        @*</div>*@
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            @*style="padding-right:0px;"*@
+                                            <label for="PersonnesConcerneeNom" class="label-xs">Nom&nbsp;pers.&nbsp;concern.&nbsp;:&nbsp;&nbsp;</label>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <div class="input-group input-group-xs">
+                                                <input type="text" class="form-control input-xs" id="PersonnesConcerneeNom" value="<%= paramModel.get('PersonneConcerneeNom') %>">
+                                                @*<span class="input-group-addon" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></span></span>*@
+                                                @*<span class="input-group-btn">
+                                                        <button id="ActiveDirectoryPersonneConcerneeRecherche" class=" btn btn-default" type="button" data-toggle="modal" @*data-target="#ActiveDirectoryUtilisateurModal">
+                                                            <span class="glyphicon glyphicon-user">
+                                                        </button>
+                                                    </span>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            @*style="padding-right:0px;"*@
+                                            <label for="ResponsableNom" class="label-xs">Nom&nbsp;Resp.&nbsp;Fiche&nbsp;:</label>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <div class="input-group input-group-xs">
+                                                <input type="text" class="form-control input-xs" id="ResponsableNom" value="<%= paramModel.get('ResponsableNom') %>">
+                                                @*<span class="input-group-addon" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></span></span>*@
+                                                @*<span class="input-group-btn">
+                                                        <button id="ActiveDirectoryPersonneConcerneeRecherche" class=" btn btn-default" type="button" data-toggle="modal" @*data-target="#ActiveDirectoryUtilisateurModal">
+                                                            <span class="glyphicon glyphicon-user">
+                                                        </button>
+                                                    </span>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="PlageHoraire" class="col-sm-4 label-xs">Plage&nbsp;horaire&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="PlageHoraire">
+                                                <option value="0" <% if (paramModel.get('PlageHoraireId') == 0){ %> selected <% } %> ></option>
+                                                <% plageHoraireCollection.each( function(plageHoraire){ %>
+                                                <option value="<%= plageHoraire.get('PlageHoraireID') %>"
+                                                <% if (paramModel.get('PlageHoraireId') == plageHoraire.get('PlageHoraireID')){ %> selected <% } %>
+                                                >
+                                                <%= plageHoraire.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Danger" class="col-sm-4 label-xs">Danger&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="Danger">
+                                                <option value="0" <% if (paramModel.get('DangerId') == 0){ %> selected <% } %> ></option>
+                                                <% dangerCollection.each( function(danger){ %>
+                                                <option value="<%= danger.get('DangerID') %>"
+                                                    <% if (paramModel.get('DangerId') == danger.get('DangerID')){ %> selected <% } %> >
+                                                <%= danger.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4" style="margin-top:5px;">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Risque" class="col-sm-4 label-xs">Risque&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="Risque">
+                                                <option value="0" <% if (paramModel.get('RisqueId') == 0){ %> selected <% } %> ></option>
+                                                <% risqueTypeCollection.each( function(risqueType){ %>
+                                                <optgroup label="<%= risqueType.get('Nom') %>">
+                                                    @*La fonction Where renvoie un array et non pas une collection, on utilise donc _.each et non pas each de Backbone*@
+                                                    <% _.each(risqueCollection.where({'RisqueTypeId': risqueType.get('RisqueTypeId')}), function(risque){ %>
+                                                    <option value="<%= risque.get('RisqueId') %>"
+                                                    <% if (paramModel.get('RisqueId') == risque.get('RisqueId')){ %> selected <% } %> >
+                                                    <%= risque.get('Nom') %>
+                                                <% }); %>
+                                                </optgroup>
+                                                <% }); %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Frequence" class="col-sm-4 label-xs">Fréquence&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control input-xs" id="Frequence" value="<%= paramModel.get('CotationFrequence') %>">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Gravite" class="col-sm-4 label-xs">Gravité&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control input-xs" id="Gravite" value="<%= paramModel.get('CotationGravite') %>">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="CorpsHumainZone" class="col-sm-4 label-xs">Zone Corps Humain&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="CorpsHumainZone">
+                                                <option value="0" <% if (paramModel.get('CorpsHumainZoneId') == 0){ %> selected <% } %> ></option>
+                                                <% corpsHumainZoneCollection.each( function(corpsHumainZone){ %>
+                                                <option value="<%= corpsHumainZone.get('Id') %>"
+                                                    <% if (paramModel.get('CorpsHumainZoneId') == corpsHumainZone.get('Id')){ %> selected <% } %> >
+                                                <%= corpsHumainZone.get('Nom') %>
+                                            </option>
+                                                <% }); %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Criticite" class="col-sm-4 label-xs">Criticité&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control input-xs" id="Criticite" value="<%= paramModel.get('CotationCriticite') %>">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="Risque" class="col-sm-4 label-xs">Niveau criticité&nbsp;:</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-xs" id="CriticiteNiveau">
+                                                <option value="NULL" <% if (paramModel.get('CriticiteNiveau') == ""){ %> selected <% } %> ></option>
+                                                <option value="BAS" <% if (paramModel.get('CriticiteNiveau') == "BAS"){ %> selected <% } %> >BAS ( < 9 )</option>
+                                                <option value="MOYEN" <% if (paramModel.get('CriticiteNiveau') == "MOYEN"){ %> selected <% } %> >MOYEN ( 9 ou 12 )</option>
+                                                <option value="HAUT" <% if (paramModel.get('CriticiteNiveau') == "HAUT"){ %> selected <% } %> >HAUT ( > 12 )</option> 
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            @*------------------------------------------------------------------------------ACTIONS-------------------------------------------------------------------------------------*@
+
+
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="Action" aria-labelledby="Action-tab">
+
+
+                            <div class="col-md-4" style="margin-top:5px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="label-xs">Date&nbsp;Butoir&nbsp;Début&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        <div class='input-group date' id='DateButoirDebut'>
+                                            <input type='text' name="DateButoirDebut" id="DateButoirDebutInput" class="form-control input-xs" value="<%= paramModel.get('DateButoirDebutJavascript') %>" />
+                                            <span class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="label-xs">Date&nbsp;Butoir&nbsp;Fin&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        <div class='input-group date' id='DateButoirFin'>
+                                            <input type='text' name="DateButoirFin" id="DateButoirFinInput" class="form-control input-xs" value="<%= paramModel.get('DateButoirFinJavascript') %>" />
+                                            <span class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <div class="col-md-4" style="margin-top:5px;">
+
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="label-xs">Date&nbsp;Clôture&nbsp;Début&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        @*<div class="form-group">*@
+                                        <div class='input-group date' id='DateClotureDebut'>
+                                            <input type='text' name="DateClotureDebut" id="DateClotureDebutInput" class="form-control input-xs" value="<%= paramModel.get('DateClotureDebutJavascript') %>" />
+                                            <span class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                        @*</div>*@
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="label-xs">Date&nbsp;Clôture&nbsp;Fin&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        @*<div class="form-group">*@
+                                        <div class='input-group date' id='DateClotureFin'>
+                                            <input type='text' name="DateClotureFin" id="DateClotureFinInput" class="form-control input-xs" value="<%= paramModel.get('DateClotureFinJavascript') %>" />
+                                            <span class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                        @*</div>*@
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+                            <div class="col-md-4" style="margin-top:5px;">
+
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            @*style="padding-right:0px;"*@
+                                            <label for="ResponsableNomAction" class="label-xs">Nom&nbsp;Resp.&nbsp;Action&nbsp;:&nbsp;&nbsp;</label>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <div class="input-group input-group-xs">
+                                                <input type="text" class="form-control input-xs" id="ResponsableNomAction" @*value="<%= paramModel.get('PersonneConcerneeNom') %>"*@>
+                                                @*<span class="input-group-addon" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></span></span>*@
+                                                @*<span class="input-group-btn">
+                                                        <button id="ActiveDirectoryPersonneConcerneeRecherche" class=" btn btn-default" type="button" data-toggle="modal" @*data-target="#ActiveDirectoryUtilisateurModal">
+                                                            <span class="glyphicon glyphicon-user">
+                                                        </button>
+                                                    </span>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="panel-footer" style="background-color :white; color: black">
+                    @*<%= paramModel.get('IsNouvelleFiche') %>*@
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="IsNouvelleFiche" style="font-weight:normal"> <span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:white;height:10px;">&nbsp;Nouvelle Fiche&nbsp;</span></label>
+                            <input type="checkbox" id="IsNouvelleFiche"<% if(paramModel.get('IsNouvelleFiche')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsPlanActionAttente" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#BFBFBF;height:10px;">&nbsp;Plan d'action en attente de validation&nbsp;</span></label>
+                            <input type="checkbox" id="IsPlanActionAttente"<% if(paramModel.get('IsPlanActionAttente')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsPlanActionValide" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#FFC000;height:10px;">&nbsp;Plan d'action validé&nbsp;</span></label>
+                            <input type="checkbox" id="IsPlanActionValide"<% if(paramModel.get('IsPlanActionValide')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsPlanActionRejete" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#FF0000;height:10px;">&nbsp;Plan d'action rejeté&nbsp;</span></label>
+                            <input type="checkbox" id="IsPlanActionRejete"<% if(paramModel.get('IsPlanActionRejete')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsPlanActionCloture" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#00B0F0;height:10px;">&nbsp;Plan d'action clôturé&nbsp;</span></label>
+                            <input type="checkbox" id="IsPlanActionCloture"<% if(paramModel.get('IsPlanActionCloture')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsFicheSecuriteCloture" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#00FF00;height:10px;">&nbsp;Fiche Sécurité clôturée&nbsp;</span></label>
+                            <input type="checkbox" id="IsFicheSecuriteCloture"<% if(paramModel.get('IsFicheSecuriteCloture')===true) { %> checked <% } %> >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+</script>
+
+<script type="text/template" id="TableRecherche">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="panel panel-primary" style="border-color: #C42031;">
+                <div class="panel-heading" style="background-color: #C42031; color: white">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <% if(paramModel.get('typeRecherche')==="FICHESECURITE") { %> <span style="text-decoration:underline;font-weight:bold;">FICHES SECURITE</span> :  <% } %>
+                            <% if(paramModel.get('typeRecherche')==="ACTION") { %> <span style="text-decoration:underline;font-weight:bold;">ACTIONS</span> :  <% } %>
+                        </div>
+                        @*<div class="col-md-5 pull-right">Click Droit ou Milieu : Ouvrir dans une nouvelle fenêtre</div>*@
+                    </div>
+                </div>
+                <div class="panel-body" oncontextmenu="return false;">
+
+                    <% if(paramModel.get('typeRecherche')==="FICHESECURITE") { %>
+
+                    <table id="Table" class="stripe hover">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Numéro FS</th>
+                                <th>Nom</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <% } %>
+
+                    <% if(paramModel.get('typeRecherche')==="ACTION") { %>
+
+                    <table id="Table" class="stripe hover">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Numéro FS</th>
+                                <th>Responsable</th>
+                                <th>Description</th>
+                                <th>Date butoir 1</th>
+                                <th>Date butoir 2</th>
+                                <th>Date clôture</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <% } %>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</script>
+
+<div id="TableFiltreDiv">
+</div>
+
+<div id="TableRechercheDiv">
+</div>
+
+
+
+<script type="text/javascript">
+    function cancelBubble(e) {
+        var evt = e ? e : window.event;
+        if (evt.stopPropagation) evt.stopPropagation();
+        if (evt.cancelBubble != null) evt.cancelBubble = true;
+    }
+
+    $(document).ready(function () {
+
+        var currentHSERole = "@ViewBag.CurrentHSERole";
+
+        $(function () {
+            $(document).tooltip({ show: 1500 });
+        });
+
+        function dateFormatJS(date) {
+            var dateFormated = '';
+            if (date != null) {
+                dateFormated = date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+            }
+            return dateFormated;
+        };
+
+        var viewModel = new ViewModel();
+
+        viewModel.fetch({
+            async: false
+        });
+
+        viewModel.set({ 'currentHSERole': currentHSERole });
+
+        viewModel.set({ 'paramModel': new ParamModel(viewModel.get('RechercheFicheSecuriteParamModel')) });
+
+        viewModel.get('paramModel').set({ 'DateEvenementDebutJavascript': dateFormatJS(viewModel.get('paramModel').get('DateEvenementDebut')) });
+        viewModel.get('paramModel').set({ 'DateEvenementFinJavascript': dateFormatJS(viewModel.get('paramModel').get('DateEvenementFin')) });
+        viewModel.get('paramModel').set({ 'DateButoirDebutJavascript': dateFormatJS(viewModel.get('paramModel').get('DateButoirDebut')) });
+        viewModel.get('paramModel').set({ 'DateButoirFinJavascript': dateFormatJS(viewModel.get('paramModel').get('DateButoirFin')) });
+        viewModel.get('paramModel').set({ 'DateClotureDebutJavascript': dateFormatJS(viewModel.get('paramModel').get('DateClotureDebut')) });
+        viewModel.get('paramModel').set({ 'DateClotureFinJavascript': dateFormatJS(viewModel.get('paramModel').get('DateClotureFin')) });
+
+        viewModel.get('paramModel').set({ 'typeRecherche': 'FICHESECURITE' });
+
+        viewModel.set({ 'siteCollection': new SiteCollection(viewModel.get('AllSite')) });
+        viewModel.set({ 'zoneCollection': new ZoneCollection(viewModel.get('AllZone')) });
+        viewModel.get('zoneCollection').each(function (zone, index) {
+            zone.set({ 'Nom': zone.get('ZoneType').Nom });
+        });
+
+        viewModel.set({ 'lieuCollection': new LieuCollection(viewModel.get('AllLieu')) });
+        viewModel.set({ 'serviceCollection': new ServiceCollection(viewModel.get('AllService')) });
+        viewModel.get('serviceCollection').each(function (service, index) {
+            service.set({ 'Nom': service.get('ServiceType').Nom });
+        });
+        viewModel.set({ 'posteDeTravailCollection': new PosteDeTravailCollection(viewModel.get('AllPosteDeTravail')) });
+
+        viewModel.set({ 'ficheSecuriteTypeCollection': new FicheSecuriteTypeCollection(viewModel.get('AllFicheSecuriteType')) });
+        viewModel.set({ 'plageHoraireCollection': new PlageHoraireCollection(viewModel.get('AllPlageHoraire')) });
+        viewModel.set({ 'dangerCollection': new DangerCollection(viewModel.get('AllDanger')) });
+        viewModel.set({ 'corpsHumainZoneCollection': new CorpsHumainZoneCollection(viewModel.get('AllCorpsHumainZone')) });
+        viewModel.set({ 'risqueCollection': new RisqueCollection(viewModel.get('AllRisque')) });
+        viewModel.set({ 'risqueTypeCollection': new RisqueTypeCollection(viewModel.get('AllRisqueType')) });
+
+        Backbone.applicationEvents = _.extend({}, Backbone.Events);
+
+        var FiltreTableView = Backbone.View.extend({
+            id: 'RechercheTableFicheSecurite',
+            template: _.template($('#TableFiltre').html()),
+            render: function () {
+                this.$el.html(this.template(this.model.toJSON()));
+
+                $('#DateEvenementDebut').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateEvenementFin').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateButoirDebut').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateButoirFin').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateClotureDebut').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateClotureFin').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+
+                //On écoute les changements sur le DatePicker pour les passer à la fonction Backbone
+                $('#DateEvenementDebut').on("dp.change", $.proxy(this.changeDateEvenementDebut, this));
+                // TODO : Mettre des dp.hide sur tous les DateTimePickers ! >> Si on ne selectionne rien, il choisit date et heure du jour.
+                $('#DateEvenementDebut').on("dp.hide", $.proxy(this.changeDateEvenementDebut, this));
+                $('#DateEvenementFin').on("dp.change", $.proxy(this.changeDateEvenementFin, this));
+                $('#DateEvenementFin').on("dp.hide", $.proxy(this.changeDateEvenementFin, this));
+
+                $('#DateButoirDebut').on("dp.change", $.proxy(this.changeDateButoirDebut, this));
+                $('#DateButoirDebut').on("dp.hide", $.proxy(this.changeDateButoirDebut, this));
+                $('#DateButoirFin').on("dp.change", $.proxy(this.changeDateButoirFin, this));
+                $('#DateButoirFin').on("dp.hide", $.proxy(this.changeDateButoirFin, this));
+
+                $('#DateClotureDebut').on("dp.change", $.proxy(this.changeDateClotureDebut, this));
+                $('#DateClotureDebut').on("dp.hide", $.proxy(this.changeDateClotureDebut, this));
+                $('#DateClotureFin').on("dp.change", $.proxy(this.changeDateClotureFin, this));
+                $('#DateClotureFin').on("dp.hide", $.proxy(this.changeDateClotureFin, this));
+
+                return this;
+            },
+            initialize: function () {
+                this.render();
+
+            },
+            events: {
+                "change #Site": "changeSite",
+                "change #Zone": "changeZone",
+                "change #Lieu": "changeLieu",
+                "change #Service": "changeService",
+                "change #PosteDeTravail": "changePosteDeTravail",
+                "keyup #Age": "changeAge",
+                "change #Type": "changeType",
+                "keyup #Code": "changeCode",
+                "keyup #DateEvenementDebutInput": "changeDateEvenementDebut",
+                "keyup #DateEvenementFinInput": "changeDateEvenementFin",
+                "keyup #DateButoirDebutInput": "changeDateButoirDebut",
+                "keyup #DateButoirFinInput": "changeDateButoirFin",
+                "keyup #DateClotureDebutInput": "changeDateClotureDebut",
+                "keyup #DateClotureFinInput": "changeDateClotureFin",
+                "keyup #PersonnesConcerneeNom": "changePersonneConcerneeNom",
+                "keyup #ResponsableNom": "changeResponsableNom",
+                "change #PlageHoraire": "changePlageHoraire",
+                "change #Danger": "changeDanger",
+                "change #Risque": "changeRisque",
+                "keyup #Gravite": "changeGravite",
+                "keyup #Frequence": "changeFrequence",
+                "keyup #Criticite": "changeCriticite",
+                "change #CriticiteNiveau": "changeCriticiteNiveau",
+                "change #CorpsHumainZone": "changeCorpsHumainZone",
+                "click #RechercheBouton": "recherche",
+                "click #RechercheActionBouton": "rechercheAction",
+                "click #IsNouvelleFiche": "changeIsNouvelleFiche",
+                "click #IsPlanActionValide": "changeIsPlanActionValide",
+                "click #IsPlanActionAttente": "changeIsPlanActionAttente",
+                "click #IsPlanActionRejete": "changeIsPlanActionRejete",
+                "click #IsPlanActionCloture": "changeIsPlanActionCloture",
+                "click #IsFicheSecuriteCloture":"changeIsFicheSecuriteCloture",
+                "keyup #ResponsableNomAction": "changeResponsableNomAction",
+
+            },
+            triggerRechercheSurEntree : function(e){
+                if ( e.which === 13 ) { 
+                    if(viewModel.get('paramModel').get('typeRecherche') === 'FICHESECURITE'){
+                    Backbone.applicationEvents.trigger('recherche');
+                }
+                    if(viewModel.get('paramModel').get('typeRecherche') === 'ACTION'){
+                        Backbone.applicationEvents.trigger('rechercheAction');
+                }
+                }
+            },
+            recherche: function () {
+                console.log('RECHERCHE');
+                viewModel.get('paramModel').set({ 'typeRecherche': 'FICHESECURITE' });
+                Backbone.applicationEvents.trigger('recherche');
+            },
+            rechercheAction: function () {
+                console.log('RECHERCHEACTION');
+                viewModel.get('paramModel').set({ 'typeRecherche': 'ACTION' });
+                Backbone.applicationEvents.trigger('rechercheAction');
+            },
+            changeSite: function () {
+                this.model.get('paramModel').set({ 'SiteId': parseInt($('#Site').val()) });
+
+                // Ajout de l'ID de l'URL, voir si il n'y a pas moyen de l'ajouter directement dans le fetch d'une collection Backbone ...
+                this.model.get('zoneCollection').url = '/api/action/zone/getZonesBySiteId/' + this.model.get('paramModel').get('SiteId');
+
+                // /!\ ASYNC : FALSE >>> Si true, la page se raffraichie sans attendre la mise à jour du model (anciennes données affichées)
+                this.model.get('zoneCollection').fetch({ async: false });
+
+                this.model.get('zoneCollection').each(function (zone, index) {
+                    zone.set({ 'Nom': zone.get('ZoneType').Nom });
+                });
+
+                // Ajout de l'ID de l'URL, voir si il n'y a pas moyen de l'ajouter directement dans le fetch d'une collection Backbone ...
+                this.model.get('serviceCollection').url = '/api/action/service/getServicesBySiteId/' + this.model.get('paramModel').get('SiteId');
+
+                // /!\ ASYNC : FALSE >>> Si true, la page se raffraichie sans attendre la mise à jour du model (anciennes données affichées)
+                this.model.get('serviceCollection').fetch({ async: false });
+
+                this.model.get('serviceCollection').each(function (service, index) {
+                    service.set({ 'Nom': service.get('ServiceType').Nom });
+                });
+
+                // TODO : Mettre à Zéro les lieux
+
+                this.render();
+            },
+            changeZone: function () {
+                this.model.get('paramModel').set({ 'ZoneId': parseInt($('#Zone').val()) });
+
+                this.model.get('lieuCollection').url = '/api/action/lieu/getLieuxByZoneId/' + this.model.get('paramModel').get('ZoneId');
+                this.model.get('posteDeTravailCollection').url = '/api/action/posteDeTravail/getPosteDeTravailsByZoneId/' + this.model.get('paramModel').get('ZoneId');
+
+                // /!\ ASYNC : FALSE >>> Si true, la page se raffraichie sans attendre la mise à jour du model (anciennes données affichées)
+                this.model.get('lieuCollection').fetch({ async: false });
+                this.model.get('posteDeTravailCollection').fetch({ async: false });
+
+                this.render();
+
+            },
+            changeLieu: function () {
+                this.model.get('paramModel').set({ 'LieuId': $('#Lieu').val() });
+            },
+            changeService: function () {
+                this.model.get('paramModel').set({ 'ServiceId': $('#Service').val() });
+            },
+            changePosteDeTravail: function () {
+                this.model.get('paramModel').set({ 'PosteDeTravailId': $('#PosteDeTravail').val() });
+            },
+            changeAge: function () {
+                this.model.get('paramModel').set({ 'Age': $('#Age').val() });
+            },
+            changeType: function () {
+                this.model.get('paramModel').set({ 'FicheSecuriteTypeId': $('#Type').val() });
+            },
+            changeCode: function (e) {
+                this.model.get('paramModel').set({ 'Code': $('#Code').val() });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changePersonneConcerneeNom: function (e) {
+                this.model.get('paramModel').set({ 'PersonneConcerneeNom': $('#PersonnesConcerneeNom').val() });
+                
+                this.triggerRechercheSurEntree(e);
+            },
+            changeResponsableNom: function (e) {
+                this.model.get('paramModel').set({ 'ResponsableNom': $('#ResponsableNom').val() });
+                this.model.get('paramModel').set({ 'ResponsableGuid': null });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changePlageHoraire: function () {
+                this.model.get('paramModel').set({ 'PlageHoraireId': $('#PlageHoraire').val() });
+            },
+            changeDanger: function () {
+                this.model.get('paramModel').set({ 'DangerId': $('#Danger').val() });
+            },
+            changeRisque: function () {
+                this.model.get('paramModel').set({ 'RisqueId': $('#Risque').val() });
+            },
+            changeGravite: function (e) {
+                this.model.get('paramModel').set({ 'CotationGravite': $('#Gravite').val() });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changeFrequence: function (e) {
+                this.model.get('paramModel').set({ 'CotationFrequence': $('#Frequence').val() });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changeCriticite: function (e) {
+                switch($('#Criticite').val()){
+                    case "" :
+                        this.model.get('paramModel').set({ 'Criticite': 0 });
+                        break;
+                    default : 
+                        this.model.get('paramModel').set({ 'Criticite': $('#Criticite').val() });
+                        break;
+                }
+                
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changeCriticiteNiveau: function (e) {
+                this.model.get('paramModel').set({ 'CriticiteNiveau': $('#CriticiteNiveau').val() });
+                console.log($('#CriticiteNiveau').val());
+            },
+            changeCorpsHumainZone: function (data) {
+                this.model.get('paramModel').set({ 'CorpsHumainZoneId': $('#CorpsHumainZone').val() });
+            },
+            changeDateEvenementDebut: function (e) {
+                this.model.get('paramModel').set({ 'DateEvenementDebut': this.dateFormatMVC($('#DateEvenementDebutInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('paramModel').set({ 'DateEvenementDebutJavascript': $('#DateEvenementDebutInput').val() });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changeDateEvenementFin: function (e) {
+                this.model.get('paramModel').set({ 'DateEvenementFin': this.dateFormatMVC($('#DateEvenementFinInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('paramModel').set({ 'DateEvenementFinJavascript': $('#DateEvenementFinInput').val() });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changeDateButoirDebut: function (e) {
+                this.model.get('paramModel').set({ 'DateButoirDebut': this.dateFormatMVC($('#DateButoirDebutInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('paramModel').set({ 'DateButoirDebutJavascript': $('#DateButoirDebutInput').val() });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changeDateButoirFin: function (e) {
+                this.model.get('paramModel').set({ 'DateButoirFin': this.dateFormatMVC($('#DateButoirFinInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('paramModel').set({ 'DateButoirFinJavascript': $('#DateButoirFinInput').val() });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changeDateClotureDebut: function (e) {
+                this.model.get('paramModel').set({ 'DateClotureDebut': this.dateFormatMVC($('#DateClotureDebutInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('paramModel').set({ 'DateClotureDebutJavascript': $('#DateClotureDebutInput').val() });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            changeDateClotureFin: function (e) {
+                this.model.get('paramModel').set({ 'DateClotureFin': this.dateFormatMVC($('#DateClotureFinInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('paramModel').set({ 'DateClotureFinJavascript': $('#DateClotureFinInput').val() });
+
+                this.triggerRechercheSurEntree(e);
+            },
+            dateFormatMVC: function (date) {
+                // De date FR à DateTime
+                var dateFormated = date.substring(6, 10) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2);
+                return dateFormated;
+            },
+            changeIsNouvelleFiche: function () {
+                this.model.get('paramModel').set({ 'IsNouvelleFiche': $('#IsNouvelleFiche').is(":checked") });
+            },
+            changeIsPlanActionValide: function () {
+                this.model.get('paramModel').set({ 'IsPlanActionValide': $('#IsPlanActionValide').is(":checked") });
+            },
+            changeIsPlanActionAttente: function () {
+                this.model.get('paramModel').set({ 'IsPlanActionAttente': $('#IsPlanActionAttente').is(":checked") });
+            },
+            changeIsPlanActionRejete: function () {
+                this.model.get('paramModel').set({ 'IsPlanActionRejete': $('#IsPlanActionRejete').is(":checked") });
+            },
+            changeIsPlanActionCloture: function () {
+                this.model.get('paramModel').set({ 'IsPlanActionCloture': $('#IsPlanActionCloture').is(":checked") });
+            },
+            changeIsFicheSecuriteCloture: function () {
+                this.model.get('paramModel').set({ 'IsFicheSecuriteCloture': $('#IsFicheSecuriteCloture').is(":checked") });
+            },
+            changeResponsableNomAction: function (e) {
+                this.model.get('paramModel').set({ 'ResponsableNomAction': $('#ResponsableNomAction').val() });
+                this.model.get('paramModel').set({ 'ResponsableNomActionGuid': null });
+
+                this.triggerRechercheSurEntree(e);
+            },
+        });
+
+
+
+        var RechercheTableView = Backbone.View.extend({
+            id: 'RechercheTableFicheSecurite',
+            template: _.template($('#TableRecherche').html()),
+            render: function () {
+                this.$el.html(this.template(this.model.toJSON()));
+
+                this.buildDataTable();
+
+                return this;
+            },
+            initialize: function () {
+
+                Backbone.applicationEvents.on('recherche', function () {
+                    this.recherche();
+                }, this);
+
+
+                this.render();
+
+            },
+            events: {
+                "click #RechercheBouton": "recherche"
+
+            },
+            buildDataTable: function () {
+                // /!\ Les fonctions d'ajout de 'datas' supplémentaires de DataTables ne fonctionnent pas très bien
+                // Donc à chaque recherche, nous réinstancions le tableau
+                // A chaque recherche, les paramètres de tri ne sont donc pas sauvegardés ... A voir si c'est grâve.
+
+                $("#Table").DataTable().destroy();
+
+                table = $("#Table").DataTable({
+                    dom: 'lf<"floatright"B>rtip',
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ],
+                    //"tableTools": {
+                    //    "sSwfPath": "Scripts/DataTables-1.10.7/extensions/TableTools/swf/copy_csv_xls_pdf.swf",
+                    //    "aButtons": [
+                    //        {
+                    //            "sExtends": "pdf",
+                    //            "mColumns": [1,2,3]
+                    //        },
+                    //        {
+                    //            "sExtends": "csv",
+                    //            "mColumns": [1,2,3]
+                    //        },
+                    //        {
+                    //            "sExtends": "print",
+                    //            "mColumns": [1,2,3]
+                    //        },
+                    //        {
+                    //            "sExtends": "copy",
+                    //            "mColumns": [1,2,3]
+                    //        }
+                    //    ]
+                    //},
+                    "scrollY": "400px",
+                    "autoWidth": false,
+                    "serverSide": true,
+                    "processing": true,
+                    "filter": false,
+                    "ajax": {
+                        "url": "/api/FicheSecurite",
+                        "data": {
+                            "siteId": this.model.get('paramModel').get('SiteId'),
+                            "zoneId": this.model.get('paramModel').get('ZoneId'),
+                            "lieuId": this.model.get('paramModel').get('LieuId'),
+                            "typeId": this.model.get('paramModel').get('FicheSecuriteTypeId'),
+                            "code": this.model.get('paramModel').get('Code'),
+                            "age": this.model.get('paramModel').get('Age'),
+                            "posteDeTravailId": this.model.get('paramModel').get('PosteDeTravailId'),
+                            "serviceId": this.model.get('paramModel').get('ServiceId'),
+                            "personneConcerneeNom": this.model.get('paramModel').get('PersonneConcerneeNom'),
+                            "responsableNom": this.model.get('paramModel').get('ResponsableNom'),
+                            "cotationFrequence": this.model.get('paramModel').get('CotationFrequence'),
+                            "cotationGravite": this.model.get('paramModel').get('CotationGravite'),
+                            "risqueId": this.model.get('paramModel').get('RisqueId'),
+                            "dangerId": this.model.get('paramModel').get('DangerId'),
+                            "corpsHumainZoneId": this.model.get('paramModel').get('CorpsHumainZoneId'),
+                            "plageHoraireId": this.model.get('paramModel').get('PlageHoraireId'),
+                            "responsableGuid": this.model.get('paramModel').get('ResponsableGuid'),
+                            "dateEvenementDebut": this.model.get('paramModel').get('DateEvenementDebut'),
+                            "dateEvenementFin": this.model.get('paramModel').get('DateEvenementFin'),
+                            "dateButoirDebut": this.model.get('paramModel').get('DateButoirDebut'),
+                            "dateButoirFin": this.model.get('paramModel').get('DateButoirFin'),
+                            "dateClotureDebut": this.model.get('paramModel').get('DateClotureDebut'),
+                            "dateClotureFin": this.model.get('paramModel').get('DateClotureFin'),
+                            "isNouvelleFiche": this.model.get('paramModel').get('IsNouvelleFiche'),
+                            "isPlanActionValide": this.model.get('paramModel').get('IsPlanActionValide'),
+                            "isPlanActionAttente": this.model.get('paramModel').get('IsPlanActionAttente'),
+                            "isPlanActionRejete": this.model.get('paramModel').get('IsPlanActionRejete'),
+                            "isPlanActionCloture": this.model.get('paramModel').get('IsPlanActionCloture'),
+                            "isFicheSecuriteCloture": this.model.get('paramModel').get('IsFicheSecuriteCloture'),
+                            "responsableNomAction": this.model.get('paramModel').get('ResponsableNomAction'),
+                            "criticite": this.model.get('paramModel').get('Criticite'), 
+                            "criticiteNiveau": this.model.get('paramModel').get('CriticiteNiveau'), 
+                            "rechercheType": "FICHESECURITE"
+                        }
+
+                    },
+                    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tous"]],
+                    "fnRowCallback": function (nRow, aData) {
+                        var $nRow = $(nRow); // cache the row wrapped up in jQuery
+
+                        $('td:eq(0)', nRow).css({ "border-style": "solid", "border-width": "1px", "border-color": "#B4B4B4" });
+                        var color = "white";
+                        var colorHeavy = "white";
+                        var colorLight = "white";
+                        if (aData.WorkFlowAttenteASEValidation == true) {
+                            colorHeavy = "#BFBFBF";
+                            colorLight = "#E0E0E0";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.WorkFlowASERejetee == true) {
+                            colorHeavy = "#FF0000";
+                            colorLight = "#FFE7FF";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.WorkFlowASEValidee == true) {
+                            colorHeavy = "#FFC000";
+                            colorLight = "#FCE6A2";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.WorkFlowCloturee == true && aData.WorkFlowASEValidee == true) {
+                            colorHeavy = "#00B0F0";
+                            colorLight = "#AFE8FD";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.WorkFlowFicheSecuriteCloturee == true) {
+                            colorHeavy = "#00FF00";
+                            colorLight = "#AFFDAF";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        $(nRow).hover(function () {
+                            //$nRow.css({ "background-color": "#EAEAEA" });
+                            $nRow.css({ "background-color": "#808181", "color": "white" });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy, "color": "black" });
+                        }, function () {
+                            $nRow.css({ "background-color": colorLight, "color": "black" });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy, "color": "black" });
+                        });
+                        return nRow
+                    },
+                    "columns": [
+                        {
+                            "mData": "FicheSecuriteID",
+                            "sTitle": "Id",
+                            "visible": false,
+                            "orderable": false,
+                            "width": "0px"
+                        },
+                        {
+                            "mData": "Code",
+                            "sTitle": "Code",
+                            "orderable": true,
+                            "width": "12%"
+                        },
+                        {
+                            "mData": "Responsable",
+                            "sTitle": "Nom",
+                            "orderable": false,
+                            "width": "20%",
+                            "mRender": function (date, type, full) {
+                                return full.Responsable.Nom + ' ' + full.Responsable.Prenom;
+                            }
+                        },
+                        {
+                            "mData": "Description",
+                            "sTitle": "Description",
+                            "orderable": false,
+                            //"mRender": function (date, type, full) {
+                            //    return '<span title="' + full.Description + '">' + full.Description.substring(0, 80) + '...</span>'
+                            //}
+                        },
+                        {
+                            "mData": "FicheSecuriteID",
+                            "sTitle": "Action",
+                            "orderable": false,
+                            "width": "5%",
+                            "mRender": function (date, type, full) {
+
+                                var urlEdit = '@Url.Action("Edit", new { id=-1 })';
+                                urlEdit = urlEdit.replace('-1', full.FicheSecuriteID);
+
+
+
+                                //function deleteFicheSecurite() {
+                                //    var confirmation = confirm("Êtes-vous sûr de vouloir supprimer cette Fiche Sécurité ?");
+                                //    if (confirmation == true) {
+
+                                //        alert("totot");
+                                //    }
+                                //}
+
+                                var links = '<div ><a class="glyphicon glyphicon-edit" href="' + urlEdit + '"></a>&nbsp;&nbsp;';
+                                if (@ViewBag.CurrentHSERole < 400) {
+
+                                    links = links + '<a id="deleteFicheSecurite" data-id="' + full.FicheSecuriteID + '" class="glyphicon glyphicon-remove"></a></div>';
+                                }
+
+
+                                return links;
+                            }
+                        }
+
+
+                    ],
+                    "oLanguage": {
+                        "sUrl": "Scripts/datatables_lang_fr.js"
+                    }
+                });
+
+                table.$('tr.selected').removeClass('selected');
+
+                $('#Table tbody').on('mousedown', 'tr', function (e) {
+
+                    // !!! Triche >> Pour raison X, le click sur un élément la ligne ou un élément de celle-ci se joue deux fois
+                    // On n'active donc le code qu'une fois sur deux (Ce n'est pas une question de propagation Bubbling ... )
+                    var i = 0;
+                    i++
+                    if (i % 2 > 0) {
+
+                        if (e.button == 0) {
+
+                            if (e.target.id == "deleteFicheSecurite") {
+
+                                var id = e.target.getAttribute("data-id");
+                                var confirmation = confirm("Êtes-vous sûr de vouloir supprimer cette Fiche Sécurité ?");
+                                if (confirmation == true) {
+                                    var ficheSecuriteToDeleteModel = new FicheSecuriteModel({ "FicheSecuriteID": id })
+                                    ficheSecuriteToDeleteModel.destroy({
+                                        async: false, wait: true,
+                                        success: _.bind(function (model, repsonse) {
+                                            //Backbone.applicationEvents.trigger('validFicheSecurite', 'la cause a été supprimée');
+                                        }, this)
+                                    });
+                                    table.ajax.reload(null, false);
+                                }
+                            } else {
+                                // CODE POUR OUVRIR DANS MEME FENETRE NE PAS SUPPRIMER 
+                                @*var aData = $("#Table").dataTable().fnGetData(this);
+                                var url = '@Url.Action("Edit", "FicheSecurite", new { id = "__id__" })';
+                                window.location.href = url.replace('__id__', aData.FicheSecuriteID);*@
+
+                                var aData = $("#Table").dataTable().fnGetData(this);
+                                var url = '@Url.Action("Edit", "FicheSecurite", new { id = "__id__" })';
+                                var realUrl = url.replace('__id__', aData.FicheSecuriteID)
+                                window.open(realUrl, "_blank");
+                            }
+                        }
+
+                        e.preventDefault();
+
+                        if (e.button == 2 || e.button == 1) {
+                            var aData = $("#Table").dataTable().fnGetData(this);
+                            var url = '@Url.Action("Edit", "FicheSecurite", new { id = "__id__" })';
+                            var realUrl = url.replace('__id__', aData.FicheSecuriteID)
+                            window.open(realUrl, "_blank");
+                        }
+
+                    }
+                });
+
+            },
+            recherche: function () {
+                this.render();
+                this.buildDataTable();
+            }
+        });
+
+
+        var RechercheActionTableView = Backbone.View.extend({
+            id: 'RechercheTableFicheSecurite',
+            template: _.template($('#TableRecherche').html()),
+            render: function () {
+                this.$el.html(this.template(this.model.toJSON()));
+
+                this.buildDataTable();
+
+                return this;
+            },
+            initialize: function () {
+
+                Backbone.applicationEvents.on('rechercheAction', function () {
+                    this.rechercheAction();
+                }, this);
+
+
+
+
+            },
+            events: {
+                "click #RechercheActionBouton": "rechercheAction"
+
+            },
+            buildDataTable: function () {
+                // /!\ Les fonctions d'ajout de 'datas' supplémentaires de DataTables ne fonctionnent pas très bien
+                // Donc à chaque recherche, nous réinstancions le tableau
+                // A chaque recherche, les paramètres de tri ne sont donc pas sauvegardés ... A voir si c'est grâve.
+
+                $("#Table").DataTable().destroy();
+
+                table = $("#Table").DataTable({
+                    dom: 'lf<"floatright"B>rtip',
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ],
+                    //dom: 'T<"clear">lfrtip',
+                    //"tableTools": {
+                    //    "sSwfPath": "Scripts/DataTables-1.10.7/extensions/TableTools/swf/copy_csv_xls_pdf.swf",
+                    //    "aButtons": [
+                    //        {
+                    //            "sExtends": "pdf",
+                    //            "mColumns": [1,2,3,4,5,6]
+                    //        },
+                    //        {
+                    //            "sExtends": "csv",
+                    //            "mColumns": [1,2,3,4,5,6]
+                    //        },
+                    //        {
+                    //            "sExtends": "print",
+                    //            "mColumns": [1,2,3,4,5,6]
+                    //        },
+                    //        {
+                    //            "sExtends": "copy",
+                    //            "mColumns": [1,2,3,4,5,6]
+                    //        }
+                    //    ]
+                    //},
+                    "scrollY": "400px",
+                    "autoWidth": false,
+                    "serverSide": true,
+                    "processing": true,
+                    "filter": false,
+                    "ajax": {
+                        "url": "/api/FicheSecurite",
+                        //"type": "POST",
+                        "data": {
+                            "siteId": this.model.get('paramModel').get('SiteId'),
+                            "zoneId": this.model.get('paramModel').get('ZoneId'),
+                            "lieuId": this.model.get('paramModel').get('LieuId'),
+                            "typeId": this.model.get('paramModel').get('FicheSecuriteTypeId'),
+                            "code": this.model.get('paramModel').get('Code'),
+                            "age": this.model.get('paramModel').get('Age'),
+                            "posteDeTravailId": this.model.get('paramModel').get('PosteDeTravailId'),
+                            "serviceId": this.model.get('paramModel').get('ServiceId'),
+                            "personneConcerneeNom": this.model.get('paramModel').get('PersonneConcerneeNom'),
+                            "responsableNom": this.model.get('paramModel').get('ResponsableNom'),
+                            "cotationFrequence": this.model.get('paramModel').get('CotationFrequence'),
+                            "cotationGravite": this.model.get('paramModel').get('CotationGravite'),
+                            "risqueId": this.model.get('paramModel').get('RisqueId'),
+                            "dangerId": this.model.get('paramModel').get('DangerId'),
+                            "corpsHumainZoneId": this.model.get('paramModel').get('CorpsHumainZoneId'),
+                            "plageHoraireId": this.model.get('paramModel').get('PlageHoraireId'),
+                            "responsableGuid": this.model.get('paramModel').get('ResponsableGuid'),
+                            "dateEvenementDebut": this.model.get('paramModel').get('DateEvenementDebut'),
+                            "dateEvenementFin": this.model.get('paramModel').get('DateEvenementFin'),
+                            "dateButoirDebut": this.model.get('paramModel').get('DateButoirDebut'),
+                            "dateButoirFin": this.model.get('paramModel').get('DateButoirFin'),
+                            "dateClotureDebut": this.model.get('paramModel').get('DateClotureDebut'),
+                            "dateClotureFin": this.model.get('paramModel').get('DateClotureFin'),
+                            "isNouvelleFiche": this.model.get('paramModel').get('IsNouvelleFiche'),
+                            "isPlanActionValide": this.model.get('paramModel').get('IsPlanActionValide'),
+                            "isPlanActionAttente": this.model.get('paramModel').get('IsPlanActionAttente'),
+                            "isPlanActionRejete": this.model.get('paramModel').get('IsPlanActionRejete'),
+                            "isPlanActionCloture": this.model.get('paramModel').get('IsPlanActionCloture'),
+                            "isFicheSecuriteCloture": this.model.get('paramModel').get('IsFicheSecuriteCloture'),
+                            "responsableNomAction": this.model.get('paramModel').get('ResponsableNomAction'),
+                            "criticite": this.model.get('paramModel').get('Criticite'), 
+                            "criticiteNiveau": this.model.get('paramModel').get('CriticiteNiveau'),
+                            "rechercheType":"ACTION"
+                        }
+
+                    },
+                    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tous"]],
+                    "fnRowCallback": function (nRow, aData) {
+                        var $nRow = $(nRow); // cache the row wrapped up in jQuery
+
+                        $('td:eq(0)', nRow).css({ "border-style": "solid", "border-width": "1px", "border-color": "#B4B4B4" });
+                        var color = "white";
+                        var colorHeavy = "white";
+                        var colorLight = "white";
+                        if (aData.FicheSecurite.WorkFlowAttenteASEValidation == true) {
+                            colorHeavy = "#BFBFBF";
+                            colorLight = "#E0E0E0";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.FicheSecurite.WorkFlowASERejetee == true) {
+                            colorHeavy = "#FF0000";
+                            colorLight = "#FFE7FF";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.FicheSecurite.WorkFlowASEValidee == true) {
+                            colorHeavy = "#FFC000";
+                            colorLight = "#FCE6A2";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.FicheSecurite.WorkFlowCloturee == true && aData.FicheSecurite.WorkFlowASEValidee == true) {
+                            colorHeavy = "#00B0F0";
+                            colorLight = "#AFE8FD";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        if (aData.FicheSecurite.WorkFlowFicheSecuriteCloturee == true) {
+                            colorHeavy = "#00FF00";
+                            colorLight = "#AFFDAF";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        $(nRow).hover(function () {
+                            //$nRow.css({ "background-color": "#EAEAEA" });
+                            $nRow.css({ "background-color": "#808181", "color": "white" });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy, "color": "black" });
+                        }, function () {
+                            $nRow.css({ "background-color": colorLight, "color": "black" });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy, "color": "black" });
+                        });
+                        return nRow
+                    },
+                    "columns": [
+                        {
+                            "mData": "FicheSecurite.FicheSecuriteID",
+                            "sTitle": "Id",
+                            "visible": false,
+                            "orderable": false,
+                            "width": "0px"
+                        },
+                        {
+                            "mData": "FicheSecurite.Code",
+                            "sTitle": "Code",
+                            "orderable": true,
+                            "width": "12%"
+                        },
+                        {
+                            "mData": "Responsable",
+                            "sTitle": "Responsable",
+                            "orderable": true,
+                            "width": "20%",
+                            "mRender": function (date, type, full) {
+                                return full.ActionQSE.Responsable.Nom + ' ' + full.ActionQSE.Responsable.Prenom;
+                            }
+                        },
+                        {
+                            "mData": "Description",
+                            "sTitle": "Description",
+                            "orderable": false,
+                            "mRender": function (date, type, full) {
+                                //return '<span title="' + full.ActionQSE.Description + '" </span>>' + full.ActionQSE.Description.substring(0, 40) + '...</span>'
+                                return full.ActionQSE.Description;
+                            }
+                        },
+                        {
+                            "mData": "DateButoireInitiale",
+                            "sTitle": "Date Butoir 1",
+                            "sType": "date",
+                            "mRender": function (date, type, full) {
+                                return full.ActionQSE.DateButoireInitiale.substring(8, 10) + '/' + full.ActionQSE.DateButoireInitiale.substring(5, 7) + '/' + full.ActionQSE.DateButoireInitiale.substring(0, 4);
+                            },
+                            "orderable": true,
+                            "width": "10%"
+                        },
+                        {
+                            "mData": "DateButoireNouvelle",
+                            "sTitle": "Date Butoir 2",
+                            "sType": "date",
+                            "mRender": function (date, type, full) {
+                                if (full.ActionQSE.DateButoireNouvelle === null || full.ActionQSE.DateButoireNouvelle === undefined) { return ""; }
+                                return full.ActionQSE.DateButoireNouvelle.substring(8, 10) + '/' + full.ActionQSE.DateButoireNouvelle.substring(5, 7) + '/' + full.ActionQSE.DateButoireNouvelle.substring(0, 4);
+                            },
+                            "orderable": true,
+                            "width": "10%"
+                         },
+                         {
+                             "mData": "DateCloture",
+                             "sTitle": "Date clôture",
+                             "sType": "date",
+                             "mRender": function (date, type, full) {
+                                 if (full.ActionQSE.ClotureDate === null || full.ActionQSE.ClotureDate === undefined) { return ""; }
+                                 return full.ActionQSE.ClotureDate.substring(8, 10) + '/' + full.ActionQSE.ClotureDate.substring(5, 7) + '/' + full.ActionQSE.ClotureDate.substring(0, 4);
+                             },
+                             "orderable": true,
+                             "width": "10%"
+                        },
+                        {
+                            "mData": "FicheSecuriteID",
+                            "sTitle": "Action",
+                            "orderable": false,
+                            "width": "5%",
+                            "mRender": function (date, type, full) {
+
+                                var urlEdit = '@Url.Action("Edit", new { id=-1 })';
+                                urlEdit = urlEdit.replace('-1', full.FicheSecurite.FicheSecuriteID);
+
+
+
+                                //function deleteFicheSecurite() {
+                                //    var confirmation = confirm("Êtes-vous sûr de vouloir supprimer cette Fiche Sécurité ?");
+                                //    if (confirmation == true) {
+
+                                //        alert("totot");
+                                //    }
+                                //}
+
+                                var links = '<div ><a class="glyphicon glyphicon-edit" href="' + urlEdit + '"></a>&nbsp;&nbsp;';
+                                if (@ViewBag.CurrentHSERole < 400) {
+
+                                    links = links + '<a id="deleteFicheSecurite" data-id="' + full.FicheSecurite.FicheSecuriteID + '" class="glyphicon glyphicon-remove"></a></div>';
+                                }
+
+
+                                return links;
+                            }
+                        }
+
+
+                    ],
+                    "oLanguage": {
+                        "sUrl": "Scripts/datatables_lang_fr.js"
+                    }
+                });
+
+                table.$('tr.selected').removeClass('selected');
+
+                $('#Table tbody').on('mousedown', 'tr', function (e) {
+
+                    // !!! Triche >> Pour raison X, le click sur un élément la ligne ou un élément de celle-ci se joue deux fois
+                    // On n'active donc le code qu'une fois sur deux (Ce n'est pas une question de propagation Bubbling ... )
+                    var a = 0;
+                    i++
+                    if (i % 2 > 0) {
+
+                        if (e.button == 0) {
+
+                            if (e.target.id == "deleteFicheSecurite") {
+
+                                var id = e.target.getAttribute("data-id");
+                                var confirmation = confirm("Êtes-vous sûr de vouloir supprimer cette Fiche Sécurité ?");
+                                if (confirmation == true) {
+                                    var ficheSecuriteToDeleteModel = new FicheSecuriteModel({ "FicheSecuriteID": id })
+                                    ficheSecuriteToDeleteModel.destroy({
+                                        async: false, wait: true,
+                                        success: _.bind(function (model, repsonse) {
+                                            //Backbone.applicationEvents.trigger('validFicheSecurite', 'la cause a été supprimée');
+                                        }, this)
+                                    });
+                                    table.ajax.reload(null, false);
+                                }
+                            } else {
+                                var aData = $("#Table").dataTable().fnGetData(this);
+                                var url = '@Url.Action("Edit", "FicheSecurite", new { id = "__id__" })';
+                                window.location.href = url.replace('__id__', aData.FicheSecurite.FicheSecuriteID);
+                            }
+                        }
+
+                        e.preventDefault();
+
+                        if (e.button == 2 || e.button == 1) {
+                            var aData = $("#Table").dataTable().fnGetData(this);
+                            var url = '@Url.Action("Edit", "FicheSecurite", new { id = "__id__" })';
+                            var realUrl = url.replace('__id__', aData.FicheSecurite.FicheSecuriteID)
+                            window.open(realUrl, "_blank");
+                        }
+
+                    }
+                });
+
+            },
+            rechercheAction: function () {
+                this.render();
+                this.buildDataTable();
+            }
+        });
+
+        function cancelBubble(e) {
+            var evt = e ? e : window.event;
+            if (evt.stopPropagation) evt.stopPropagation();
+            if (evt.cancelBubble != null) evt.cancelBubble = true;
+        }
+
+        var filtreTableView = new FiltreTableView({
+            el: $("#TableFiltreDiv"),
+            model: viewModel
+        });
+
+        var rechercheTableView = new RechercheTableView({
+            el: $("#TableRechercheDiv"),
+            model: viewModel
+        });
+
+        var rechercheActionTableView = new RechercheActionTableView({
+            el: $("#TableRechercheDiv"),
+            model: viewModel
+        });
+
+
+    });
+
+
+</script>
+

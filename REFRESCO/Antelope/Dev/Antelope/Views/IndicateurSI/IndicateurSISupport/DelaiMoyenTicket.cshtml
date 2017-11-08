@@ -1,0 +1,184 @@
+﻿
+@{
+    ViewBag.Title = "DelaiMoyenTicket";
+    Layout = "~/Views/IndicateurSI/Shared/_Layout.cshtml";
+}
+
+@*<style type="text/css">
+    body {
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 100% 100%;
+        background-attachment: fixed;
+        background-image: url(/Content/images/IndicateurSI/Website_Background.jpg);
+    }
+</style>*@
+
+<h2><img alt="" width="32" height="32" src="~/Content/images/IndicateurSI/histogramme.png" /> Temps de traitement moyen des tickets</h2>
+
+<div class="row" style="background-color: #AADBE0; border-color: black; border-width: 1px; border-style: solid">
+    <div class="col-md-4">
+        <div id="selectGranularite"></div><div id="periode"></div><div id="containerTextField"></div><div id="buttonChercher"></div><br />
+    </div>
+    <div class="col-md-4">
+        <div id="selectSI"></div><br />
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="container" style="height: 400px; min-width: 310px"></div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        tabGranularite = ["Mois", "Année"];
+
+        resultat = '<h3 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Selection granularité</h3><select id="mySelGranularite">';
+        for (var i = 0; i < tabGranularite.length; i++) {
+            resultat = resultat + '<option ';
+            if (i == 2) resultat += 'selected ';
+            resultat += 'value=' + i + '>' + tabGranularite[i] + '</option>';
+        }
+        resultat = resultat + '</select>';
+        document.getElementById('selectGranularite').innerHTML = resultat;
+
+        $.ajax({
+            url: "@Url.Action("StartPage", "DelaiMoyenTicket")",
+            dataType: "json",
+        type: "POST",
+        error: function () {
+            alert("An error occurred.");
+            },
+        success: function (tab) {
+
+            json = parseJSON(tab);
+            draw(json.tempsIncident, json.tempsDemande);
+                            
+            }
+        });
+
+        $.ajax({
+            url: "@Url.Action("recupNameSI", "DelaiMoyenTicket")",
+            data: {},
+        dataType: "json",
+        type: "POST",
+        error: function () {
+            alert("An error occurred.");
+        },
+        success: function (data) {
+        
+            var json = parseJSON(data);
+            valSelectSI = '<h3 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection service SI</h3><select id="SelSI">'
+            for (var i = 0; i < json.name.length; i++) {
+                valSelectSI += '<option ';
+                if (json.name[i] == "SAP / Fonctionnel") valSelectSI += 'selected '
+                valSelectSI += 'value="' + json.name[i] + '">' + json.name[i] + '</option>';
+            }
+            valSelectSI += '</select>';
+            document.getElementById('selectSI').innerHTML = valSelectSI;
+        }
+        });
+
+        $('#selectGranularite').on('change', function () {
+            recharge();
+        });
+
+        $('#selectSI').on('change', function () {
+            recharge();
+        });
+
+    });
+
+    function recharge() {
+        var GranulariteID = $('#mySelGranularite').find(":selected").val();
+        var SIId = $('#SelSI').find(":selected").val();
+
+        reload(GranulariteID, SIId);
+    }
+
+    function reload(GranulariteID, SIId)
+    {
+        $.ajax({
+            url: "@Url.Action("Draw", "DelaiMoyenTicket")",
+            data: { GranulariteID: GranulariteID , SIId: SIId},
+        dataType: "json",
+        type: "POST",
+        error: function () {
+            alert("An error occurred.");
+        },
+        success: function (tab) {
+
+            json = parseJSON(tab);
+            draw(json.tempsIncident, json.tempsDemande);
+        }        
+                   
+    });
+    }
+
+    function draw(tabTempsIncident, tabTempsDemande) {
+        $('#container').highcharts('StockChart', {
+            credits: {
+                enabled: false
+            },
+
+
+            rangeSelector: {
+                selected: 5,
+                inputEnabled: $('#container').width() > 480
+            },
+
+            legend: { enabled: true },
+
+            yAxis: { min: 0 },
+
+            connectNulls:true,
+
+            title: {
+                text: 'Temps de traitement moyen des tickets (en jours)'
+            },
+            series: [{
+                color: 'rgba(255, 128, 0, 0.7)',
+                name: 'Temps de traitement moyen des incidents',
+                data: tabTempsIncident,
+                type: 'area',
+                threshold: null,
+                tooltip: {
+                    valueDecimals: 1
+                },
+                fillColor: {
+                    linearGradient: [0, 0, 0, 0],
+                    stops: [
+                      [0, 'rgba(255, 128, 0, 0.2)']
+                    ]
+                }
+            },
+            {
+                color: 'rgba(35, 167, 172, 0.7)',
+                name: 'Temps de traitement moyen des demandes',
+                data: tabTempsDemande,
+                type: 'area',
+                threshold: null,
+                tooltip: {
+                    valueDecimals: 1
+                },
+                fillColor: {
+                    linearGradient: [0, 0, 0, 0],
+                    stops: [
+                      [0, 'rgba(35, 167, 172, 0.2)']
+                    ]
+                }
+            }]
+        });
+    }
+
+    function parseJSON(data) {
+        return window.JSON && window.JSON.parse ? window.JSON.parse(data) : (new Function("return " + data))();
+    }
+   
+
+</script>

@@ -1,0 +1,339 @@
+﻿@{
+    ViewBag.Title = "SupportRepartitionTicket";
+    Layout = "~/Views/IndicateurSI/Shared/_Layout.cshtml";
+}
+
+@*<style type="text/css">
+    body {
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 100% 100%;
+        background-attachment: fixed;
+        background-image: url(/Content/images/IndicateurSI/Website_Background.jpg);
+    }
+</style>*@
+
+<h2><img alt="" width="32" height="32" src="~/Content/images/IndicateurSI/camembert.png" /> Répartiton des tickets reçus par catégorie</h2>
+
+<div class="row" style="background-color: #AADBE0; border-color: black; border-width: 1px; border-style: solid">
+    <div class="col-md-4">
+        <div id="selectMois"></div><br />
+    </div>
+    <div class="col-md-4">
+        <div id="selectSI"></div><br />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="containerTableau"><br /><center><div id="buttonFermerTabLien"></div></center></div>
+    </div>
+</div>
+
+
+
+
+
+
+
+    <script>
+
+    var tabTitre = new Array();
+    tabTitre[0]     =   "ID";
+    tabTitre[1]     =   "Titre";
+    tabTitre[2]     =   "Type";
+    tabTitre[3]     =   "Statut";
+    tabTitre[4]     =   "Date ouverture";
+    tabTitre[5]     =   "Date dernière modification";
+    tabTitre[6]     =   "Délai prise en compte";
+    tabTitre[7]     =   "Demandeur";
+    tabTitre[8]     =   "Technicien";
+    tabTitre[9]     =   "Date échéance";
+    tabTitre[10]    =   "Satisfaction";
+
+    var satisfactionVal = 0;
+
+    $(document).ready(function () {
+
+        var moisCour;
+        date = new Date;
+        mois = date.getMonth();
+        moisLettre = new Array('Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre');
+        annee = date.getFullYear();
+        anneePrec = date.getFullYear() - 1;
+
+        // Récupération noms services SI
+        $.ajax({
+            url: "@Url.Action("recupNameSI", "SupportRepartitionTicket")",
+            data: {},
+            dataType: "json",
+            type: "POST",
+        error: function () {
+            alert("An error occurred.");
+        },
+        success: function (data) {
+        
+            var json = parseJSON(data);
+            valSelectSI = '<h3 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection service SI</h3><select id="SelSI">'
+            for (var i = 0; i < json.name.length; i++) {
+                valSelectSI += '<option ';
+                if (json.name[i] == "SAP / Fonctionnel") valSelectSI += 'selected '
+                valSelectSI += 'value="' + json.name[i] + '">' + json.name[i] + '</option>';
+            }
+            valSelectSI += '</select>';
+            document.getElementById('selectSI').innerHTML = valSelectSI;
+        }
+        });
+
+        valSelectMois = '<h3 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection mois</h3><select id="SelMois">'
+        for (var i = 1; i < 6; i++) {
+            valSelectMois += '<option ';
+            if (i == 1) valSelectMois += 'selected ';
+            valSelectMois += 'value=' + i + '>' + moisPrec(i) + '</option>';
+        }
+        valSelectMois += '</select>';
+        document.getElementById('selectMois').innerHTML = valSelectMois;
+
+        $('#selectMois').on('change', function () {
+
+            var dateId = $('#SelMois').find(":selected").val();
+            var SIId = $('#SelSI').find(":selected").val();
+            reDraw(dateId, SIId);
+            $('.accordeon').remove();
+
+        });
+
+        $('#selectSI').on('change', function () {
+            var dateId = $('#SelMois').find(":selected").val();
+            var SIId = $('#SelSI').find(":selected").val();
+            reDraw(dateId, SIId);
+            $('.accordeon').remove();
+
+        });
+
+        $('#buttonFermerTabLien').on('click', function () {
+            $('.accordeon').remove();
+        });
+
+        // Dessin chargement de page
+        reDraw(1, "SAP / Fonctionnel");
+
+    });
+
+    function draw(dateId, tab, totalTickets) {
+        $('#container').highcharts({
+            credits: {
+                enabled:false
+            },
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            title: {
+                text: 'Répartition des tickets reçus - ' + moisPrec(dateId) + ' (' + totalTickets + ' tickets)'
+            },
+            tooltip: {
+                pointFormat: '<b>{point.y}</b> {series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        color: '#000000',
+                        connectorColor: '#000000',
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'Tickets',
+                data: tab,
+                point: {
+                    events:
+                    {
+                        click: function (event) {
+                            activeLien(dateId, this.name, this.y);
+                        }
+                    }
+                }
+            }]
+
+        });
+
+    }
+
+    function reDraw(dateId, SIId) {
+
+        $.ajax({
+            url: "@Url.Action("reDraw", "SupportRepartitionTicket")",
+            data: { dateId: dateId, SIId:SIId },
+            dataType: "json",
+            type: "POST",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (result) {
+
+                var json = parseJSON(result);
+
+                draw(json.Date, json.Resultat, json.TotalTickets);
+            }
+        });
+    }
+
+    function moisPrec(nbMois) {
+
+        if (mois >= nbMois)
+            return (moisLettre[mois - nbMois] + ' ' + annee);
+        else return (moisLettre[mois + (12 - nbMois)] + ' ' + anneePrec);
+    }
+
+    function parseJSON(data) {
+        return window.JSON && window.JSON.parse ? window.JSON.parse(data) : (new Function("return " + data))();
+    }
+
+    function activeLien(dateId, nameCat, totalTickets) {
+
+        var prio = new Array();
+        prio[4] = "trés haute";
+        prio[3] = "haute";
+        prio[2] = "moyenne";
+        prio[1] = "basse";
+        prio[0] = "trés basse";
+
+        var max = 0;
+
+        $.ajax({
+            url: "@Url.Action("tabLien", "SupportRepartitionTicket")",
+            data: { dateId: dateId, nameCat:nameCat },
+            dataType: "json",
+            type: "POST",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (retour) {
+
+                var json = parseJSON(retour);
+
+                var tab = '<div class="accordeon">';
+                tab += '<div class="row">';
+                tab += '<div class="col-md-12">';
+                tab += '<h3><center>' + moisPrec(dateId) + ' - ' + nameCat + ' - ' + totalTickets + ' tickets</center></h3>';
+
+                tab += '<div class="panel-group" id="accordeon">';
+
+                for (var j = prio.length-1; j >= 0; j--) {
+                    if (json.Prio[j].Val > 0) {
+                        max = Math.max(max,j);
+                        tab += '<div class="panel" >';
+                        tab += '<div class="panel-heading" style="background-color:#23A7AC">';
+                        tab += '<h4 class="panel-title">';
+                        tab += '<a data-toggle="collapse" data-parent="#accordeon" href="#section' + j + '" style="color:#FFFFFF">';
+                        tab += '<span class="glyphicon glyphicon-exclamation-sign"></span> Priorité ' + prio[j] + ' - ' + json.Prio[j].Val + ' tickets';
+                        tab += '</a>';
+                        tab += '</h4>';
+                        tab += '</div>';
+
+                        tab += '<div class="panel-collapse collapse';
+                        if (j == max) { tab += ' in'; }
+                        tab += '" id="section' + j + '">';
+                        tab += '<div class="panel-body" style="background-color:#AADBE0">';
+                        tab += '<center><table class="table table-hover"><tr>';
+                        for (var i = 0; i < tabTitre.length; i++) {
+                            tab = tab + '<th style="text-align:center"';
+                            if (i == 1) { tab += " class=\"col-sm-2\"" }
+                            else { tab += " class=\"col-sm-1\"" }
+                            tab += '>' + tabTitre[i] + '</th>';
+                        }
+                        tab += '</tr>';
+                        for (var i = 0; i < json.Prio[j].Val; i++) {
+                            tab += '<tr>';
+                            tab += '<td>' + json.Prio[j].ID[i] + '</td>'; // ID ticket
+                            tab += '<td><a href="http://support-info/front/ticket.form.php?id=' + json.Prio[j].ID[i] + '" target="_blank">' + json.Prio[j].Name[i] + '</a></td>'; //Nom ticket
+                            tab += '<td>' + TicketType(json.Prio[j].Type[i]) + '</td>'; // Type ticket (incident/demande)
+                            tab += '<td>' + statut(json.Prio[j].Statut[i]) + '</td>'; // Staut ticket (en cours/cloturé)
+                            tab += '<td><center>' + json.Prio[j].DateOpen[i] + '</center></td>'; // Date ouverture
+                            tab += '<td><center>' + json.Prio[j].DateModif[i] + '</center></td>'; // Date dernière modification
+                        @* -- T0D0 -- *@ tab += '<td></td>'; // Délai prise en compte
+                            tab += '<td><center>' + json.Prio[j].Demandeur[i] + '</center></td>'; // Demandeur
+                            tab += '<td><center>' + json.Prio[j].Technicien[i] + '</center></td>'; // Technicien
+                        @* -- T0D0 -- *@ tab += '<td></td>'; // Date échéance
+                            tab += '<td>' + satisfaction(json.Prio[j].Satisfaction[i]) + '</td>'; // Satisfaction
+                            tab += '</tr>';
+                        }
+                        tab += '</table></center>';
+                        tab += '</div>';
+                        tab += '</div>';
+                        tab += '</div>';
+                    }
+                }
+
+                tab += '</div>';
+                tab += '</div>';
+                tab += '</div>';
+                tab += '</div>';
+
+                tab = $(tab);
+
+                $('.accordeon').remove();
+                $('#containerTableau').prepend(tab);
+                document.getElementById('buttonFermerTabLien').innerHTML = '<button class="accordeon" id="fermerTabLien">Fermer</button>';
+
+
+            }
+        })
+
+        function satisfaction(valSatisfaction) {
+            var retour = '<center>';
+            if (valSatisfaction == 0) { return '<center>- - -</center>' }
+            for (var i = 0; i < valSatisfaction; i++) {
+                retour += '<img alt="" width="16" height="16" src="/Content/images/IndicateurSI/star.png" />';
+            }
+            for (i = 0; i < (5 - valSatisfaction) ; i++) {
+                retour += '<img alt="" width="16" height="16" src="/Content/images/IndicateurSI/empty_star.png" />';
+            }
+            
+            return retour + '</center>';
+        }
+
+        function statut(valStatut) {
+            switch (valStatut) {
+                case '1':
+                    return 'Nouveau';
+                case '2':
+                    return 'En cours (Attribué)';
+                case '3':
+                    return 'En cours (Planifié)';
+                case '4':
+                    return 'En attente';
+                case '5':
+                    return 'Résolu';
+                case '6':
+                    return 'Clos';
+                default:
+                    return 'ERREUR !';
+            }
+        }
+
+        function TicketType(val) {
+
+            if (val == 1)
+                return "Incident";
+            else if (val == 2)
+                return "Demande";
+            else return "ERREUR !";
+
+        }
+    }
+
+    </script>
+
+

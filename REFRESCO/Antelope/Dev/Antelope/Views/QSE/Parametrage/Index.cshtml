@@ -1,0 +1,162 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/QSE/Shared/_Layout.cshtml";
+}
+
+<script type="text/template" id="ParametrageTemplate">
+
+    @*<% if (currentQSERole < 300) { %>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Configuration des Emails</div>
+        <div class="panel-body">
+            Renseignez ici : <br />
+            -une adresse email (@@refresco.com) <br />
+            -un groupe de diffusion (@@refresco.com) <br />
+            -"SELF" afin que la personne connectée reçoive elle-même les emails (à des fins de test)
+            <div class="form-group">
+                <label for="exampleInputEmail1">Email de diffusion des Fiche Sécurité : </label>
+                <input type="email" class="form-control" id="EmailDiffusionFS" value="<%= EmailDiffusionFS %>">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Email des rejets de plan d'action : </label>
+                <input type="email" class="form-control" id="EmailRejetPlanActionFS" value="<%= EmailRejetPlanActionFS %>">
+            </div>
+        </div>
+        <div class="form-group">
+            <button id="SaveParametrageHSEEmail" type="submit" class="btn btn-default btn-xs">
+                <span class="glyphicon glyphicon-save"></span> Enregistrer
+            </button>
+        </div>
+    </div>*@
+
+    <% if (currentQSERole < 200) { %>
+    <div class="panel panel-default">
+        <div class="panel-heading">Alimentation de la Base de Données</div>
+        <div class="panel-body">
+            <h5>
+                Attention ! l'alimentation est temporaire, et sera masquée dans la version finale
+                Seul l'administrateur doit opérer sur cette fonction. Merci.
+            </h5>
+            <div class="row">
+                <div class="col-md-3">
+                    <button id="AlimentationBaseTest" type="submit" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-search"></span> Alimentation base test
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <button id="AlimentationBaseAcceptance" type="submit" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-search"></span> Alimentation base Acceptance
+                    </button>
+                </div>
+            </div>
+            <br />
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    <button id="ImportNonConformites" type="submit" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-search"></span> Import Non Conformites
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+
+    @*<% } %>*@
+
+
+</script>
+
+<div id="PrincipalDiv">
+</div>
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+        var currentQSERole = "@ViewBag.CurrentQSERole";
+        console.log(currentQSERole);
+        ParametrageModel = Backbone.Model.extend({
+            url: '/api/QSEParametrage/',
+            id:0
+        });
+        parametrageModel = new ParametrageModel();
+        parametrageModel.set({ "currentQSERole": currentQSERole });
+
+        parametrageModel.url = '/api/action/QSEParametrage/GetQSEParametrage';
+        parametrageModel.fetch({ async: false, wait: true });
+
+        console.log( parametrageModel.get("currentQSERole"));
+
+        ParametrageView = Backbone.View.extend({
+            id: 'ParametrageDiv',
+            template: _.template($('#ParametrageTemplate').html()),
+            render: function () {
+                this.$el.html(this.template(this.model.toJSON()));
+                return this;
+            },
+            initialize : function(){
+
+                this.render();
+            },
+            events: {
+                "click #AlimentationBaseTest": "alimentationBaseTest",
+                "click #AlimentationBaseAcceptance": "alimentationBaseAcceptance",
+                "click #ImportNonConformites": "importNonConformites",
+                //"click #SaveParametrageHSEEmail": "saveParametrageHSEEmail",
+                //"keyup #EmailDiffusionFS": "changeEmailDiffusionFS",
+                //"keyup #EmailRejetPlanActionFS": "changeEmailRejetPlanActionFS",
+
+            },
+            alimentationBaseTest: function () {
+                var r = confirm("Vous allez alimenter la BDD EN COURS (Test, Acceptance ou PROD, avec le jeu de données TEST original, Si vous ne savez pas ce que vous faites, ANNULEZ, Merci.");
+                if (r == true) {
+                    this.model.url = '/api/action/QSEParametrage/AlimenteBaseTest';
+                    this.model.save(null, { async: false, wait: true });
+                } else {
+                }
+
+            },
+            alimentationBaseAcceptance: function () {
+                var r = confirm("Vous allez alimenter la BDD EN COURS (Test, Acceptance ou PROD, avec le jeu de données ACCEPTANCE original, Si vous ne savez pas ce que vous faites, ANNULEZ, Merci.");
+                if (r == true) {
+                    this.model.url = '/api/action/QSEParametrage/AlimenteBaseAcceptance';
+                    this.model.save(null, { async: false, wait: true });
+                } else {
+                }
+            },
+            importNonConformites: function () {
+                var r = confirm("Vous allez importer le contenu des tables IMPORT (Non Conformites et Actions) dans les tables en production, voulez-vous continuer ?");
+                if (r == true) {
+                    this.model.url = '/api/action/QSEParametrage/ImportNonConformites';
+                    this.model.save(null, { async: false, wait: true });
+                } else {
+                }
+
+            }
+            //saveParametrageHSEEmail: function () {
+            //    this.model.url = '/api/action/HSEParametrage/SaveParametrageHSEEmail';
+            //    this.model.save(null, { async: false, wait: true });
+            //    this.render;
+            //},
+            //changeEmailDiffusionFS: function () {
+            //    console.log('PASSAGE DIFFUSION');
+            //    this.model.set({ 'EmailDiffusionFS': $('#EmailDiffusionFS').val() });
+            //},
+            //changeEmailRejetPlanActionFS: function () {
+            //    this.model.set({ 'EmailRejetPlanActionFS': $('#EmailRejetPlanActionFS').val() });
+            //},
+
+        });
+
+        var parametrageView = new ParametrageView({
+            el: $("#PrincipalDiv"),
+            model: parametrageModel
+        });
+    });
+</script>

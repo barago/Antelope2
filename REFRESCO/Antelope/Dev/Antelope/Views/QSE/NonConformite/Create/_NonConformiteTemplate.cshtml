@@ -1,0 +1,142 @@
+﻿@model string
+<script type="text/template" id="@Model">
+    <div class="panel-group" id="accordion" >
+
+        <div id="NonConformitePanel" class="panel panel-primary" style="border-color: #006573;">
+
+            <div class="panel-heading" style="background-color: #006573; color: white">
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" href="#collapseOne" data-target="#collapseOne">
+                                @*data-parent="#accordion"*@
+                                NON-CONFORMITE  &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;<%= nonConformiteModel.get('Code') %>
+                            </a>
+                        </h4>
+                    </div>
+
+                    <div class="col-md-8">
+
+                        <button id="Enregistrer" type="submit" class="btn pull-right btn-xs" style="color: green">
+                            <span class="glyphicon glyphicon-floppy-disk"></span> Enregistrer
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="Site" class="label-xs">Site&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                            <select id="Site" class="form-control input-xs">
+                                <option value="null" <% if (nonConformiteModel.get('SiteId') == 'null'){ %> selected <% } %> ></option>
+                                <% siteCollection.each( function(site){ %>
+                                <option value="<%= site.get('SiteID') %>"
+                                                <% if (nonConformiteModel.get('SiteId') == site.get('SiteID')){ %> selected <% } %>
+                                                >
+                                                <%= site.get('Trigramme') %>
+                                            </option>
+                                <% }); %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="ServiceType" class="label-xs">Appartenance&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                            <select id="ServiceType" class="form-control input-xs">
+                                <option value="null" <% if (nonConformiteModel.get('ServiceTypeId') == 'null'){ %> selected <% } %> ></option>
+                                <% serviceTypeCollection.each( function(serviceType){ %>
+                                <option value="<%= serviceType.get('ServiceTypeId') %>"
+                                                <% if (nonConformiteModel.get('ServiceTypeId') == serviceType.get('ServiceTypeId')){ %> selected <% } %>
+                                    >
+                                                <%= serviceType.get('Nom') %>
+                                            </option>
+                                <% }); %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="DateNonConformite" class="label-xs">Date&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                            <div class='input-group date' id="DateNonConformite">
+                                <input type='text' name="Date" class="form-control input-xs" id="DateNonConformiteInput" value="<%= (nonConformiteModel.get('DateJavascript') == '01/01/0001') ? '' : nonConformiteModel.get('DateJavascript') %>" />
+                                <div class="input-group-addon input-xs">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="NonConformiteDomaine" class="label-xs">Domaine&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                            <select id="NonConformiteDomaine" class="form-control input-xs">
+                                <option value="null" <% if (nonConformiteModel.get('NonConformiteDomaineId') === '0'){ %> selected <% } %> ></option>
+                                <% nonConformiteDomaineCollection.each( function(nonConformiteDomaine){ %>
+                                <option value="<%= nonConformiteDomaine.get('Id') %>"
+                                                <% if (nonConformiteModel.get('NonConformiteDomaineId') == nonConformiteDomaine.get('Id')){ %> selected <% } %>
+                                                >
+                                                <%= nonConformiteDomaine.get('Nom') %>
+                                            </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="NonConformiteOrigine" class="label-xs">Origine&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                            <select id="NonConformiteOrigine" class="form-control input-xs">
+                                <option value="null" <% if (nonConformiteModel.get('NonConformiteOrigineId') === '0'){ %> selected <% } %> ></option>
+                                <% nonConformiteOrigineCollection.each( function(nonConformiteOrigine){ %>
+                                <option value="<%= nonConformiteOrigine.get('Id') %>"
+                                                <% if (nonConformiteModel.get('NonConformiteOrigineId') == nonConformiteOrigine.get('Id')){ %> selected <% } %>
+                                                >
+                                                <%= nonConformiteOrigine.get('Nom') %>
+                                            </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="NonConformiteGravite" class="label-xs">Gravite&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                            <select id="NonConformiteGravite" class="form-control input-xs">
+                                <option value="null" <% if (nonConformiteModel.get('NonConformiteGraviteId') === '0'){ %> selected <% } %> ></option>
+                                <% nonConformiteGraviteCollection.each( function(nonConformiteGravite){ %>
+                                <option value="<%= nonConformiteGravite.get('Id') %>"
+                                                <% if (nonConformiteModel.get('NonConformiteGraviteId') == nonConformiteGravite.get('Id')){ %> selected <% } %>
+                                                >
+                                                <%= nonConformiteGravite.get('Nom') %>
+                                            </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="Description" class="label-xs">Description&nbsp;de&nbsp;l'&nbsp;écart&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                <textarea id="Description" class="form-control input-small" rows="6" style="max-width:100%;"><%= nonConformiteModel.get('Description') %></textarea>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="Attendu" class="label-xs">Normes&nbsp;/&nbsp;Spécifications&nbsp;attendues&nbsp;:&nbsp;</label>
+                                <textarea id="Attendu" class="form-control input-small" rows="6" style="max-width:100%;"><%= nonConformiteModel.get('Attendu') %></textarea>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="Cause" class="label-xs">Cause&nbsp;de&nbsp;l'&nbsp;écart&nbsp;:&nbsp;<span style="color:red">*</span></label>
+                                <textarea id="Cause" class="form-control input-small" rows="6" style="max-width:100%;"><%= nonConformiteModel.get('Cause') %></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

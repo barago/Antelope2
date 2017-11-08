@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="a80b11d9-a974-46c7-a781-56e792cfb81f" ChangeDateTime="01/16/2015 08:18:37">
+    <Property Name="ElementName" Value="[dbo].[ParametrageHSEs].[EmailRejetPlanActionFS]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ParametrageHSEs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EmailValidationRejetPlanActionFS" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="22ac68dc-3fab-4188-adbc-333b2d684c40" ChangeDateTime="02/17/2015 10:45:44">
+    <Property Name="ElementName" Value="[dbo].[ImportNonConformite].[NonConformiteDomaine]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ImportNonConformite]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="NonConformiteDomaineId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e58f1843-5282-4b0e-ba3a-5dbe83059731" ChangeDateTime="02/17/2015 10:45:57">
+    <Property Name="ElementName" Value="[dbo].[ImportNonConformite].[Non]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ImportNonConformite]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="NonConformiteGraviteId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="556f68c9-8231-4210-b827-4b2bd51d41ca" ChangeDateTime="02/17/2015 10:46:24">
+    <Property Name="ElementName" Value="[dbo].[ImportNonConformite].[Site]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ImportNonConformite]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="SiteId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2b5f44ad-4f91-4026-8e85-af097c1a9a2f" ChangeDateTime="02/17/2015 14:02:02">
+    <Property Name="ElementName" Value="[dbo].[ImportActions].[DateButoireIntiale]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ImportActions]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DateButoireInitiale" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="7752373d-8520-429d-9adb-b90680a48eb9" ChangeDateTime="02/18/2015 13:26:48">
+    <Property Name="ElementName" Value="[dbo].[ImportNonConformites].[OldId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ImportNonConformites]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ImportId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="9fd07537-9877-4dba-b743-27ef63dd53ba" ChangeDateTime="09/17/2015 14:11:21">
+    <Property Name="ElementName" Value="[dbo].[FilePaths].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[FilePaths]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="FilePathId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0f972386-6b53-4c0f-a034-02ebff7b29d9" ChangeDateTime="12/08/2015 14:02:00">
+    <Property Name="ElementName" Value="[dbo].[DialogueSecurites].[Dialogeur2Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DialogueSecurites]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Dialogueur2Id" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a5f3e106-c784-469e-bf3c-d07e15c54e9a" ChangeDateTime="12/08/2015 14:02:02">
+    <Property Name="ElementName" Value="[dbo].[DialogueSecurites].[Dialogeur1Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DialogueSecurites]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Dialogueur1Id" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e57f8da0-53bb-4eda-bcaf-daebf1a1848d" ChangeDateTime="12/08/2015 14:45:09">
+    <Property Name="ElementName" Value="[dbo].[Thematiques].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Thematiques]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ThematiqueId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d8804250-ac43-4c2e-b7fb-6421b2a0d9c2" ChangeDateTime="12/09/2015 09:02:11">
+    <Property Name="ElementName" Value="[dbo].[DialogueSecurites].[zoneId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DialogueSecurites]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ZoneId" />
+  </Operation>
+</Operations>

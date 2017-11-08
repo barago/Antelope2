@@ -1,0 +1,340 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Services/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/Scripts/jquery.dataTables.min.js"></script>
+
+
+<script type="text/javascript" src="/Scripts/underscore.js"></script>
+<script type="text/javascript" src="/Scripts/backbone.js"></script>
+
+<script type="text/template" id="AnnuaireTemplate">
+
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Annuaire Utilisateurs</div>
+        <div class="panel-body">
+
+            @*<% utilisateurCollection.each( function(utilisateur){ %>
+
+
+            <div class="row">
+                <div class="col-md-4">
+                    <%= utilisateur.get('NomEntier')%>
+                </div>
+                <div class="col-md-4">
+                    <%= utilisateur.get('NumInterne')%>
+                </div>
+                <div class="col-md-4">
+                     <%= utilisateur.get('NumExterne')    %>
+                </div>
+
+            </div>
+
+
+
+
+            <% }); %>*@
+
+
+            <table id="Table" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            Prénom
+                        </th>
+                        <th>
+                            Nom
+                        </th>
+                        <th>
+                            Poste
+                        </th>
+                        <th>
+                            Num. interne
+                        </th>
+                        <th>
+                            Num. externe
+                        </th>
+                        <th>
+                            Email
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    
+                        <% utilisateurCollection.each( function(utilisateur){ %>
+
+                    <tr>
+                        <td>
+                            <%= utilisateur.get('Prenom')%>
+                        </td>
+                        <td>
+                            <%= utilisateur.get('Nom')%>
+                        </td>
+                        <td>
+                            <%= utilisateur.get('Poste')%>
+                        </td>
+                        <td>
+                            <%= utilisateur.get('NumInterne')%>
+                        </td>
+                        <td>
+                            <%= utilisateur.get('NumExterne')    %>
+                        </td>
+                        <td>
+                            <%= utilisateur.get('Mail')    %>
+                        </td>
+
+
+                    </tr>
+
+
+
+                        <% }); %>
+
+
+
+                    
+               
+
+
+                </tbody>
+
+
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+</script>
+
+<div id="PrincipalDiv">
+</div>
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+        //var currentHSERole = "@ViewBag.CurrentHSERole";
+
+        ResponseModel = Backbone.Model.extend({
+            url: '/api/Annuaire/',
+            id:0
+        });
+
+        AnnuaireParamModel = Backbone.Model.extend({
+        });
+
+        SiteModel = Backbone.Model.extend({
+        });
+
+        UtilisateurModel = Backbone.Model.extend({
+        });
+
+
+        UtilisateurCollection = Backbone.Collection.extend({
+            model : UtilisateurModel
+        });
+
+        SiteCollection = Backbone.Collection.extend({
+            model: SiteModel
+        });
+
+        responseModel = new ResponseModel();
+        //responseModel.set({ "currentHSERole": currentHSERole });
+
+        responseModel.url = '/api/action/Annuaire/GetAnnuaire';
+        responseModel.fetch({ async: false, wait: true });
+
+        siteCollection = new SiteCollection(responseModel.get('AllSite'));
+        
+        utilisateurCollection = new UtilisateurCollection(responseModel.get('AllAnuaireUtilisateurDTO'));
+
+        responseModel.set({ 'annuaireParamModel': new AnnuaireParamModel(responseModel.get('AnnuaireParamModel')) });
+        responseModel.set({ 'siteCollection': siteCollection });
+        responseModel.set({ 'utilisateurCollection': utilisateurCollection });
+
+        console.log(responseModel);
+        AnnuaireView = Backbone.View.extend({
+            id: 'AnnuaireDiv',
+            template: _.template($('#AnnuaireTemplate').html()),
+            render: function () {
+                //console.log(this.model);
+                this.$el.html(this.template(this.model.toJSON()));
+
+                this.buildDataTable();
+                return this;
+            },
+            initialize : function(){
+
+                this.render();
+            },
+            events: {
+                
+
+
+            },
+            buildDataTable: function () {
+                // /!\ Les fonctions d'ajout de 'datas' supplémentaires de DataTables ne fonctionnent pas très bien
+                // Donc à chaque recherche, nous réinstancions le tableau 
+                // A chaque recherche, les paramètres de tri ne sont donc pas sauvegardés ... A voir si c'est grâve.
+                console.log("this.model.get('AnnuaireParamModel').get('SiteId')");
+                console.log(this.model.get('annuaireParamModel').get('SiteId'));
+                $("#Table").DataTable().destroy();
+
+                table = $("#Table").DataTable({
+                    "scrollY": "500px",
+                    "autoWidth": false,
+                    "serverSide": false,
+                    "processing": true,
+                    "filter": false,
+                    //"sAjaxSource": "/api/NonConformite",
+                    "ajax": {
+                        "url": "/api/action/Annuaire/GetData",
+                        "data": {
+                            "siteId": this.model.get('annuaireParamModel').get('SiteId')//,
+                            //"nonConformiteOrigineId": this.model.get('rechercheNonConformiteParamModel').get('NonConformiteOrigineId'),
+                            //"nonConformiteDomaineId": this.model.get('rechercheNonConformiteParamModel').get('NonConformiteDomaineId'),
+                            //"nonConformiteGraviteId": this.model.get('rechercheNonConformiteParamModel').get('NonConformiteGraviteId')
+                        }
+
+                    },
+                    "columns": [
+                        {
+                            "mData": "Prenom",
+                            "sTitle": "Prénom",
+                            //"visible": false,
+                            "orderable": true,
+                        },
+                        {
+                            "mData": "Nom",
+                            "sTitle": "Nom",
+                            "orderable": true,
+                           // "width": "10%"
+                        },
+                        {
+                            "mData": "Poste",
+                            "sTitle": "Poste",
+                            "orderable": true,
+                            //"width": "10%",
+                           // "mRender": function (date, type, full) {
+                           //     return full.Responsable.Nom + ' ' + full.Responsable.Prenom;
+                           // }
+                        },
+                        {
+                            "mData": "NumInterne",
+                            "sTitle": "Num. Interne",
+                            //"sType": "date",
+                           // "mRender": function (date, type, full) {
+                                //return new Date(date).toLocaleString();
+                                //return date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+                                //var date = (full.DateButoireNouvelle == null) ? full.DateButoireInitiale : full.DateButoireNouvelle;
+                               // return date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+                            //},
+                            "orderable": true,
+                            //"width": "10%"
+                        },
+                                                {
+                                                    "mData": "NumExterne",
+                                                    "sTitle": "Num. Externe",
+                                                    //"sType": "date",
+                                                    // "mRender": function (date, type, full) {
+                                                    //return new Date(date).toLocaleString();
+                                                    //return date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+                                                    //var date = (full.DateButoireNouvelle == null) ? full.DateButoireInitiale : full.DateButoireNouvelle;
+                                                    // return date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+                                                    //},
+                                                    "orderable": true,
+                                                    //"width": "10%"
+                                                },
+                                                                        {
+                                                                            "mData": "Mail",
+                                                                            "sTitle": "Email",
+                                                                            //"sType": "date",
+                                                                            // "mRender": function (date, type, full) {
+                                                                            //return new Date(date).toLocaleString();
+                                                                            //return date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+                                                                            //var date = (full.DateButoireNouvelle == null) ? full.DateButoireInitiale : full.DateButoireNouvelle;
+                                                                            // return date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+                                                                            //},
+                                                                            "orderable": true,
+                                                                            //"width": "10%"
+                                                                        },
+                        //},
+                        //{
+                        //    "mData": "Code",
+                        //    "sTitle": "Code",
+                        //    "orderable": false,
+                        //    "width": "10%"
+                        //},
+                        //{
+                        //    "mData": "Date",
+                        //    "sTitle": "Date",
+                        //    "sType": "date",
+                        //    "mRender": function (date, type, full) {
+                        //        //return new Date(date).toLocaleString();
+                        //        return date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+                        //    },
+                        //    "orderable": false,
+                        //    "width": "10%"
+                        //},
+                        //{
+                        //    "mData": "NonConformiteOrigine.Nom",
+                        //    "sTitle": "Origine",
+                        //    "orderable": false,
+                        //    "width": "15%"
+                        //},
+                        //{
+                        //    "mData": "Description",
+                        //    "sTitle": "Description",
+                        //    "orderable":false
+                        //}
+                    ],
+                    "oLanguage": {
+                        "sUrl": "Scripts/datatables_lang_fr.js"
+                    }
+                });
+
+
+                table.$('tr.selected').removeClass('selected');
+                
+
+
+
+
+
+    },
+
+        });
+
+
+        var annuaireView = new AnnuaireView({
+            el: $("#PrincipalDiv"),
+            model: responseModel
+        });
+
+
+
+
+
+    });
+
+
+</script>
+

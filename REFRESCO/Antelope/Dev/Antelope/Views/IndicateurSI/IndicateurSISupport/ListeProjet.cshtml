@@ -1,0 +1,564 @@
+﻿
+@{
+    ViewBag.Title = "SupportListeProjet";
+    Layout = "~/Views/IndicateurSI/Shared/_Layout.cshtml";
+}
+
+<h2><img alt="" width="32" height="32" src="~/Content/images/IndicateurSI/calendrier.png" /> Liste des projets en cours</h2>
+
+<div class="row" style="background-color: #AADBE0; border-color: black; border-width: 1px; border-style: solid; padding:0px">
+    <div class="col-md-4">
+        <div id="selectEtat"></div><br />
+    </div>
+    <div class="col-md-4">
+        <div id="selectSI"></div><br />
+    </div>
+    <div class="col-md-4">
+        <br /><button class='regular pull-right' name='buttonAjoutProjet' id="buttonAjoutProjet"
+                      onclick="this.getElementsByTagName('span')[0].innerHTML = (this.getElementsByTagName('span')[0].innerHTML == ' Ajouter un projet' ? ' Annuler' : ' Ajouter un projet');">
+            <div class="glyphicon glyphicon-plus-sign"></div><span> Ajouter un projet</span>
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <center id="tableProjet">
+
+            <table class="table table-hover">
+                <tr>
+                    <th class="col-sm-1" style="text-align:center">Dates ouverture / cloture</th>
+                    <th class="col-sm-2" style="text-align:center">Nom projet</th>
+                    <th class="col-sm-1" style="text-align:center">Statut</th>
+                    <th class="col-sm-3" style="text-align:center">Commentaire</th>
+                    <th class="col-sm-3" style="text-align:center">Prochaine étape</th>
+                    <th class="col-sm-3" style="text-align:center">Actions</th>
+                </tr>
+            </table>
+            <h4>----- Projets en cours -----</h4>
+            <table class="table table-hover" id="tabProjetCours"></table>
+            <div id="ajoutProjet"></div>
+
+        </center>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        smiley = new Array();
+        smileyVert = new Array();
+        smileyOrange = new Array();
+        smileyRouge = new Array();
+        smileyBlanc = new Array();
+        smileyTermine = new Array();
+
+        smileyVert = ["smileyVsourire.png", "smileyVneutre.png", "smileyVtriste.png"];
+        smileyOrange = ["smileyOsourire.png", "smileyOneutre.png", "smileyOtriste.png"];
+        smileyRouge = ["smileyRsourire.png", "smileyRneutre.png", "smileyRtriste.png"];
+        smileyBlanc = ["smileyBsourire.png", "smileyBneutre.png", "smileyBtriste.png"];
+        smileyTermine = ["smileyTsourire.png", "smileyTneutre.png", "smileyTtriste.png"];
+        smiley = [smileyVert, smileyOrange, smileyRouge, smileyBlanc, smileyTermine];
+
+        ajoutProjet = 0;
+        editprojet = 0;
+
+        drawTabCours("Fonctionnel");
+
+
+        // Récupération noms services SI
+        $.ajax({
+            url: "@Url.Action("recupNameSI", "ListeProjet")",
+            data: {},
+            dataType: "json",
+            type: "POST",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (data) {
+
+                var json = parseJSON(data);
+                var valSelectSI = '<h3 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection service SI</h3><select id="SelSI">'
+                valSelectSI += '<option value="Fonctionnel" selected>Fonctionnel</option>';
+                valSelectSI += '<option value="Suport-Info">Suport-Info</option>';
+                valSelectSI += '<option value="Infrastructure">Infrastructure</option>';
+                valSelectSI += '</select>';
+                document.getElementById('selectSI').innerHTML = valSelectSI;
+            }
+        });
+
+        var valSelectEtat = '<h3 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection état</h3>';
+        valSelectEtat += '<input id="checkbox" name="checkbox" type="checkbox" style="height: 20px; width: 20px"/><b> <p id="textCheckbox" style="vertical-align: middle; display: inline-block; height:20px">Afficher projets clos</p></b>';
+        document.getElementById('selectEtat').innerHTML = valSelectEtat;
+
+        $('#textCheckbox').on('click', function () {
+            document.getElementById("checkbox").click();
+        })
+
+        $('#selectSI').on('change', function () {
+            drawTabCours();
+            if ($('input[name=checkbox]').is(':checked')) {
+                document.getElementById("checkbox").click();
+                document.getElementById("checkbox").click();
+            }
+        });
+
+        $('#checkbox').on('click', function () {
+            if ($('input[name=checkbox]').is(':checked')) {
+
+                $.ajax({
+                    url: "@Url.Action("JsonTab", "ListeProjet")",
+                    data: { etat: 1, serviceSI: $('#selectSI').find(":selected").val() },
+                    dataType: "json",
+                    type: "POST",
+                    error: function () {
+                        alert("An error occurred.");
+                    },
+                    success: function (data) {
+
+                        var json = parseJSON(data);
+
+                        var tableClos = '<center id="tableClos"><h4>----- Projets clos -----</h4><table class="table table-hover">';
+
+                        for (var i = 0; i < json.NomProjet.length; i++) {
+
+                            tableClos += '<tr>';
+                            tableClos += '<td class="col-sm-1" style="vertical-align:middle; text-align:center">';
+                            tableClos += json.DateOuverture[i] + "<br/>/<br/>" + json.DateCloture[i];
+                            tableClos += '</td><td class="col-sm-2" style="vertical-align:middle; text-align:center">';
+                            tableClos += json.NomProjet[i];
+                            tableClos += '</td><td class="col-sm-1" style="vertical-align:middle; text-align:center">';
+                            tableClos += '<img src="/Content/images/IndicateurSI/' + smiley[json.StatutCouleur[i]][json.StatutVisage[i]] + '"/>';
+                            tableClos += '</td><td class="col-sm-3" style="vertical-align:middle; text-align:center">';
+                            tableClos += json.Commentaire[i];
+                            tableClos += '</td><td class="col-sm-3" style="vertical-align:middle; text-align:center">';
+                            tableClos += json.ProchaineEtape[i];
+                            tableClos += '</td><td style="vertical-align:middle; text-align:center"><button title="Editer" value=' + i + ' class="glyphicon glyphicon-edit buttonEditerClos"></button> <button title="Supprimer" value=' + i + ' class="glyphicon glyphicon-trash buttonSupprProjet"></button></td></tr>';
+
+                        }
+
+                        if (json.NomProjet.length == 0) {
+                            if ($('#selectSI').find(":selected").val() == null)
+                                tableClos += "<center>Pas de projet Fonctionnel clos...</center>"
+                            else
+                                tableClos += "<center>Pas de projet " + $('#selectSI').find(":selected").val() + " clos...</center>"
+                        }
+
+                        tableClos += '</table></center>';
+
+                        $('#tableProjet').append(tableClos);
+
+                        $('.buttonEditerClos').on('click', function () {
+                            fenetreEdition(json.ID[$(this).val()], json.DateOuverture[$(this).val()], json.NomProjet[$(this).val()], json.StatutCouleur[$(this).val()], json.StatutVisage[$(this).val()], json.Commentaire[$(this).val()], json.ProchaineEtape[$(this).val()])
+                        })
+
+                        $('.buttonSupprProjet').on('click', function () {
+
+                            var NomProjet = json.NomProjet[$(this).val()];
+
+                            if (confirm('Voulez vous vraiment supprimer le projet ' + NomProjet + ' ?')) {
+
+                                $.ajax({
+                                    url: "@Url.Action("SupprimerTable", "ListeProjet")",
+                                    data: { ID: json.ID[$(this).val()] },
+                                    dataType: "json",
+                                    type: "POST",
+                                    error: function () {
+                                        alert("Le projet " + NomProjet + " n'a pas pu être supprimé.");
+                                    },
+                                    success: function (data) {
+                                        alert('Projet ' + NomProjet + ' supprimé avec succès !');
+                                        drawTabCours();
+                                        document.getElementById("checkbox").click();
+                                        document.getElementById("checkbox").click();
+                                    }
+                                });
+
+                            }
+                        })
+
+                    }
+                })
+            }
+            else {
+                $('#tableClos').remove();
+            }
+        })
+
+        $('#buttonAjoutProjet').on('click', function () {
+            if (ajoutProjet == 0) {
+                tableAjoutProjet = '<div id="tableAjoutProjet"><div class="row"><h4>----- Ajouter un projet -----</h4>';
+                tableAjoutProjet += '<div class="col-md-1" style="vertical-align:middle"><h5>Date ouverture jj-mm-aa</h5></div>';
+                tableAjoutProjet += '<div class="col-md-2" style="vertical-align:middle"><h5>Nom projet</h5></div>';
+                tableAjoutProjet += '<div class="col-md-1" style="vertical-align:middle"><h5>Statut</h5></div>';
+                tableAjoutProjet += '<div class="col-md-3" style="vertical-align:middle"><h5>Commentaire</h5></div>';
+                tableAjoutProjet += '<div class="col-md-3" style="vertical-align:middle"><h5>Prochaine étape</h5></div>';
+                tableAjoutProjet += '<div class="col-md-2" style="vertical-align:middle"><button title="Sauvegarder" id="saveButton" class="glyphicon glyphicon-floppy-disk"></button> <button title="Annuler" id="cancelButton" class="glyphicon glyphicon-remove"></button></div>'
+                tableAjoutProjet += '</div><div class="row">';
+                var dateCourant = new Date(Date.now());
+                var moisCourant = dateCourant.getMonth()+1;
+                if (moisCourant < 10) {
+                    moisCourant = "0" + moisCourant;
+                }
+                tableAjoutProjet += '<div class="col-md-1" style="vertical-align:middle; text-align:left"><input id="Date" size="6"value="' + dateCourant.getDate() + '-' + moisCourant + '-' + (dateCourant.getFullYear()).toString().substring(1).substring(1) + '"/></div>';
+                tableAjoutProjet += '<div class="col-md-2" style="vertical-align:middle; text-align:left"><input id="NProjet" size="25"/></div>';
+                tableAjoutProjet += '<div class="col-md-1" style="vertical-align:middle"><select id="demo-htmlselect-basic">';
+                for (var i = 0; i < (smiley.length - 1) ; i++) {
+                    for (var j = 0; j < smiley[i].length; j++) {
+
+                        tableAjoutProjet += '<option data-imagesrc="/Content/images/IndicateurSI/' + smiley[i][j] + '" value="' + (i * 10 + j) + '"></option>';
+                    }
+                }
+
+                tableAjoutProjet += '</select></div>';
+                tableAjoutProjet += '<div class="col-md-3" style="vertical-align:middle; text-align:left"><textarea id="Com" cols="50" rows="4"/></div>';
+                tableAjoutProjet += '<div class="col-md-3" style="vertical-align:middle; text-align:left"><textarea id="PEtape" cols="50" rows="4"/></div>';
+                tableAjoutProjet += '<div class="col-md-2" style="vertical-align:middle"><div id="progressBar"></div></div>'
+                tableAjoutProjet += '</div></div>';
+
+                $('#ajoutProjet').append(tableAjoutProjet);
+                ajoutProjet = 1;
+
+                $('#demo-htmlselect-basic').ddslick(
+                {
+                    onSelected: function (data) {
+                        displaySelectedData("Callback Function on Dropdown Selection", data);
+                    }
+                });
+
+                $('#saveButton').on('click', function () {
+
+                    if ($('#NProjet').val() != "" && $("#Date").val() != "") {
+
+                        var date = $("#Date").val().split('-');
+                        var com = 0;
+                        var pEt = 0;
+
+                        if (date.length == 3 && date[0] < 32 && date[1] < 13 && date[2] < 100) {
+
+                            if ($('#Com').val() == "") {
+
+                                if (confirm('Attention, vous n\'avez renseigné aucun commentaire. Continuer ?')) {
+                                    com = 1;
+                                }
+                            }
+                            else {
+                                com = 1;
+                            }
+                            if ($('#PEtape').val() == "" && com == 1) {
+
+                                if (confirm('Attention, vous n\'avez pas renseigné de prochaine étape. Continuer ?')) {
+                                    pEt = 1;
+                                }
+                            }
+                            else {
+                                pEt = 1;
+                            }
+
+                            if (com == 1 && pEt == 1) {
+
+                                $('#saveButton').after('<h4><span id="saveButton" style="color:grey" class="glyphicon glyphicon-floppy-saved"> Sauvegarde en cours...</span></h4>');
+                                $('#saveButton').remove();
+                                $('#cancelButton').remove();
+                                $('#progressBar').append('<div id="bar" class="progress progress-striped active"><div class="progress-bar" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%;"></div></div>');
+
+                                setTimeout(function () { $('#bar').remove(); $('#progressBar').append('<div id="bar" class="progress progress-striped active"><div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"></div></div>'); }, 1000)
+
+                                var SCouleur = parseInt(($('#demo-htmlselect-basic').data().ddslick.selectedData.value) / 10);
+                                var SVisage = ($('#demo-htmlselect-basic').data().ddslick.selectedData.value) - (SCouleur * 10);
+
+                                $.ajax({
+                                    url: "@Url.Action("AjouterTable", "ListeProjet")",
+                                    data: { NProjet: $('#NProjet').val(), SCouleur: SCouleur, SVisage: SVisage, Com: $('#Com').val(), PEtape: $('#PEtape').val(), DOuverture: $("#Date").val(), ServiceSI: $('#selectSI').find(":selected").val() },
+                                    dataType: "json",
+                                    type: "POST",
+                                    error: function () {
+                                        alert("Une erreur est survenue.");
+                                        $('#bar').remove();
+                                        setTimeout(function () { drawTabCours(); }, 500)
+                                    },
+                                    success: function (data) {
+
+                                        setTimeout(function () { $('#bar').remove(); $('#progressBar').append('<div id="bar" class="progress progress-striped active"><div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div></div>'); }, 1000)
+                                        setTimeout(function () { $('#bar').remove(); $('#saveButton').after('<h4><span style="color:green" class="glyphicon glyphicon-floppy-saved"> Sauvegardé !</span></h4>'); $('#saveButton').remove(); }, 1500)
+                                        setTimeout(function () { if (ajoutProjet == 1) { document.getElementById("buttonAjoutProjet").click() } else { $('#tableAjoutProjet').remove(); ajoutProjet = 0; } }, 2500)
+                                        setTimeout(function () { drawTabCours(); }, 2500)
+
+                                    }
+                                })
+
+
+                            }
+                        }
+                        else {
+                            alert('Erreur dans la date !');
+                        }
+                    }
+                    else {
+                        alert('Date et nom de projet sont des champs obligatoires !');
+                    }
+                })
+
+                $('#cancelButton').on('click', function () {
+                    $('#buttonAjoutProjet').click();
+                })
+            }
+            else {
+                $('#tableAjoutProjet').remove();
+                ajoutProjet = 0;
+            }
+        })
+
+    });
+
+    function displaySelectedData(demoIndex, ddData) {
+
+        $('#dd-display-data').html("<h3>Data from Demo " + demoIndex + "</h3>");
+    }
+
+    function parseJSON(data) {
+        return window.JSON && window.JSON.parse ? window.JSON.parse(data) : (new Function("return " + data))();
+    }
+
+    function closeAddProjet() {
+        $('#tableAjoutProjet').remove();
+        ajoutProjet = 0;
+    }
+
+    function drawTabCours(StartVal) {
+
+        if (StartVal != null) {
+            serviceSI = StartVal;
+        }
+        else {
+            serviceSI = $('#selectSI').find(":selected").val()
+        }
+
+        $.ajax({
+            url: "@Url.Action("JsonTab", "ListeProjet")",
+            data: { etat: 0, serviceSI: serviceSI },
+            dataType: "json",
+            type: "POST",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (data) {
+
+                var json = parseJSON(data);
+
+                var valTabProjetCours = "";
+
+                for (var i = 0; i < json.NomProjet.length; i++) {
+
+                    valTabProjetCours += '<tr><td class="col-sm-1" style="vertical-align:middle; text-align:center">';
+                    valTabProjetCours += json.DateOuverture[i];
+                    valTabProjetCours += '</td><td class="col-sm-2" style="vertical-align:middle; text-align:center">';
+                    valTabProjetCours += json.NomProjet[i];
+                    valTabProjetCours += '</td><td class="col-sm-1" style="vertical-align:middle; text-align:center">';
+                    valTabProjetCours += '<img src="/Content/images/IndicateurSI/' + smiley[json.StatutCouleur[i]][json.StatutVisage[i]] + '"/>';
+                    valTabProjetCours += '</td><td class="col-sm-3" style="vertical-align:middle; text-align:center">';
+                    valTabProjetCours += json.Commentaire[i];
+                    valTabProjetCours += '</td><td class="col-sm-3" style="vertical-align:middle; text-align:center">';
+                    valTabProjetCours += json.ProchaineEtape[i];
+                    valTabProjetCours += '</td><td class="col-sm-3" style="vertical-align:middle; text-align:center"><button title="Editer" class="glyphicon glyphicon-edit buttonEditerCours" value=' + i + '></button> <button title="Clore" value=' + i + ' class="glyphicon glyphicon-inbox buttonClore"></button> <button value="' + i + '" title=" Supprimer" class="glyphicon glyphicon-trash buttonSupprProjetCours"></button></td></tr>';
+                }
+
+                if (valTabProjetCours == "") {
+                    if ($('#selectSI').find(":selected").val() == null)
+                        valTabProjetCours += "<center>Pas de projet Fonctionnel en cours...</center>"
+                    else
+                        valTabProjetCours += "<center>Pas de projet " + $('#selectSI').find(":selected").val() + " en cours...</center>"
+                }
+
+                document.getElementById('tabProjetCours').innerHTML = valTabProjetCours;
+
+                $('.buttonEditerCours').on('click', function () {
+                    fenetreEdition(json.ID[$(this).val()], json.DateOuverture[$(this).val()], json.NomProjet[$(this).val()], json.StatutCouleur[$(this).val()], json.StatutVisage[$(this).val()], json.Commentaire[$(this).val()], json.ProchaineEtape[$(this).val()])
+                })
+
+                $('.buttonSupprProjetCours').on('click', function () {
+
+                    var NomProjet = json.NomProjet[$(this).val()];
+
+                    if (confirm('Voulez vous vraiment supprimer le projet ' + NomProjet + ' ?')) {
+
+                        $.ajax({
+                            url: "@Url.Action("SupprimerTable", "ListeProjet")",
+                            data: { ID: json.ID[$(this).val()] },
+                            dataType: "json",
+                            type: "POST",
+                            error: function () {
+                                alert("Le projet " + NomProjet + " n'a pas pu être supprimé.");
+                            },
+                            success: function (data) {
+                                alert('Projet ' + NomProjet + ' supprimé avec succès !');
+                                drawTabCours();
+                            }
+                        });
+
+                    }
+                })
+
+                $('.buttonClore').on('click', function () {
+
+                    var NomProjet = json.NomProjet[$(this).val()];
+
+                    if (confirm('Voulez vous vraiment clore le projet ' + NomProjet + ' ?')) {
+
+                        $.ajax({
+                            url: "@Url.Action("CloreProjet", "ListeProjet")",
+                            data: { ID: json.ID[$(this).val()] },
+                            dataType: "json",
+                            type: "POST",
+                            error: function () {
+                                alert("Le projet " + NomProjet + " n'a pas pu être clos.");
+                            },
+                            success: function (data) {
+                                alert('Projet ' + NomProjet + ' clos avec succès !');
+                                drawTabCours();
+                                if ($('input[name=checkbox]').is(':checked')) {
+                                    document.getElementById("checkbox").click();
+                                    document.getElementById("checkbox").click();
+                                }
+                            }
+                        });
+
+                    }
+                })
+
+
+            }
+        });
+    }
+
+    function fenetreEdition(ID, DateOurveture, NomProjet, SCouleur, SVisage, Com, PEtape) {
+        if (editprojet == 1) {
+            $('#tableEditProjet').remove()
+        }
+        tableEditProjet = '<div id="tableEditProjet"><div class="row"><h4>----- Editer un projet -----</h4>';
+        tableEditProjet += '<div class="col-md-1" style="vertical-align:middle"><h5>Date ouverture jj-mm-aa</h5></div>';
+        tableEditProjet += '<div class="col-md-2" style="vertical-align:middle"><h5>Nom projet</h5></div>';
+        tableEditProjet += '<div class="col-md-1" style="vertical-align:middle"><h5>Statut</h5></div>';
+        tableEditProjet += '<div class="col-md-3" style="vertical-align:middle"><h5>Commentaire</h5></div>';
+        tableEditProjet += '<div class="col-md-3" style="vertical-align:middle"><h5>Prochaine étape</h5></div>';
+        tableEditProjet += '<div class="col-md-2" style="vertical-align:middle"><button title="Sauvegarder" id="saveButtonEdit" class="glyphicon glyphicon-floppy-disk"></button> <button title="Annuler" id="cancelButtonEdit" class="glyphicon glyphicon-remove"></button></div>'
+        tableEditProjet += '</div><div class="row">';
+        tableEditProjet += '<div class="col-md-1" style="vertical-align:middle; text-align:left"><input id="DateEdit" value="' + DateOurveture + '" size="6"/></div>';
+        tableEditProjet += '<div class="col-md-2" style="vertical-align:middle; text-align:left"><div class="row"><input id="NProjetEdit" value="' + NomProjet + '" size="25"/></div><div class="row" syle="text-align:center">'
+
+        tableEditProjet += '<select id="editSI">'
+        tableEditProjet += '<option value="Fonctionnel" '
+        if ($('#selectSI').find(":selected").val() == "Fonctionnel") { tableEditProjet += 'selected' }
+        tableEditProjet += '>Fonctionnel</option><option value="Suport-Info" '
+        if ($('#selectSI').find(":selected").val() == "Suport-Info") { tableEditProjet += 'selected' }
+        tableEditProjet += '>Suport-Info</option><option value="Infrastructure" '
+        if ($('#selectSI').find(":selected").val() == "Infrastructure") { tableEditProjet += 'selected' }
+        tableEditProjet += '>Infrastructure</option></select></div></div>';
+        tableEditProjet += '<div class="col-md-1" style="vertical-align:middle"><select id="selecteurEdit">';
+        for (var i = 0; i < (smiley.length - 1) ; i++) {
+            for (var j = 0; j < smiley[i].length; j++) {
+
+                tableEditProjet += '<option data-imagesrc="/Content/images/IndicateurSI/' + smiley[i][j] + '" value="' + (i * 10 + j) + '"';
+                if (i == SCouleur && j == SVisage) { tableEditProjet += ' selected '; }
+                tableEditProjet += '></option>';
+            }
+        }
+
+        tableEditProjet += '</select></div>';
+        tableEditProjet += '<div class="col-md-3" style="vertical-align:middle; text-align:left"><textarea id="ComEdit" cols="50" rows="4">' + Com + '</textarea></div>';
+        tableEditProjet += '<div class="col-md-3" style="vertical-align:middle; text-align:left"><textarea id="PEtapeEdit" cols="50" rows="4">' + PEtape + '</textarea></div>';
+        tableEditProjet += '<div class="col-md-2" style="vertical-align:middle"><div id="progressBarEdit"></div></div>'
+        tableEditProjet += '</div></div>';
+
+        $('#ajoutProjet').prepend(tableEditProjet);
+        editprojet = 1;
+
+        $('#selecteurEdit').ddslick(
+        {
+            onSelected: function (data) {
+                displaySelectedData("Callback Function on Dropdown Selection", data);
+            }
+        });
+
+        $('#saveButtonEdit').on('click', function () {
+
+            if ($('#NProjetEdit').val() != "" && $("#DateEdit").val() != "") {
+
+                var date = $("#DateEdit").val().split('-');
+                var com = 0;
+                var pEt = 0;
+
+                if (date.length == 3 && date[0] < 32 && date[1] < 13 && date[2] < 100) {
+
+                    if ($('#ComEdit').val() == "") {
+
+                        if (confirm('Attention, vous n\'avez renseigné aucun commentaire. Continuer ?')) {
+                            com = 1;
+                        }
+                    }
+                    else {
+                        com = 1;
+                    }
+                    if ($('#PEtapeEdit').val() == "" && com == 1) {
+
+                        if (confirm('Attention, vous n\'avez pas renseigné de prochaine étape. Continuer ?')) {
+                            pEt = 1;
+                        }
+                    }
+                    else {
+                        pEt = 1;
+                    }
+
+                    if (com == 1 && pEt == 1) {
+
+                        $('#saveButtonEdit').after('<h4><span id="saveButtonEdit" style="color:grey" class="glyphicon glyphicon-floppy-saved"> Sauvegarde en cours...</span></h4>');
+                        $('#saveButtonEdit').remove();
+                        $('#cancelButtonEdit').remove();
+                        $('#progressBarEdit').append('<div id="barEdit" class="progress progress-striped active"><div class="progress-bar" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%;"></div></div>');
+
+                        setTimeout(function () { $('#barEdit').remove(); $('#progressBarEdit').append('<div id="barEdit" class="progress progress-striped active"><div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"></div></div>'); }, 1000)
+
+                        var SCouleur = parseInt(($('#selecteurEdit').data().ddslick.selectedData.value) / 10);
+                        var SVisage = ($('#selecteurEdit').data().ddslick.selectedData.value) - (SCouleur * 10);
+
+                        $.ajax({
+                            url: "@Url.Action("EditerTable", "ListeProjet")",
+                            data: { ID: ID, NProjet: $('#NProjetEdit').val(), SCouleur: SCouleur, SVisage: SVisage, Com: $('#ComEdit').val(), PEtape: $('#PEtapeEdit').val(), DOuverture: $("#DateEdit").val(), ServiceSI: $('#editSI').find(":selected").val() },
+                            dataType: "json",
+                            type: "POST",
+                            error: function () {
+                                alert("Une erreur est survenue.");
+                                $('#barEdit').remove();
+                                setTimeout(function () { drawTabCours(); }, 500)
+                            },
+                            success: function (data) {
+
+                                setTimeout(function () { $('#barEdit').remove(); $('#progressBarEdit').append('<div id="barEdit" class="progress progress-striped active"><div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div></div>'); }, 1000)
+                                setTimeout(function () { $('#barEdit').remove(); $('#saveButtonEdit').after('<h4><span style="color:green" class="glyphicon glyphicon-floppy-saved"> Sauvegardé !</span></h4>'); $('#saveButton').remove(); }, 1500)
+                                setTimeout(function () { if (editprojet == 1) { $('#tableEditProjet').remove(); editprojet = 0; } }, 2500)
+                                setTimeout(function () { drawTabCours(); document.getElementById("checkbox").click(); }, 2500)
+                                setTimeout(function () { document.getElementById("checkbox").click(); }, 2600)
+
+                            }
+                        })
+
+
+                    }
+                }
+                else {
+                    alert('Erreur dans la date !');
+                }
+            }
+            else {
+                alert('Date et nom de projet sont des champs obligatoires !');
+            }
+        })
+
+        $('#cancelButtonEdit').on('click', function () {
+            $('#tableEditProjet').remove();
+            editprojet = 0;
+        })
+
+    }
+
+</script>

@@ -1,0 +1,577 @@
+﻿@{
+    ViewBag.Title = "Paramètrage";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript" src="/Scripts/underscore.js"></script>
+<script type="text/javascript" src="/Scripts/backbone.js"></script>
+
+<script type="text/template" id="ParametrageTemplate">
+
+    <% if (currentHSERole < 300) { %>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Configuration des Droits</div>
+        <div class="panel-body">
+
+
+
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <button id="AddAdministrateur" type="submit" class="btn btn-primary btn-xs">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                    <span style="font-size:large">Administrateur</span>
+                    </br>
+
+                </div>
+
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-1">
+
+
+
+                </div>
+
+                <div class="col-md-11">
+
+                    <% HSERoleCollection.each (function(HSERole){ %>
+
+                    <% if (HSERole.get('RoleCode') === '100' ) { %>
+
+                    <button type="submit" data-id="<%= HSERole.get('ADRoleID') %>" class="DeleteRole btn btn-danger btn-xs">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </button>
+                    <%= HSERole.get('Name') %> <br/>
+
+                    @*<div class="col-md-12">*@
+
+                        <br />
+                    @*</div>*@
+
+                    <% } %>
+
+                    <% }); %>
+
+                 
+                </div>
+
+
+                    <div class="col-md-12">
+
+                        <br />
+
+                    </div>
+
+
+
+                </div>
+
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <button id="AddCoordinateur" type="submit" class="btn btn-primary btn-xs">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                    <span style="font-size:large">Coordinateur</span>
+                </div>
+                <div class="col-md-1">
+
+                </div>
+                <div class="col-md-11">
+
+                    <% HSERoleCollection.each (function(HSERole){ %>
+
+                    <% if (HSERole.get('RoleCode') === '200' ) { %>
+
+                    <button id="DeleteCoordinateur" data-id="<%= HSERole.get('ADRoleID') %>"  type="submit" class="DeleteRole btn btn-danger btn-xs">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </button>
+                    <%= HSERole.get('Name') %> </br>
+
+
+                    <% } %>
+
+                    <% }); %>
+
+                </div>
+
+                <div class="col-md-12">
+
+                    <br />
+
+                </div>
+
+            </div>
+
+
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <button id="AddAnimateur" type="submit" class="btn btn-primary btn-xs">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                    <span style="font-size:large">Animateur</span>
+                </div>
+
+                <div class="col-md-1">
+
+                </div>
+                <div class="col-md-11">
+
+                    <% HSERoleCollection.each (function(HSERole){ %>
+
+                    <% if (HSERole.get('RoleCode') === '300' ) { %>
+
+                    <button id="DeleteAnimateur" data-id="<%= HSERole.get('ADRoleID') %>" type="submit" class="DeleteRole btn btn-danger btn-xs">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </button>
+                    <%= HSERole.get('Name') %> </br>
+
+
+                    <% } %>
+
+                    <% }); %>
+
+                </div>
+
+                <div class="col-md-12">
+
+                    <br />
+
+                </div>
+
+
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <button id="AddManager" type="submit" class="btn btn-primary btn-xs">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                    <span style="font-size:large">Manager</span>
+                </div>
+
+                <div class="col-md-1">
+
+                </div>
+                <div class="col-md-11">
+
+                    <% HSERoleCollection.each (function(HSERole){ %>
+
+                    <% if (HSERole.get('RoleCode') === '400' ) { %>
+
+                    <button id="DeleteManager" data-id="<%= HSERole.get('ADRoleID') %>" type="submit" class="DeleteRole btn btn-danger btn-xs">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </button>
+                    <%= HSERole.get('Name') %> </br>
+
+
+                    <% } %>
+
+                    <% }); %>
+
+                </div>
+
+                <div class="col-md-12">
+
+                    <br />
+
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-1">
+
+                </div>
+                <div class="col-md-12">
+                    <button id="AddConsultation" type="submit" class="btn btn-primary btn-xs">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                    <span style="font-size:large">Consultation</span>
+                </div>
+
+
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-11">
+                    <% HSERoleCollection.each (function(HSERole){ %>
+
+
+                    <% if (HSERole.get('RoleCode') === '500' ) { %>
+                    <button id="DeleteConsultation" data-id="<%= HSERole.get('ADRoleID') %>" type="submit" class="DeleteRole btn btn-danger btn-xs">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </button>
+                    <%= HSERole.get('Name') %> </br>
+
+
+                    <% } %>
+
+                    <% }); %>
+                </div>
+
+                <div class="col-md-12">
+
+                    <br />
+
+                </div>
+
+            </div>
+
+
+
+            <div class="row">
+
+
+                <div class="col-md-12">
+                    <button id="AddVisiteur" type="submit" class="btn btn-primary btn-xs">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                    <span style="font-size:large">Visiteur</span>
+                </div>
+
+                <div class="col-md-1">
+
+                </div>
+                <div class="col-md-11">
+                    <% HSERoleCollection.each (function(HSERole){ %>
+
+                    <% if (HSERole.get('RoleCode') === '600' ) { %>
+
+                    <button type="submit" data-id="<%= HSERole.get('ADRoleID') %>" class="DeleteRole btn btn-danger btn-xs">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </button>
+                    <%= HSERole.get('Name') %> </br>
+
+
+                    <% } %>
+
+                    <% }); %>
+
+                </div>
+
+                <div class="col-md-12">
+
+                    <br />
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <div class="panel-footer">
+
+        SuperAdmin = 100 = Administrateur,
+        Admin = 200 = Coordinateur,
+        Validateur = 300 = Animateur,
+        Redacteur = 400 = Manager,
+        Consultation = 500 = Consultation,
+        Visiteur = 600 = Visisteur
+    </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Configuration des Emails</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email de diffusion des Fiche Sécurité : </label>
+                        <input type="email" class="form-control" id="EmailDiffusionFS" value="<%= ParametrageModel.get('EmailDiffusionFS') %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email des diffusions de plan d'action : </label>
+                        <input type="email" class="form-control" id="EmailDiffusionPlanActionFS" value="<%= ParametrageModel.get('EmailDiffusionPlanAction') %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email des validations et rejets de plan d'action : </label>
+                        <input type="email" class="form-control" id="EmailValidationRejetPlanActionFS" value="<%= ParametrageModel.get('EmailValidationRejetPlanActionFS') %>">
+                    </div>
+
+                    <div class="form-group">
+                        <button id="SaveParametrageHSEEmail" type="submit" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-save"></span> Enregistrer
+                        </button>
+                    </div>
+
+                </div>
+                <div class="col-md-8">
+                    Renseignez ici : <br />
+                    -une adresse email (@@refresco.com) <br />
+                    -un groupe de diffusion (@@refresco.com) <br />
+                    <br />
+                    -"SELF" afin que la personne connectée reçoive elle-même les emails (à des fins de test)<br />
+                    <br />
+                    -Vous pouvez saisir plusieurs adresses, en les séparant par des VIRGULES (et non pas les point-virgules d'Outlook)<br />
+                    <br />
+                    -Les caractères spéciaux "&&&" représenteront le trigramme du site lié au compte Windows connecté (RFS, DLF, STA, NSG, LQN) <br />
+                    <br />
+                    -Le nombre de caractères est limité à 250, il vaut mieux indiquer des listes de diffusion que des emails persos.<br />
+                    <br />
+                    EXEMPLE :<br />
+                    service-info@refresco.com, &&&-FPA-FAS@refresco.com <br />
+                    Enverra un email à la liste de diffusion service info, et à RFS-FPA-FAS@refresco.com si on est connecté à un compte utilisateur dépendant de RFS.<br />
+                    <br />
+
+                    /!\ Les responsables de la FS et des actions recevront un email automatiquement, vous n'avez pas à les configurer /!\
+                    <br />
+                    <br />
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <% if (currentHSERole < 200) { %>
+    <div class="panel panel-default">
+        <div class="panel-heading">Alimentation de la Base de Données</div>
+        <div class="panel-body">
+            <h5>
+                Attention ! l'alimentation est temporaire, et sera masquée dans la version finale
+                Seul l'administrateur doit opérer sur cette fonction. Merci.
+            </h5>
+            <div class="row">
+                <div class="col-md-3">
+                    <button id="AlimentationBaseTest" type="submit" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-search"></span> Alimentation base avec jeu de test
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <button id="AlimentationBaseAcceptance" type="submit" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-search"></span> Alimentation base sans jeu de test
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <button id="DebugFicheCloturees" type="submit" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-search"></span> Clôture les plans d'action clôturés
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+
+    <% } %>
+
+
+</script>
+
+<div id="PrincipalDiv">
+</div>
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+        var currentHSERole = "@ViewBag.CurrentHSERole";
+
+        ResponseModel = Backbone.Model.extend({
+            url: '/api/HSEParametrage/',
+            id: 0
+        });
+
+        ParametrageModel = Backbone.Model.extend({
+        });
+
+        HSERoleModel = Backbone.Model.extend({
+            idAttribute: 'ADRoleID',
+        });
+
+        HSERoleCollection = Backbone.Collection.extend({
+            model: HSERoleModel
+        });
+
+        responseModel = new ResponseModel();
+        responseModel.set({ "currentHSERole": currentHSERole });
+
+        responseModel.url = '/api/action/HSEParametrage/GetHSEParametrage';
+        responseModel.fetch({ async: false, wait: true });
+
+        hseRoleCollection = new HSERoleCollection(responseModel.get('Roles'));
+
+        responseModel.set({ 'ParametrageModel': new ParametrageModel(responseModel.get('Parametrage')) });
+        responseModel.set({ 'HSERoleCollection': hseRoleCollection });
+
+        console.log(responseModel);
+
+        ParametrageView = Backbone.View.extend({
+            id: 'ParametrageDiv',
+            template: _.template($('#ParametrageTemplate').html()),
+            render: function () {
+                //console.log(this.model);
+                this.$el.html(this.template(this.model.toJSON()));
+                return this;
+            },
+            initialize: function () {
+
+                this.render();
+            },
+            events: {
+                "click #DebugFicheCloturees": "debugFicheCloturees",
+                "click #AlimentationBaseTest": "alimentationBaseTest",
+                "click #AlimentationBaseAcceptance": "alimentationBaseAcceptance",
+                "click #SaveParametrageHSEEmail": "saveParametrageHSEEmail",
+                "keyup #EmailDiffusionFS": "changeEmailDiffusionFS",
+                "keyup #EmailValidationRejetPlanActionFS": "changeEmailValidationRejetPlanActionFS",
+                "keyup #EmailDiffusionPlanActionFS": "changeEmailDiffusionPlanAction",
+                "click #AddAdministrateur": "addRole",
+                "click #AddCoordinateur": "addRole",
+                "click #AddAnimateur": "addRole",
+                "click #AddManager": "addRole",
+                "click #AddConsultation": "addRole",
+                "click #AddVisiteur": "addRole",
+                "click .DeleteRole": "deleteRole"
+
+            },
+            debugFicheCloturees: function(){
+                var r = confirm("Debug des plans d'action clôturés ?");
+                if (r == true) {
+                    this.model.url = '/api/action/HSEParametrage/DebugFicheCloturees';
+                    this.model.save(null, { async: false, wait: true });
+                } 
+
+            },
+            alimentationBaseTest: function () {
+                var r = confirm("Vous allez alimenter la BDD EN COURS (Test, Acceptance ou PROD, avec le jeu de données TEST original, Si vous ne savez pas ce que vous faites, ANNULEZ, Merci.");
+                if (r == true) {
+                    this.model.url = '/api/action/HSEParametrage/AlimenteBaseTest';
+                    this.model.save(null, { async: false, wait: true });
+                } 
+
+            },
+            alimentationBaseAcceptance: function () {
+                var r = confirm("Vous allez alimenter la BDD EN COURS (Test, Acceptance ou PROD, avec le jeu de données ACCEPTANCE original, Si vous ne savez pas ce que vous faites, ANNULEZ, Merci.");
+                if (r == true) {
+                    this.model.url = '/api/action/HSEParametrage/AlimenteBaseAcceptance';
+                    this.model.save(null, { async: false, wait: true });
+                } 
+            },
+            saveParametrageHSEEmail: function () {
+                this.model.url = '/api/action/HSEParametrage/SaveParametrageHSEEmail';
+                this.model.save(null, { async: false, wait: true });
+                this.render;
+            },
+            changeEmailDiffusionFS: function () {
+                console.log('PASSAGE DIFFUSION');
+                this.model.set({ 'EmailDiffusionFS': $('#EmailDiffusionFS').val() });
+            },
+            changeEmailValidationRejetPlanActionFS: function () {
+                this.model.set({ 'EmailValidationRejetPlanActionFS': $('#EmailValidationRejetPlanActionFS').val() });
+            },
+            changeEmailDiffusionPlanAction: function () {
+                this.model.set({ 'EmailDiffusionPlanAction': $('#EmailDiffusionPlanActionFS').val() });
+                console.log(this.model.get('EmailDiffusionPlanAction'));
+            },
+            addRole: function (ev) {
+
+                var id = $(ev.currentTarget).attr('id');
+
+                var roleCode;
+                
+                switch (id) {
+                    case "AddAdministrateur":
+                        roleCode = "100";
+                        break;
+                    case "AddCoordinateur":
+                        roleCode = "200";
+                        break;
+                    case "AddAnimateur":
+                        roleCode = "300";
+                        break;
+                    case "AddManager":
+                        roleCode = "400";
+                        break;
+                    case "AddConsultation":
+                        roleCode = "500";
+                        break;
+                    case "AddVisiteur":
+                        roleCode = "600";
+                        break;
+                }
+
+                var groupeAD = prompt("Veullez entrer un groupe de l'AD");
+                if (groupeAD != null) {
+                    
+                   
+                    hSERoleModel = new HSERoleModel({
+                        'RoleType':'HSE',
+                        'RoleCode':roleCode,
+                        'Name':groupeAD
+                    });
+
+                    console.log(hSERoleModel);
+               
+
+                    this.model.get('HSERoleCollection').create(
+                        hSERoleModel, {
+                            async: false, wait: true,
+                            success: _.bind(function (model, response) {
+                                this.render();
+                            },
+                        this),
+                            url: '/api/action/HSEParametrage/AddADRole/0'
+
+
+                        });
+                   
+                }
+
+                
+
+            },
+            deleteRole: function (ev) {
+
+                var id = $(ev.currentTarget).attr('data-id');
+                var classToDelete = $(ev.currentTarget).attr('data-classToDelete');
+
+                var confirmation = confirm("Êtes-vous sûr de vouloir supprimer les droits de ce groupe ?");
+                if (confirmation == true) {
+
+                    this.model.get('HSERoleCollection').findWhere({ ADRoleID: parseInt(id) }).destroy(
+                        {
+                            async: false, wait: true,
+                            success: _.bind(function (model, response) {
+                                this.render();
+                            },
+                        this),
+                            url: '/api/action/HSEParametrage/DeleteADRole/' + id
+
+
+                        });
+                }
+
+            }
+        });
+
+
+        var parametrageView = new ParametrageView({
+            el: $("#PrincipalDiv"),
+            model: responseModel
+        });
+
+
+
+
+
+    });
+
+
+</script>

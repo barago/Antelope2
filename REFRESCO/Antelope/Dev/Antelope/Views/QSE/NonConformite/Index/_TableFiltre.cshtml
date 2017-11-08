@@ -1,0 +1,255 @@
+﻿@model string
+<script type="text/template" id="@Model">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="panel panel-primary" style="border-color: #006573;">
+                <div class="panel-heading" style="background-color :#006573; color: white">
+
+                    <div class="row">
+
+                        <div class="col-md-3">
+                            FILTRES&nbsp;:
+                        </div>
+                        <div class="col-md-9">
+
+                            <button id="RechercheBouton" type="submit" class="btn btn-default btn-xs pull-right">
+                                <span class="glyphicon glyphicon-search"></span> Chercher les Actions
+                            </button>
+
+                            <button id="RechercheNonConformiteBouton" type="submit" class="btn btn-default btn-xs pull-right" style="margin-right:10px">
+                                <span class="glyphicon glyphicon-search"></span> Chercher les Non-Conformités
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body" style="padding:0px;">
+                    <div class="row input-sm">
+                        <div class="col-md-4">
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="Site" class="label-xs">Site&nbsp;:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select id="Site" class="form-control input-xs">
+                                        <option value="0" <% if (rechercheNonConformiteParamModel.get('SiteId') == 0){ %> selected <% } %> ></option>
+                                        <% siteCollection.each( function(site){ %>
+                                        <option value="<%= site.get('SiteID') %>"
+                                            <% if (rechercheNonConformiteParamModel.get('SiteId') == site.get('SiteID')){ %> selected <% } %> >
+                                            <%= site.get('Nom') %>
+                                        </option>
+                                        <% }); %>
+                                        @*%> selected <%*@
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="Origine" class="label-xs">Origine&nbsp;:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select id="Origine" class="form-control input-xs">
+                                        <option value="0" <% if (rechercheNonConformiteParamModel.get('NonConformiteOrigineId') == 0){ %> selected <% } %> ></option>
+                                        <% nonConformiteOrigineCollection.each( function(nonConformiteOrigine){ %>
+                                        <option value="<%= nonConformiteOrigine.get('Id') %>"
+                                            <% if (rechercheNonConformiteParamModel.get('NonConformiteOrigineId') == nonConformiteOrigine.get('Id')){ %> selected <% } %> >
+                                            <%= nonConformiteOrigine.get('Nom') %>
+                                        </option>
+                                        <% }); %>
+                                        @*%> selected <%*@
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="Domaine" class="label-xs">Domaine&nbsp;:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select id="Domaine" class="form-control input-xs">
+                                        <option value="0" <% if (rechercheNonConformiteParamModel.get('NonConformiteDomaineId') == 0){ %> selected <% } %> ></option>
+                                        <% nonConformiteDomaineCollection.each( function(nonConformiteDomaine){ %>
+                                        <option value="<%= nonConformiteDomaine.get('Id') %>"
+                                            <% if (rechercheNonConformiteParamModel.get('NonConformiteDomaineId') == nonConformiteDomaine.get('Id')){ %> selected <% } %> >
+                                            <%= nonConformiteDomaine.get('Nom') %>
+                                        </option>
+                                        <% }); %>
+                                        @*%> selected <%*@
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="Gravite" class="label-xs">Gravite&nbsp;:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select id="Gravite" class="form-control input-xs">
+                                        <option value="0" <% if (rechercheNonConformiteParamModel.get('NonConformiteGraviteId') == 0){ %> selected <% } %> ></option>
+                                        <% nonConformiteGraviteCollection.each( function(nonConformiteGravite){ %>
+                                        <option value="<%= nonConformiteGravite.get('Id') %>"
+                                            <% if (rechercheNonConformiteParamModel.get('NonConformiteGraviteId') == nonConformiteGravite.get('Id')){ %> selected <% } %> >
+                                            <%= nonConformiteGravite.get('Nom') %>
+                                        </option>
+                                        <% }); %>
+                                        @*%> selected <%*@
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="ServiceType" class="label-xs">Appartenance&nbsp;:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select id="ServiceType" class="form-control input-xs">
+                                        <option value="0" <% if (rechercheNonConformiteParamModel.get('ServiceTypeId') == 0){ %> selected <% } %> ></option>
+                                        <% serviceTypeCollection.each( function(serviceType){ %>
+                                        <option value="<%= serviceType.get('ServiceTypeId') %>"
+                                            <% if (rechercheNonConformiteParamModel.get('ServiceTypeId') == serviceType.get('ServiceTypeId')){ %> selected <% } %> >
+                                            <%= serviceType.get('Nom') %>
+                                        </option>
+                                        <% }); %>
+                                        @*%> selected <%*@
+                                    </select>
+                                </div>
+                            </div>
+
+                            @*<div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="ResponsableNom" class="label-xs">Nom&nbsp;Resp.&nbsp;Action&nbsp;:</label>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <div class="input-group input-group-xs">
+                                            <input type="text" class="form-control input-xs" id="ResponsableNom" value="<%= rechercheNonConformiteParamModel.get('ResponsableNom') %>">
+                                        </div>
+                                    </div>
+                                </div>*@
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="ResponsableNom" class="label-xs">Nom resp. act°&nbsp;:&nbsp;</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="input-group input-group-xs">
+                                        <input type="text" class="form-control input-xs" id="ResponsableNom">
+                                        <span class="input-group-btn">
+                                            <button id="ActiveDirectoryActionResponsableRecherche" class="btn btn-default" type="button" data-toggle="modal" data-sourceutilisateurfield="ActionResponsable">
+                                                <span class="glyphicon glyphicon-user">
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="<%= 'ResponsablePrenom' %>" class="label-xs">Prénom resp.&nbsp;:&nbsp;</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-xs ResponsablePrenom" id="ResponsablePrenom">
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="DateButoirDebut" class="label-xs">Date&nbsp;butoir&nbsp;Début&nbsp;:</label>
+                                </div>
+                                <div class='col-sm-8'>
+                                    @*<div class="form-group">*@
+                                    <div class='input-group date' id='DateButoirDebut'>
+                                        <input type='text' name="DateButoirDebut" id="DateButoirDebutInput" class="form-control input-xs" value="<%= rechercheNonConformiteParamModel.get('DateButoirDebutJavascript') %>" />
+                                        <div class="input-group-addon input-xs">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </div>
+                                    </div>
+                                    @*</div>*@
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="DateButoirFin" class="label-xs">Date&nbsp;butoir&nbsp;Fin&nbsp;:</label>
+                                </div>
+                                <div class='col-sm-8'>
+                                    @*<div class="form-group">*@
+                                    <div class='input-group date' id='DateButoirFin'>
+                                        <input type='text' name="DateButoirFin" id="DateButoirFinInput" class="form-control input-xs" value="<%= rechercheNonConformiteParamModel.get('DateButoirFinJavascript') %>" />
+                                        <span class="input-group-addon input-xs">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                    @*</div>*@
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="<%= 'NonConformiteCode' %>" class="label-xs">Code Non-Conformité&nbsp;:&nbsp;</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-xs NonConformiteCode" id="NonConformiteCode">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="<%= 'ActionCode' %>" class="label-xs">Code Action&nbsp;:&nbsp;</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-xs ActionCode" id="ActionCode">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="ShowArchived" class="label-xs">Afficher NC N + 2&nbsp;:&nbsp;</label>
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="checkbox" class="form-control input-xs ShowArchived" id="ShowArchived"<% if(rechercheNonConformiteParamModel.get('ShowArchived')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            Filtres sur les Non-Conformités :
+                            <label for="IsNCEnCours" style="font-weight:normal"> <span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:white;height:10px;">&nbsp;NC en cours&nbsp;</span></label>
+                            <input type="checkbox" id="IsNCEnCours"<% if(rechercheNonConformiteParamModel.get('IsNCEnCours')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsNCCloture" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#00FF00;height:10px;">&nbsp;NC clôturées&nbsp;</span></label>
+                            <input type="checkbox" id="IsNCCloture"<% if(rechercheNonConformiteParamModel.get('IsNCEnCours')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            Filtres sur les Actions :
+                            <label for="IsActionEnCours" style="font-weight:normal"> <span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:white;height:10px;">&nbsp;Actions en cours&nbsp;</span></label>
+                            <input type="checkbox" id="IsActionEnCours"<% if(rechercheNonConformiteParamModel.get('IsActionEnCours')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsActionRealise" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#FFC000;height:10px;">&nbsp;Actions réalisées&nbsp;</span></label>
+                            <input type="checkbox" id="IsActionRealise"<% if(rechercheNonConformiteParamModel.get('IsActionRealise')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsActionRetard" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#FF0000;height:10px;">&nbsp;Actions en retard&nbsp;</span></label>
+                            <input type="checkbox" id="IsActionRetard"<% if(rechercheNonConformiteParamModel.get('IsActionRetard')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsActionCloture" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#00FF00;height:10px;">&nbsp;Actions clôturées&nbsp;</span></label>
+                            <input type="checkbox" id="IsActionCloture"<% if(rechercheNonConformiteParamModel.get('IsActionCloture')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</script>

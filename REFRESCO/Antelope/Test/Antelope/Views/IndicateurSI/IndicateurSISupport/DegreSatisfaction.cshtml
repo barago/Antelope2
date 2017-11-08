@@ -1,0 +1,172 @@
+﻿
+@{
+    ViewBag.Title = "DegreSatisfaction";
+    Layout = "~/Views/IndicateurSI/Shared/_Layout.cshtml";
+}
+
+<h2><img alt="" width="32" height="32" src="~/Content/images/IndicateurSI/histogramme.png" /> Degré de satisfaction aux traitement des tickets</h2>
+
+<div class="row" style="background-color: #AADBE0; border-color: black; border-width: 1px; border-style: solid; padding:0px">
+    <div class="col-md-4">
+        <div id="selectGranularite"></div><div id="periode"></div><div id="containerTextField"></div><div id="buttonChercher"></div><br />
+    </div>
+    <div class="col-md-4">
+        <div id="selectSI"></div><br />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="container" style="height: 400px; min-width: 310px"></div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        var tabGranularite = new Array();
+        tabGranularite = ["Mois", "Année"];
+
+        valSelectGranularite = '<h3 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Selection granularité</h3><select id="mySelGranularite">';
+        for (var i = 0; i < tabGranularite.length; i++) {
+            valSelectGranularite = valSelectGranularite + '<option ';
+            if (i == 2) valSelectGranularite += 'selected ';
+            valSelectGranularite += 'value=' + i + '>' + tabGranularite[i] + '</option>';
+        }
+        valSelectGranularite = valSelectGranularite + '</select>';
+        document.getElementById('selectGranularite').innerHTML = valSelectGranularite;
+
+        // Récupération noms services SI
+        $.ajax({
+            url: "@Url.Action("recupNameSI", "DegreSatisfaction")",
+            data: {},
+            dataType: "json",
+            type: "POST",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (data) {
+
+                var json = parseJSON(data);
+                valSelectSI = '<h3 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection service SI</h3><select id="SelSI">'
+                for (var i = 0; i < json.name.length; i++) {
+                    valSelectSI += '<option ';
+                    if (json.name[i] == "SAP / Fonctionnel") valSelectSI += 'selected '
+                    valSelectSI += 'value="' + json.name[i] + '">' + json.name[i] + '</option>';
+                }
+                valSelectSI += '</select>';
+                document.getElementById('selectSI').innerHTML = valSelectSI;
+            }
+        });
+
+        startPage();
+
+        $('#selectGranularite').on('change', function () {
+            recharge();
+        });
+
+        $('#selectSI').on('change', function () {
+            recharge();
+        });
+
+    });
+
+    function recharge() {
+        var GranulariteID = $('#mySelGranularite').find(":selected").val();
+        var SIId = $('#SelSI').find(":selected").val();
+
+        $.ajax({
+            url: "@Url.Action("Draw", "DegreSatisfaction")",
+            data: { GranulariteID: GranulariteID , SIId: SIId},
+        dataType: "json",
+        type: "POST",
+        error: function () {
+            alert("An error occurred.");
+        },
+        success: function (tab) {
+
+            json = parseJSON(tab);
+            draw(json.Resultat);
+        }        
+                   
+    });
+    }
+
+
+    function parseJSON(data) {
+            return window.JSON && window.JSON.parse ? window.JSON.parse(data) : (new Function("return " + data))();
+        }
+    
+
+    function draw(tab) {
+        $('#container').highcharts('StockChart', {
+            credits: {
+                enabled: false
+            },
+
+
+            rangeSelector: {
+                selected: 5,
+                inputEnabled: $('#container').width() > 480
+            },
+
+            legend: {
+                enabled: true,
+                reversed: true
+            },
+
+            yAxis: {
+                min: 0,
+                max: 5,
+            },
+
+            title: {
+                text: 'Degré de satisfaction'
+            },
+            series: [{
+                point: {
+                    events:
+                    {
+                        click: function (event) {
+                            console.log(this.name, this.y, this.x);
+                        }
+                    }
+                },
+                color: 'rgba(255, 128, 0, 0.7)',
+                name: 'Degré de satisfaction',
+                data: tab,
+                type: 'area',
+                threshold: null,
+                tooltip: {
+                    valueDecimals: 2
+                },
+                fillColor: {
+                    linearGradient: [0, 0, 0, 0],
+                    stops: [
+                      [0, 'rgba(255, 128, 0, 0.2)']
+                    ]
+                }
+            }]
+        });
+    }
+
+    function startPage() {
+
+        $.ajax({
+            url: "@Url.Action("StartPage", "DegreSatisfaction")",
+            dataType: "json",
+        type: "POST",
+        error: function () {
+            alert("An error occurred.");
+        },
+        success: function (tab) {
+
+            json = parseJSON(tab);
+            draw(json.Resultat);
+                            
+        }
+        });
+
+    }
+
+</script>

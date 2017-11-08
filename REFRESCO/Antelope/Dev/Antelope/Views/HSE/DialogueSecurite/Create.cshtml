@@ -1,0 +1,76 @@
+﻿@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+ 
+<script type="text/javascript" src="/Scripts/spin.min.js"></script>
+<link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/Scripts/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="~/Scripts/jquery.imagemapster.min.js"></script>
+
+<script type="text/javascript" src="~/Scripts/Application/HSE/DialogueSecurite/Formulaire/ViewModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/RechercheActiveDirectoryModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/HSE/DialogueSecurite/DialogueSecuriteModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/HSE/DialogueSecurite/ThematiqueModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/SiteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/ZoneModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/LieuModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/Socle/PersonneModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/Socle/ServiceTypeModel.js"></script>
+
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/RechercheActiveDirectoryView.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/AlerteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/AlerteView.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/HSE/DialogueSecurite/Formulaire/DialogueSecuriteView.js"></script>
+
+@Html.Partial("~/Views/HSE/DialogueSecurite/Create/_RechercheActiveDirectory.cshtml", "RechercheActiveDirectory")
+<div id="RechercheActiveDirectoryDiv"></div>
+
+@Html.Partial("~/Views/HSE/DialogueSecurite/Create/_DialogueSecuriteTemplate.cshtml", "DialogueSecuriteTemplate")
+<div id="DialogueSecuriteDiv"></div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var dialogueSecuriteId = "@ViewBag.Id"; 
+
+        var viewModel = new ViewModel({ id: dialogueSecuriteId }); //{id:NonConformiteId}
+        viewModel.fetch({ async: false });
+
+        var dialogueSecuriteModel = new DialogueSecuriteModel(viewModel.get('DialogueSecurite'));
+        if (dialogueSecuriteModel.get('Id') === -1 || dialogueSecuriteModel.get('Id') === 0) {
+            dialogueSecuriteModel.unset('Id');
+        };
+        dialogueSecuriteModel.set({ 'DateJavascript': dateTimeUtils.dateFormatJS(dialogueSecuriteModel.get('Date')) });
+        viewModel.set({ 'dialogueSecuriteModel': dialogueSecuriteModel });
+        viewModel.set({ 'siteCollection': new SiteCollection(viewModel.get('AllSite')) });
+        viewModel.set({ 'zoneCollection': new ZoneCollection(viewModel.get('AllZone')) });
+        viewModel.set({ 'thematiqueCollection': new ThematiqueCollection(viewModel.get('AllThematique')) });
+        viewModel.get('zoneCollection').each(function (zone, index) {
+            zone.set({ 'Nom': zone.get('ZoneType').Nom });
+        });
+        viewModel.set({ 'lieuCollection': new LieuCollection(viewModel.get('AllLieu')) });
+        dialogueSecuriteModel.set({ 'Dialogueur1': new PersonneModel(dialogueSecuriteModel.get('Dialogueur1')) });
+        dialogueSecuriteModel.set({ 'Dialogueur2': new PersonneModel(dialogueSecuriteModel.get('Dialogueur2')) });
+        dialogueSecuriteModel.set({ 'Dialogueur3': new PersonneModel(dialogueSecuriteModel.get('Dialogueur3')) });
+        dialogueSecuriteModel.set({ 'Entretenu1': new PersonneModel(dialogueSecuriteModel.get('Entretenu1')) });
+        dialogueSecuriteModel.set({ 'Entretenu2': new PersonneModel(dialogueSecuriteModel.get('Entretenu2')) });
+        dialogueSecuriteModel.set({ 'Entretenu3': new PersonneModel(dialogueSecuriteModel.get('Entretenu3')) });
+        viewModel.set({ 'serviceTypeCollection': new ServiceTypeCollection(viewModel.get('AllServiceType')) });
+        console.log(dialogueSecuriteModel);
+
+        Backbone.applicationEvents = _.extend({}, Backbone.Events);
+        var alerteModel = new AlerteModel();
+        var dialogueSecuriteView = new window.DialogueSecuriteView({
+            el: $("#DialogueSecuriteDiv"),
+            model: viewModel
+        });
+
+        var alerteView = new AlerteView({
+            el: $("#alerteDiv"),
+            model: alerteModel
+        });
+    })
+
+</script>

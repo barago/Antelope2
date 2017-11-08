@@ -1,0 +1,206 @@
+﻿@{
+    ViewBag.Title = "Paramètrage";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("~/Views/HSE/Parametrage/Parametrage/_ParametrageTemplate.cshtml", "ParametrageTemplate")
+<div id="PrincipalDiv"></div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var currentHSERole = "@ViewBag.CurrentHSERole";
+
+        ResponseModel = Backbone.Model.extend({
+            url: '/api/HSEParametrage/',
+            id: 0
+        });
+
+        ParametrageModel = Backbone.Model.extend({
+        });
+
+        HSERoleModel = Backbone.Model.extend({
+            idAttribute: 'ADRoleID',
+        });
+
+        HSERoleCollection = Backbone.Collection.extend({
+            model: HSERoleModel
+        });
+
+        responseModel = new ResponseModel();
+        responseModel.set({ "currentHSERole": currentHSERole });
+
+        responseModel.url = '/api/action/HSEParametrage/GetHSEParametrage';
+        responseModel.fetch({ async: false, wait: true });
+
+        hseRoleCollection = new HSERoleCollection(responseModel.get('Roles'));
+
+        responseModel.set({ 'ParametrageModel': new ParametrageModel(responseModel.get('Parametrage')) });
+        responseModel.set({ 'HSERoleCollection': hseRoleCollection });
+
+        console.log(responseModel);
+
+        ParametrageView = Backbone.View.extend({
+            id: 'ParametrageDiv',
+            template: _.template($('#ParametrageTemplate').html()),
+            render: function () {
+                //console.log(this.model);
+                this.$el.html(this.template(this.model.toJSON()));
+                return this;
+            },
+            initialize: function () {
+
+                this.render();
+            },
+            events: {
+                "click #DebugFicheCloturees": "debugFicheCloturees",
+                "click #AlimentationBaseTest": "alimentationBaseTest",
+                "click #AlimentationBaseAcceptance": "alimentationBaseAcceptance",
+                "click #SaveParametrageHSEEmail": "saveParametrageHSEEmail",
+                "keyup #EmailDiffusionFS": "changeEmailDiffusionFS",
+                "keyup #EmailValidationRejetPlanActionFS": "changeEmailValidationRejetPlanActionFS",
+                "keyup #EmailDiffusionPlanActionFS": "changeEmailDiffusionPlanAction",
+                "click #AddAdministrateur": "addRole",
+                "click #AddCoordinateur": "addRole",
+                "click #AddAnimateur": "addRole",
+                "click #AddManager": "addRole",
+                "click #AddConsultation": "addRole",
+                "click #AddVisiteur": "addRole",
+                "click .DeleteRole": "deleteRole"
+
+            },
+            debugFicheCloturees: function(){
+                var r = confirm("Debug des plans d'action clôturés ?");
+                if (r == true) {
+                    this.model.url = '/api/action/HSEParametrage/DebugFicheCloturees';
+                    this.model.save(null, { async: false, wait: true });
+                } 
+
+            },
+            alimentationBaseTest: function () {
+                var r = confirm("Vous allez alimenter la BDD EN COURS (Test, Acceptance ou PROD, avec le jeu de données TEST original, Si vous ne savez pas ce que vous faites, ANNULEZ, Merci.");
+                if (r == true) {
+                    this.model.url = '/api/action/HSEParametrage/AlimenteBaseTest';
+                    this.model.save(null, { async: false, wait: true });
+                } 
+
+            },
+            alimentationBaseAcceptance: function () {
+                var r = confirm("Vous allez alimenter la BDD EN COURS (Test, Acceptance ou PROD, avec le jeu de données ACCEPTANCE original, Si vous ne savez pas ce que vous faites, ANNULEZ, Merci.");
+                if (r == true) {
+                    this.model.url = '/api/action/HSEParametrage/AlimenteBaseAcceptance';
+                    this.model.save(null, { async: false, wait: true });
+                } 
+            },
+            saveParametrageHSEEmail: function () {
+                this.model.url = '/api/action/HSEParametrage/SaveParametrageHSEEmail';
+                this.model.save(null, { async: false, wait: true });
+                this.render;
+            },
+            changeEmailDiffusionFS: function () {
+                console.log('PASSAGE DIFFUSION');
+                this.model.set({ 'EmailDiffusionFS': $('#EmailDiffusionFS').val() });
+            },
+            changeEmailValidationRejetPlanActionFS: function () {
+                this.model.set({ 'EmailValidationRejetPlanActionFS': $('#EmailValidationRejetPlanActionFS').val() });
+            },
+            changeEmailDiffusionPlanAction: function () {
+                this.model.set({ 'EmailDiffusionPlanAction': $('#EmailDiffusionPlanActionFS').val() });
+                console.log(this.model.get('EmailDiffusionPlanAction'));
+            },
+            addRole: function (ev) {
+
+                var id = $(ev.currentTarget).attr('id');
+
+                var roleCode;
+                
+                switch (id) {
+                    case "AddAdministrateur":
+                        roleCode = "100";
+                        break;
+                    case "AddCoordinateur":
+                        roleCode = "200";
+                        break;
+                    case "AddAnimateur":
+                        roleCode = "300";
+                        break;
+                    case "AddManager":
+                        roleCode = "400";
+                        break;
+                    case "AddConsultation":
+                        roleCode = "500";
+                        break;
+                    case "AddVisiteur":
+                        roleCode = "600";
+                        break;
+                }
+
+                var groupeAD = prompt("Veullez entrer un groupe de l'AD");
+                if (groupeAD != null) {
+                    
+                   
+                    hSERoleModel = new HSERoleModel({
+                        'RoleType':'HSE',
+                        'RoleCode':roleCode,
+                        'Name':groupeAD
+                    });
+
+                    console.log(hSERoleModel);
+               
+
+                    this.model.get('HSERoleCollection').create(
+                        hSERoleModel, {
+                            async: false, wait: true,
+                            success: _.bind(function (model, response) {
+                                this.render();
+                            },
+                        this),
+                            url: '/api/action/HSEParametrage/AddADRole/0'
+
+
+                        });
+                   
+                }
+
+                
+
+            },
+            deleteRole: function (ev) {
+
+                var id = $(ev.currentTarget).attr('data-id');
+                var classToDelete = $(ev.currentTarget).attr('data-classToDelete');
+
+                var confirmation = confirm("Êtes-vous sûr de vouloir supprimer les droits de ce groupe ?");
+                if (confirmation == true) {
+
+                    this.model.get('HSERoleCollection').findWhere({ ADRoleID: parseInt(id) }).destroy(
+                        {
+                            async: false, wait: true,
+                            success: _.bind(function (model, response) {
+                                this.render();
+                            },
+                        this),
+                            url: '/api/action/HSEParametrage/DeleteADRole/' + id
+
+
+                        });
+                }
+
+            }
+        });
+
+
+        var parametrageView = new ParametrageView({
+            el: $("#PrincipalDiv"),
+            model: responseModel
+        });
+
+
+
+
+
+    });
+
+
+</script>

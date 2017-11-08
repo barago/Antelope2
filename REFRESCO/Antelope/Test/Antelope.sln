@@ -1,0 +1,124 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Antelope", "Antelope\Antelope.csproj", "{CAF460A7-37D3-4AB3-97A7-7255ABD76DE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Antelope.Tests", "Antelope.Tests\Antelope.Tests.csproj", "{EAAF2C90-27FE-4456-B05C-7436737DB1ED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0966DD00-F25D-41A1-B417-6DA3D1F6A7AA}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Antelope.Database", "Antelope.Database\Antelope.Database.sqlproj", "{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Antelope.Infrastructure.EntityFramework", "Antelope.Infrastructure.EntityFramework\Antelope.Infrastructure.EntityFramework.csproj", "{9AD2A500-5E9C-4C2F-ADEF-7AE9EA8098BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Antelope.Domain.Models", "Antelope.Domain.Models\Antelope.Domain.Models.csproj", "{06C442B4-1218-4ACA-B731-2B74D75F3DAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Acceptance|Any CPU = Acceptance|Any CPU
+		Debug_Home|Any CPU = Debug_Home|Any CPU
+		debug_Remy|Any CPU = debug_Remy|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Test|Any CPU = Test|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CAF460A7-37D3-4AB3-97A7-7255ABD76DE6}.Acceptance|Any CPU.ActiveCfg = Acceptance|Any CPU
+		{CAF460A7-37D3-4AB3-97A7-7255ABD76DE6}.Acceptance|Any CPU.Build.0 = Acceptance|Any CPU
+		{CAF460A7-37D3-4AB3-97A7-7255ABD76DE6}.Debug_Home|Any CPU.ActiveCfg = Debug_Home|Any CPU
+		{CAF460A7-37D3-4AB3-97A7-7255ABD76DE6}.Debug_Home|Any CPU.Build.0 = Debug_Home|Any CPU
+		{CAF460A7-37D3-4AB3-97A7-7255ABD76DE6}.debug_Remy|Any CPU.ActiveCfg = debug_Remy|Any CPU
+		{CAF460A7-37D3-4AB3-97A7-7255ABD76DE6}.debug_Remy|Any CPU.Build.0 = debug_Remy|Any CPU
+		{CAF460A7-37D3-4AB3-97A7-7255ABD76DE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAF460A7-37D3-4AB3-97A7-7255ABD76DE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAF460A7-37D3-4AB3-97A7-7255ABD76DE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAF460A7-37D3-4AB3-97A7-7255ABD76DE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAF460A7-37D3-4AB3-97A7-7255ABD76DE6}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{CAF460A7-37D3-4AB3-97A7-7255ABD76DE6}.Test|Any CPU.Build.0 = Test|Any CPU
+		{EAAF2C90-27FE-4456-B05C-7436737DB1ED}.Acceptance|Any CPU.ActiveCfg = Acceptance|Any CPU
+		{EAAF2C90-27FE-4456-B05C-7436737DB1ED}.Acceptance|Any CPU.Build.0 = Acceptance|Any CPU
+		{EAAF2C90-27FE-4456-B05C-7436737DB1ED}.Debug_Home|Any CPU.ActiveCfg = Debug_Home|Any CPU
+		{EAAF2C90-27FE-4456-B05C-7436737DB1ED}.Debug_Home|Any CPU.Build.0 = Debug_Home|Any CPU
+		{EAAF2C90-27FE-4456-B05C-7436737DB1ED}.debug_Remy|Any CPU.ActiveCfg = debug_Remy|Any CPU
+		{EAAF2C90-27FE-4456-B05C-7436737DB1ED}.debug_Remy|Any CPU.Build.0 = debug_Remy|Any CPU
+		{EAAF2C90-27FE-4456-B05C-7436737DB1ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAAF2C90-27FE-4456-B05C-7436737DB1ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAAF2C90-27FE-4456-B05C-7436737DB1ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAAF2C90-27FE-4456-B05C-7436737DB1ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAAF2C90-27FE-4456-B05C-7436737DB1ED}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{EAAF2C90-27FE-4456-B05C-7436737DB1ED}.Test|Any CPU.Build.0 = Test|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Acceptance|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Acceptance|Any CPU.Build.0 = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Acceptance|Any CPU.Deploy.0 = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Debug_Home|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Debug_Home|Any CPU.Build.0 = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Debug_Home|Any CPU.Deploy.0 = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.debug_Remy|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.debug_Remy|Any CPU.Build.0 = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.debug_Remy|Any CPU.Deploy.0 = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Test|Any CPU.Build.0 = Debug|Any CPU
+		{EB2C7858-1749-41A9-8BF2-1AE6797F78B2}.Test|Any CPU.Deploy.0 = Debug|Any CPU
+		{9AD2A500-5E9C-4C2F-ADEF-7AE9EA8098BB}.Acceptance|Any CPU.ActiveCfg = Release|Any CPU
+		{9AD2A500-5E9C-4C2F-ADEF-7AE9EA8098BB}.Acceptance|Any CPU.Build.0 = Release|Any CPU
+		{9AD2A500-5E9C-4C2F-ADEF-7AE9EA8098BB}.Debug_Home|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AD2A500-5E9C-4C2F-ADEF-7AE9EA8098BB}.Debug_Home|Any CPU.Build.0 = Debug|Any CPU
+		{9AD2A500-5E9C-4C2F-ADEF-7AE9EA8098BB}.debug_Remy|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AD2A500-5E9C-4C2F-ADEF-7AE9EA8098BB}.debug_Remy|Any CPU.Build.0 = Debug|Any CPU
+		{9AD2A500-5E9C-4C2F-ADEF-7AE9EA8098BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AD2A500-5E9C-4C2F-ADEF-7AE9EA8098BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AD2A500-5E9C-4C2F-ADEF-7AE9EA8098BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AD2A500-5E9C-4C2F-ADEF-7AE9EA8098BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AD2A500-5E9C-4C2F-ADEF-7AE9EA8098BB}.Test|Any CPU.ActiveCfg = Release|Any CPU
+		{9AD2A500-5E9C-4C2F-ADEF-7AE9EA8098BB}.Test|Any CPU.Build.0 = Release|Any CPU
+		{06C442B4-1218-4ACA-B731-2B74D75F3DAE}.Acceptance|Any CPU.ActiveCfg = Release|Any CPU
+		{06C442B4-1218-4ACA-B731-2B74D75F3DAE}.Acceptance|Any CPU.Build.0 = Release|Any CPU
+		{06C442B4-1218-4ACA-B731-2B74D75F3DAE}.Debug_Home|Any CPU.ActiveCfg = Debug|Any CPU
+		{06C442B4-1218-4ACA-B731-2B74D75F3DAE}.Debug_Home|Any CPU.Build.0 = Debug|Any CPU
+		{06C442B4-1218-4ACA-B731-2B74D75F3DAE}.debug_Remy|Any CPU.ActiveCfg = Debug|Any CPU
+		{06C442B4-1218-4ACA-B731-2B74D75F3DAE}.debug_Remy|Any CPU.Build.0 = Debug|Any CPU
+		{06C442B4-1218-4ACA-B731-2B74D75F3DAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06C442B4-1218-4ACA-B731-2B74D75F3DAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06C442B4-1218-4ACA-B731-2B74D75F3DAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06C442B4-1218-4ACA-B731-2B74D75F3DAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06C442B4-1218-4ACA-B731-2B74D75F3DAE}.Test|Any CPU.ActiveCfg = Release|Any CPU
+		{06C442B4-1218-4ACA-B731-2B74D75F3DAE}.Test|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://tfs.indeso.fr:8080/tfs/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Antelope.Database\\Antelope.Database.sqlproj
+		SccProjectName1 = Antelope.Database
+		SccLocalPath1 = Antelope.Database
+		SccProjectUniqueName2 = Antelope.Domain.Models\\Antelope.Domain.Models.csproj
+		SccProjectName2 = Antelope.Domain.Models
+		SccLocalPath2 = Antelope.Domain.Models
+		SccProjectUniqueName3 = Antelope.Infrastructure.EntityFramework\\Antelope.Infrastructure.EntityFramework.csproj
+		SccProjectName3 = Antelope.Infrastructure.EntityFramework
+		SccLocalPath3 = Antelope.Infrastructure.EntityFramework
+		SccProjectUniqueName4 = Antelope.Tests\\Antelope.Tests.csproj
+		SccProjectName4 = Antelope.Tests
+		SccLocalPath4 = Antelope.Tests
+		SccProjectUniqueName5 = Antelope\\Antelope.csproj
+		SccProjectName5 = Antelope
+		SccLocalPath5 = Antelope
+	EndGlobalSection
+EndGlobal

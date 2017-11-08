@@ -1,0 +1,50 @@
+﻿
+@{
+    ViewBag.Title = "VolumeMail";
+    Layout = "~/Views/IndicateurSI/Shared/_Layout.cshtml";
+}
+
+<h2>VolumeMail</h2>
+
+<div id="test"><textarea></textarea></div>
+
+<button onclick="afficher($('#test').val());">Test</button>
+<button onclick="mailto();">MailTo</button>
+<div id="mailto"></div>
+
+<script>
+    function afficher(test) {
+        console.log(test)
+    }
+
+    function mailto()
+    {
+
+        var email = ('Remy Vissyrias');
+
+        var subject = ('My Feedback');
+
+        var cc = ('');
+
+        var bcc = ('');
+
+        var body = ('I am the body of the feedback that you are sending.');
+
+        var varmailto = 'mailto:' + email + '?subject=' + subject;
+
+        if (cc != '') {
+            varmailto += '&cc=' + cc;
+        }
+        if (bcc != '') {
+            varmailto += '&bcc=' + bcc;
+        }
+        varmailto += '&body=' + body
+
+        window.location.href = varmailto;
+
+    }
+
+    
+        
+
+</script>

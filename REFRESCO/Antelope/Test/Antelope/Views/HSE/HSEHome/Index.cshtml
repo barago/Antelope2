@@ -1,0 +1,277 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    body {
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 90% 100%;
+        background-attachment: fixed;
+        background-image: url(/Content/images/FOND_INTRANET_SANS_POMME.jpg);
+    }
+</style>
+
+<script type="text/javascript" src="/Scripts/spin.min.js"></script>
+
+
+<div class="row">
+    <div class="col-md-4">
+
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-danger" >
+            <div class="panel-heading" style="background-color: #C42031; color: white">SECURITE</div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-8">
+                        <a href="#" class="thumbnail">
+                            <img src="~/Content/images/HSE/Home/PICTO_securite.png" alt="...">
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-10 text-center">
+                        @Html.ActionLink("Liste des Fiches Sécurité", "Index", "FicheSecurite", null, new { @class = "btn-lg btn-danger", @style = "background-color: #C42031; color: white;" })
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="row">
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-10 text-center">
+                        @Html.ActionLink("Nouvelle Fiche Sécurité", "Create", "FicheSecurite", null, new { @class = "btn-lg btn-danger", @style = "background-color: #C42031; color: white" })
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="row">
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-10 text-center">
+                        @Html.ActionLink("Liste des Dialogues Sécurité", "Index", "DialogueSecurite", null, new { @class = "btn-lg btn-danger", @style = "background-color: #C42031; color: white" })
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="row">
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-10 text-center">
+                        @Html.ActionLink("Nouveau Dialogue Sécurité", "Create", "DialogueSecurite", null, new { @class = "btn-lg btn-danger", @style = "background-color: #C42031; color: white" })
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="row">
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-10 text-center">
+                        @Html.ActionLink("Evaluation des risques", null, null, null, new { @class = "btn-lg btn-default"})
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="row">
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-10 text-center">
+                        @Html.ActionLink("Statistiques", "Index", "HSEStatistique", null, new { @class = "btn-lg btn-danger", @style = "background-color: #C42031; color: white" })
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+
+                @*<div class="col-md-1">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+                            Nouvelle Fiche <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>@Html.ActionLink("FAS (Fiche Accident Sécurité)", "Create", "FicheSecurite")</li>                 ///    @Html.ActionLink("FAS (Fiche Accident Sécurité)", "Details", "FicheSecurite") </li>
+                            <li><a href="#">FPA (Fiche Presque Accident)</a></li>
+                        </ul>
+                    </div>
+                    <br />
+                    <button type="button" class="btn btn-danger">
+                        Evaluation des risques
+                    </button>
+                    <br />
+
+
+
+
+                </div>*@
+
+
+                <!-- Single button -->
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-md-4">
+        <div class="panel panel-success">
+            <div class="panel-heading" style="background-color: #8BAC27; color: white">ENVIRONNEMENT</div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-8">
+                        <a href="#" class="thumbnail">
+                            <img src="~/Content/images/HSE/Home/PICTO_environnement.png" alt="...">
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-10 text-center">
+                        @Html.ActionLink("A Venir", "Index", "FicheSecurite", null, new { @class = "btn-lg btn-danger", @style = "background-color: #8BAC27; color: white;" })
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="row">
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-10 text-center">
+                        @Html.ActionLink("A Venir", "Create", "FicheSecurite", null, new { @class = "btn-lg btn-danger", @style = "background-color: #8BAC27; color: white" })
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+                <br />
+                <br />
+                <br />
+
+
+                @*<div class="col-md-1">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+                                Nouvelle Fiche <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>@Html.ActionLink("FAS (Fiche Accident Sécurité)", "Create", "FicheSecurite")</li>                 ///    @Html.ActionLink("FAS (Fiche Accident Sécurité)", "Details", "FicheSecurite") </li>
+                                <li><a href="#">FPA (Fiche Presque Accident)</a></li>
+                            </ul>
+                        </div>
+                        <br />
+                        <button type="button" class="btn btn-danger">
+                            Evaluation des risques
+                        </button>
+                        <br />
+
+
+
+
+                    </div>*@
+
+
+                <!-- Single button -->
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @*<div class="col-md-4">
+        <div class="panel panel-success">
+            <div class="panel-heading" style="background-color: #8BAC27; color: white">ENVIRONNEMENT</div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <a href="#" class="thumbnail">
+                            <img src="~/Content/images/HSE/Home/Environment_icon2.jpg" alt="...">
+                        </a>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                Bouton 1 <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">FAS (Fiche Accident Sécurité)</a></li>
+                                <li><a href="#">FPA (Fiche Presque Accident)</a></li>
+                            </ul>
+                        </div>
+                        <br />
+                        <button type="button" class="btn btn-success">
+                            Bouton 2
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>*@
+
+
+
+</div>
+
+
+
+@*<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">Statistiques</div>
+            <div class="panel-body">
+                Statistiques
+            </div>
+        </div>
+    </div>
+</div>*@
+
+<br/>
+<br />
+<br />
+<br />
+<br />
+<br />

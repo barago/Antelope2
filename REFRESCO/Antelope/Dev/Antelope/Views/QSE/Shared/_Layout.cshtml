@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "_QSELayout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<div class="navbar-xs">
+    <div class="navbar-primary">*@
+        <div class="navbar navbar-fixed-top navbar-default navbar-lower" style="margin-top:28px;z-index:500;">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#secondNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("Qualité-SE", "Index", "QSEHome", null, new { @class = "navbar-brand" })
+                </div>
+                <div id="secondNavbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav" style="width:80%;">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Qualité <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("Create","NonConformite")">Nouvelle Non Conformité</a></li>
+                                <li><a href="@Url.Action("Index","NonConformite")">Liste des Actions</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Paramétrage<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("General", "QSEParametrage")">Général</a></li>
+                                <li><a href="@Url.Action("Changelog", "QSEParametrage")">Changelog</a></li>
+                            </ul>
+                        </li>
+                        <li style="width: 70%;">
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    @*</div>
+</div>*@
+
+<div class="navbar-xs">
+    <div class="navbar-primary">
+        <div class="navbar navbar-fixed-top navbar-default navbar-lower" style="margin-top:79px;z-index:499;">
+            <div class="container-fluid">
+                <div class="alert alert-danger hidden" role="alert" style="margin: 0px; padding-top: 2px; padding-bottom: 2px; width: 100%;"><span class="glyphicon glyphicon-bullhorn"></span> ALERTE ! Nouvelle Alerte</div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/template" id="alerteTemplate">
+       <% if(alerteHidden === false){ %>
+        <div class="col-md-12">
+            <div class="<%= alerteClass %>" role="alert" style="text-align:center;margin:0px;padding-top:2px;padding-bottom:2px;width:100%;"><%= alerteMessage %></div>
+        </div>
+        <% } %>      
+    </script>
+
+    <div id="alerteDiv" class="row" style="margin-top:29px;position:fixed;z-index:499;width:70%">
+    </div>
+
+    @*<div class="col-md-12">
+            <div style="margin:43px;position:fixed;">
+                <div class="alert alert-danger" role="alert"> ALERTE ! Nouvelle Alerte</div>
+            </div>
+    </div>*@
+
+    @Scripts.Render("~/Scripts/jquery-ui-1.10.4.custom.min.js")
+    <script type="text/javascript" src="/Scripts/moment-with-langs.js"></script>
+    <script type="text/javascript" src="/Scripts/underscore.js"></script>
+    <script type="text/javascript" src="/Scripts/backbone.js"></script>
+
+    <div style="margin-top:68px;z-index:998;">
+        @RenderBody()
+    </div>

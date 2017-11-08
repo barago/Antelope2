@@ -1,0 +1,336 @@
+﻿
+@{
+    ViewBag.Title = "SupportDelaiCategorie";
+    Layout = "~/Views/IndicateurSI/Shared/_Layout.cshtml";
+}
+
+<h2><img alt="" width="32" height="32" src="~/Content/images/IndicateurSI/volume.png" /> Temps de traitement moyen par catégorie</h2>
+
+<div class="row" style="background-color: #AADBE0; border-color: black; border-width: 1px; border-style: solid; padding:0px">
+    <div class="col-md-3">
+
+        <div class="row">
+            <div class="col-md-12">
+                <h3 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection mois</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="selectMois"></div><br />
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-3">
+
+        <div class="row">
+            <div class="col-md-12">
+                <h3 style="color:#23A7AC; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection service SI</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="selectSI"></div><br />
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-3">
+
+        @*<div class="row">
+            <div class="col-md-12">
+                <h3 style="color:#FD9910; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection personnel</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="selectPersonnel"></div><br />
+            </div>
+        </div>*@ 
+
+    </div>
+    <div class="col-md-3">
+
+        <br />
+        <div id="buttonRetour"></div><br />
+    </div>
+    </div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="container" style="height: 600px; min-width: 400px"></div>
+
+    </div>
+</div>
+
+
+
+<script>
+
+$(document).ready(function () {
+    
+    drill = 0;
+    date = new Date;
+    mois = date.getMonth();
+    moisLettre = new Array('Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre');
+    annee = date.getFullYear();
+    anneePrec = date.getFullYear() - 1;
+
+    // Récupération noms services SI
+    $.ajax({
+        url: "@Url.Action("recupNameSI", "SupportDelaiCategorie")",
+        data: {},
+        dataType: "json",
+        type: "POST",
+        error: function () {
+        alert("An error occurred.");
+    },
+        success: function (data) {
+        
+        var json = parseJSON(data);
+        valSelectSI = '<select id="SelSI">'
+        for (var i = 0; i < json.name.length; i++) {
+            valSelectSI += '<option ';
+            if (json.name[i] == "SAP / Fonctionnel") valSelectSI += 'selected '
+            valSelectSI += 'value="' + json.name[i] + '">' + json.name[i] + '</option>';
+        }
+        valSelectSI += '</select>';
+        document.getElementById('selectSI').innerHTML = valSelectSI;
+    }
+    });
+
+    valSelectMois = '<select id="SelMois">'
+    for (var i = 1; i < 6; i++) {
+        valSelectMois += '<option ';
+        if (i == 1) valSelectMois += 'selected ';
+        valSelectMois += 'value=' + i + '>' + moisPrec(i) + '</option>';
+    }
+    valSelectMois += '</select>';
+    document.getElementById('selectMois').innerHTML = valSelectMois;
+
+    $('#selectMois').on('change', function () {
+        recharge();
+    });
+
+    $('#selectSI').on('change', function () {
+        recharge();
+    });
+
+    $('#selectPersonnel').on('change', function () {
+        recharge();
+    });
+
+    $('#buttonRetour').on('click', function () {
+        recharge();
+    })
+
+    // Dessin chargement de page
+    reDraw(1, "SAP / Fonctionnel");
+    //rechargePersonnel($('#SelSI').find(":selected").val());
+
+});
+    function recharge() {
+        drill = 0;
+        var dateId = $('#SelMois').find(":selected").val();
+        var SIId = $('#SelSI').find(":selected").val();
+        reDraw(dateId, SIId);
+        $('button').remove();
+    }
+
+    function draw(dateId, tabCategorie, tabValSolve, tabValSolveIncident, tabValSolveDemande, categorie) {
+        if (categorie != null)
+            categorie = ' - ' + categorie;
+        else categorie = '';
+        $('#container').highcharts({
+            credits: {
+                enabled: false
+            },
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Temps moyen de résolution des tickets - ' + moisPrec(dateId) + categorie
+            },
+            xAxis: {
+                categories: tabCategorie
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Temps de résolution moyen (en jours)'
+                },
+                stackLabels: {
+                    enabled: false,
+                    style: {
+                        fontWeight: 'bold',
+                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    }
+                }
+            },
+            legend: {
+                align: 'right',
+                x: -70,
+                verticalAlign: 'top',
+                y: 20,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) || 'white',
+                borderColor: '#CCC',
+                borderWidth: 1,
+                shadow: true
+            },
+            tooltip: {
+                valueDecimals: 2,
+                formatter: function() {
+                    return '<b>' + this.x + '</b><br />' +
+                        this.series.name + ': ' + Highcharts.numberFormat(this.y, 2);
+                }
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: false,
+                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                        style: {
+                            textShadow: '0 0 3px black, 0 0 3px black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                        name: 'Tous les tickets',
+                        data: tabValSolve,
+                        stack: 'total',
+                        point: {
+                            events: {
+                                        click: function (event)
+                                        {
+                                            if (tabValSolve[this.x] != 0)
+                                            {
+                                                if (drill == 0)
+                                                {
+                                                    drill = 1;
+                                                    $('#buttonRetour').append('<button class="regular pull-right" value="' + tabCategorie[this.x] + '"><img alt="" width="20" height="20" src="/Content/images/IndicateurSI/player-precedent.png"/> Retour vue par catégorie</button>');
+                                                    reDrawCategorie(dateId, tabCategorie[this.x]);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                    },
+                    {
+                        name: 'Incidents',
+                        data: tabValSolveIncident,
+                        stack: 'incident',
+                        point: {
+                            events: {
+                                click: function (event) {
+                                    if (tabValSolve[this.x] != 0) {
+                                        if (drill == 0) {
+                                            drill = 1;
+                                            $('#buttonRetour').append('<button class="regular pull-right" value="' + tabCategorie[this.x] + '"><img alt="" width="20" height="20" src="/Content/images/IndicateurSI/player-precedent.png"/> Retour vue par catégorie</button>');
+                                            reDrawCategorie(dateId, tabCategorie[this.x]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        name: 'Demandes',
+                        data: tabValSolveDemande,
+                        stack: 'demande',
+                        point: {
+                            events:
+                                {
+                                    click: function (event) {
+                                        if (tabValSolve[this.x] != 0) {
+                                            if (drill == 0) {
+                                                drill = 1;
+                                                $('#buttonRetour').append('<button class="regular pull-right" value="' + tabCategorie[this.x] + '"><img alt="" width="20" height="20" src="/Content/images/IndicateurSI/player-precedent.png"/> Retour vue par catégorie</button>');
+                                                reDrawCategorie(dateId, tabCategorie[this.x]);
+                                            }
+                                        }
+                                    }
+                                }
+                        }
+                    }]
+            @*, {
+                name: 'Prise en compte',
+                data: [12, 2, 3, 1, 0, 17]
+            }]*@
+        });
+    };
+
+
+    function reDraw(dateId, SIId) {
+       
+        $.ajax({
+            url: "@Url.Action("reDraw", "SupportDelaiCategorie")",
+            data: { dateId: dateId, SIId:SIId },
+        dataType: "json",
+        type: "POST",
+        error: function () {
+            alert("An error occurred.");
+        },
+        success: function (result) {
+
+            var json = parseJSON(result);
+
+            draw(json.Date, json.Categorie, json.ValSolve, json.ValSolveIncident, json.ValSolveDemande);
+        }
+        });
+
+    }
+
+    function reDrawCategorie(dateId, categorie) {
+        $.ajax({
+            url: "@Url.Action("reDrawCategorie", "SupportDelaiCategorie")",
+            data: { dateId: dateId, categorie: categorie },
+        dataType: "json",
+        type: "POST",
+        error: function () {
+            alert("An error occurred.");
+        },
+        success: function (result) {
+
+            var json = parseJSON(result);
+
+            draw(json.Date, json.Categorie, json.ValSolve, json.ValSolveIncident, json.ValSolveDemande, categorie);
+        }
+    });
+    }
+
+    function moisPrec(nbMois) {
+
+        if (mois >= nbMois)
+            return (moisLettre[mois - nbMois] + ' ' + annee);
+        else return (moisLettre[mois + (12-nbMois)] + ' ' + anneePrec);
+    }
+
+    function parseJSON(data) {
+        return window.JSON && window.JSON.parse ? window.JSON.parse(data) : (new Function("return " + data))();
+    }
+
+    function rechargePersonnel(SIId) {
+        $.ajax({
+            url: "@Url.Action("recupNameEmploye", "SupportDelaiCategorie")",
+            data: { SIId: SIId },
+            dataType: "json",
+            type: "POST",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (data) {
+
+                var json = parseJSON(data);
+                valSelectPersonnel = '<select id="SelPersonnel">'
+                for (var i = 0; i < json.name.length; i++) {
+                    valSelectPersonnel += '<option value="' + json.id[i] + '">' + json.name[i] + '</option>';
+                }
+                valSelectPersonnel += '</select>';
+                document.getElementById('selectPersonnel').innerHTML = valSelectPersonnel;
+            }
+        });
+    }
+
+</script>

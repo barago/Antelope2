@@ -1,0 +1,368 @@
+﻿
+@{
+    ViewBag.Title = "NbFSChrono";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript" src="/Scripts/underscore.js"></script>
+<script type="text/javascript" src="/Scripts/backbone.js"></script>
+
+<script type="text/javascript" src="/Scripts/HighStock/highstock.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.ddslick.min.js"></script>
+
+<script type="text/template" id="StatistiqueTemplate">
+
+
+
+
+
+            <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+<div id="PrincipalDiv">
+</div>
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+        ResponseModel = Backbone.Model.extend({
+            url: '/api/HSEStatistique/',
+            id:0
+        });
+
+        //AnnuaireModel = Backbone.Model.extend({
+        //});
+
+        //SiteModel = Backbone.Model.extend({
+        //});
+
+        //UtilisateurModel = Backbone.Model.extend({
+        //});
+
+
+        //UtilisateurCollection = Backbone.Collection.extend({
+        //    model : UtilisateurModel
+        //});
+
+        //SiteCollection = Backbone.Collection.extend({
+        //    model: UtilisateurModel
+        //});
+
+        //FicheSecuriteModel = Backbone.Model.extend({
+        //});
+
+
+        //FicheSecuriteCollection = Backbone.Collection.extend({
+        //    model: UtilisateurModel
+        //});
+
+        responseModel = new ResponseModel();
+        ////responseModel.set({ "currentHSERole": currentHSERole });
+
+        //responseModel.url = '/api/action/Annuaire/GetAnnuaire';
+        responseModel.fetch({ async: false, wait: true });
+
+        //siteCollection = new SiteCollection(responseModel.get('AllSite'));
+        //utilisateurCollection = new UtilisateurCollection(responseModel.get('AllUtilisateur'));
+
+        //responseModel.set({ 'annuaireModel': new ParametrageModel(responseModel.get('Data')) });
+        //responseModel.set({ 'siteCollection': siteCollection });
+        //responseModel.set({ 'utilisateurCollection': utilisateurCollection });
+
+        responseModel.get('AllFicheSecurite').forEach(function (FS) {
+            FS.TimeStamp *= 1000;
+        });
+
+       // console.log(responseModel);
+
+        var weeks = [];
+        var weeksDLF = [];
+        var weeksSTA = [];
+        var weeksNSG = [];
+        var weeksLQN = [];
+        
+
+        var dateDuJour = new Date();
+        var dateDuJourADecrementer = new Date();
+
+        while (dateDuJourADecrementer.getFullYear() === dateDuJour.getFullYear()) {
+            if (dateDuJourADecrementer.getDay() === 1) {
+                var point = [Math.floor(dateDuJourADecrementer), 0]; // dateDuJourADecrementer.valueOf()
+                var pointDLF = [Math.floor(dateDuJourADecrementer), 0]; // dateDuJourADecrementer.valueOf()
+                var pointSTA = [Math.floor(dateDuJourADecrementer), 0]; // dateDuJourADecrementer.valueOf()
+                var pointNSG = [Math.floor(dateDuJourADecrementer), 0]; // dateDuJourADecrementer.valueOf()
+                var pointLQN = [Math.floor(dateDuJourADecrementer), 0]; // dateDuJourADecrementer.valueOf()
+                weeks.push(point);
+                weeksDLF.push(pointDLF);
+                weeksSTA.push(pointSTA);
+                weeksNSG.push(pointNSG);
+                weeksLQN.push(pointLQN);
+
+            }
+
+            dateDuJourADecrementer.setDate(dateDuJourADecrementer.getDate() - 1);
+        }
+        weeks.reverse();
+        weeksDLF.reverse();
+        weeksSTA.reverse();
+        weeksNSG.reverse();
+        weeksLQN.reverse();
+
+        console.log("weeks");
+        console.log(weeks);
+        console.log("weeksDLF");
+        console.log(weeksDLF);
+
+        console.log("responseModel.get('AllFicheSecurite')");
+        console.log(responseModel.get('AllFicheSecurite'));
+
+
+        for (var i = 0; i < weeks.length; i++) {
+
+
+            responseModel.get('AllFicheSecurite').forEach(function (FS) {
+
+                if (FS.TimeStamp <= weeks[i][0]) {
+
+
+
+                    weeks[i][1]++;
+                       
+                            switch (FS.Site) {
+                                case "DLF":
+                                    weeksDLF[i][1]++
+                                    break;
+                                case "STA":
+                                    weeksSTA[i][1]++
+                                    break;
+                                case "NSG":
+                                    weeksNSG[i][1]++
+                                    break;
+                                case "LQN":
+                                    weeksLQN[i][1]++
+                                    break;
+                                default:
+                                        break;
+                }
+
+                       }
+            });
+
+
+            //})
+
+
+        };
+
+
+
+
+        //weeks.forEach(function (week) {
+        //    var count = 0;
+        //    responseModel.get('AllFicheSecurite').forEach(function (FS) {
+
+        //        if(FS.TimeStamp <= week[0]){
+                    
+        //            week[1]++;
+
+        //            switch (FS.Site) {
+        //                case "DLF":
+        //                    week[2]++
+        //                case "STA":
+        //                    week[3]++
+        //                case "NSG":
+        //                    week[4]++
+
+        //            }
+        //        }
+
+
+        //    })
+
+
+
+      
+        //});
+
+
+
+
+
+        responseModel.set({ "weeks": weeks });
+        responseModel.set({ "weeksDLF": weeksDLF });
+        responseModel.set({ "weeksSTA": weeksSTA });
+        responseModel.set({ "weeksNSG": weeksNSG });
+        responseModel.set({ "weeksLQN": weeksLQN });
+
+        //console.log(responseModel);
+
+        StatistiqueView = Backbone.View.extend({
+            id: 'StatistiqueDiv',
+            template: _.template($('#StatistiqueTemplate').html()),
+            render: function () {
+                this.$el.html(this.template(this.model.toJSON()));
+
+                this.buildChart();
+
+                return this;
+            },
+            initialize : function(){
+
+
+
+                this.render();
+            },
+            events: {
+                "click #AlimentationBaseTest": "alimentationBaseTest",
+
+
+            },
+            buildChart: function () {
+
+                $('#container').highcharts('StockChart', {
+                    credits: {
+                        enabled: false
+                    },
+
+
+                    rangeSelector: {
+                        selected: 5,
+                        inputEnabled: $('#container').width() > 480
+                    },
+
+                    legend: {
+                        enabled: true,
+                        reversed: true
+                    },
+
+                    yAxis: { min: 0 },
+                    title: {
+                        text: 'Nombre de Fiches Sécurité'
+                    },
+
+                    series: [{
+                        color: 'rgba(255, 128, 0, 0.7)',
+                        name: 'FS Total',
+                        data: this.model.get('weeks'), 
+                        //type: 'area',
+                        threshold: null,
+                        tooltip: {
+                            valueDecimals: 0
+                        },
+                        //fillColor: {
+                        //    linearGradient: [0, 0, 0, 0],
+                        //    stops: [
+                        //      [0, 'rgba(255, 128, 0, 0.2)']
+                        //    ]
+                        //}
+                    }, {
+                        color: 'rgba(0,255,0,0.7)',
+                        name: 'FS DLF',
+                        data: this.model.get('weeksDLF'),
+                        //type: 'area',
+                        threshold: null,
+                        tooltip: {
+                            valueDecimals: 0
+                        },
+                        //fillColor: {
+                        //    linearGradient: [0, 0, 0, 0],
+                        //    stops: [
+                        //      [0, 'rgba(35,167,172,0.1)']
+                        //    ]
+                        //}
+
+                    }, {
+                        color: 'rgba(255,0,0,0.7)',
+                        name: 'FS STA',
+                        data: this.model.get('weeksSTA'),
+                        //type: 'area',
+                        threshold: null,
+                        tooltip: {
+                            valueDecimals: 0
+                        },
+                        //fillColor: {
+                        //    linearGradient: [0, 0, 0, 0],
+                        //    stops: [
+                        //      [0, 'rgba(35,167,172,0.1)']
+                        //    ]
+                        //}
+
+                    }, {
+                        color: 'rgba(0,0,255,0.7)',
+                        name: 'FS NSG',
+                        data: this.model.get('weeksNSG'),
+                        //type: 'area',
+                        threshold: null,
+                        tooltip: {
+                            valueDecimals: 0
+                        },
+                        //fillColor: {
+                        //    linearGradient: [0, 0, 0, 0],
+                        //    stops: [
+                        //      [0, 'rgba(35,167,172,0.1)']
+                        //    ]
+                        //}
+
+                    }, {
+                        color: 'rgba(255,255,0,0.7)',
+                        name: 'FS LQN',
+                        data: this.model.get('weeksLQN'),
+                        //type: 'area',
+                        threshold: null,
+                        tooltip: {
+                            valueDecimals: 0
+                        },
+                        //fillColor: {
+                        //    linearGradient: [0, 0, 0, 0],
+                        //    stops: [
+                        //      [0, 'rgba(35,167,172,0.1)']
+                        //    ]
+                        //}
+
+                    }
+
+
+
+
+
+                    ]
+
+
+                });
+
+
+
+
+
+            },
+
+        });
+
+
+        var statistiqueView = new StatistiqueView({
+            el: $("#PrincipalDiv"),
+            model: responseModel
+        });
+
+
+
+
+
+    });
+
+
+</script>

@@ -1,0 +1,51 @@
+﻿@model Antelope.Models.HSE.ActionSecurite
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/HSE/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ActionSecurite</h4>
+	<hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FicheSecurite.Code)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FicheSecurite.Code)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Code)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Code)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FaitPar)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FaitPar)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ActionSecuriteId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

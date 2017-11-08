@@ -1,0 +1,558 @@
+﻿@model string
+<script type="text/template" id="@Model">
+
+    <div class="row">
+
+        @*<div class="col-md-2">
+                <img src="../../Content/images/HSE/FicheSecurite/stats.jpg" alt="..." style="max-width:100%;">
+            </div>*@
+        <div class="col-md-2">
+
+            <div class='input-group date' id='DateDebut'>
+                <input type='text' name="DateDebut" id="DateDebutInput" class="form-control input-xs" value="<%= paramModel.get('dateDebutJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <div class='input-group date' id='DateFin'>
+                <input type='text' name="DateFin" id="DateFinInput" class="form-control input-xs" value="<%= paramModel.get('dateFinJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <button id="RechercheBouton" type="submit" class="btn btn-default btn-xs pull-right">
+                <span class="glyphicon glyphicon-search"></span> Chercher
+            </button>
+        </div>
+
+        <div class="col-md-2">
+            <select id="Site" class="form-control input-xs">
+                <option value="0" <% if (siteId == 0){ %> selected <% } %> ></option>
+                <% siteCollection.each( function(site){ %>
+                <option value="<%= site.get('SiteID') %>"
+                    <% if (site.get('SiteID') == siteId){ %> selected <% } %>
+                    >
+                <%= site.get('Trigramme') %>
+            </option>
+                <% }); %>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select id="Type" class="form-control input-xs">
+                <option value="RESPONSABLE"  <% if (type === 'RESPONSABLE'){ %> selected <%}%> >Responsable</option>
+                <option value="ZONE"<% if (type === 'ZONE'){ %> selected <%}%>> Zone </option>
+                <option value="TYPE"<% if (type === 'TYPE'){ %> selected <%}%>> Type </option>
+                <option value="SERVICE"<% if (type === 'SERVICE'){ %> selected <%}%>> Service </option>
+            </select>
+        </div>
+
+    </div>
+    <div class="row" style="padding-top:20px;">
+
+        <div class="bs-example">
+            <ul class="nav nav-tabs">
+                <li <% if(base === "FS"){ %> class="active" <% } %>><a id="BaseFS" data-toggle="tab" href="#sectionA">Statistiques par FicheSecurite</a></li>
+                <li <% if(base === "ACTION"){ %> class="active" <% } %>><a id="BaseACTION" data-toggle="tab" href="#sectionB">Statistiques par Action</a></li>
+            </ul>
+            <div class="tab-content" style="color:grey;">
+                <div id="sectionA" class="tab-pane fade in active">
+                    <p>Exemple:  "Nb d'action = 30" signifie : 30 Actions dépendent de Fiches Sécurité dont la personne est résponsable (mais cette personne n'est pas forcément directement responsable des actions).</p>
+                </div>
+                <div id="sectionB" class="tab-pane fade">
+                    <p>Exemple:  "Nb d'action = 30" signifie : La personne possède 30 actions dont elle est responsable directement.  </p>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="row" style="margin-top:5px;padding-top:0px;">
+
+        <% if(base === "ACTION" && (type ==="ZONE" || type==="TYPE" || type==="SERVICE" )){ %> 
+
+        IMPOSSIBLE D'AFFICHER LE RESULTAT, LES ACTIONS NE SONT PAS LIEES A UNE ZONE, UN TYPE OU UN SERVICE 
+        VEUILLEZ FAIRE UNE RECHERCHE PAR FICHE SECURITE POUR CES FILTRES. 
+
+        <% }  else { %>
+
+        @*<div class="col-md-12">*@
+        <table id="table" class="StatistiquesPyramideTable">
+            <thead style="border-bottom: 3px solid black;font-size:x-small;">
+                <tr>
+
+
+                    @*<th>1</th>
+                        <th>1</th>
+                        <th>1</th>
+                        <th>1</th>
+                        <th>1</th>
+                        <th>1</th>
+                        <th>1</th>
+                        <th>1</th>
+                        <th>1</th>*@
+
+
+                    <th class="rotate45">
+                        <div>
+                            <span>
+                                <%= type  %>
+                            </span>
+                        </div>
+                    </th>
+                    <% if (base == "FS"){ %>
+                    <th class="rotate45 FS">
+                        <div>
+                            <span style="background-color:#E567A0; color:white;">
+                                Nb FS émises +
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 FSToggle">
+                        <div>
+                            <span style="background-color:#E0EEB4;  color:grey;">
+                                Nb FS clôt.
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 FSToggle">
+                        <div>
+                            <span style="background-color:#C8E4E8;  color:grey;">
+                                Nb FS PA clôt.
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 FSToggle">
+                        <div>
+                            <span style="background-color:#FCFCA2;  color:grey;">
+                                Nb FS PA validé
+                            </span>
+                        </div>
+                    </th>
+                    <% } %>
+                    <th class="rotate45">
+                        <div>
+                            <span style="background-color:#BF62A6; color:white;">
+                                Nb Act°
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionCloture">
+                        <div>
+                            <span style="background-color:#459BA8; color:white;">
+                                Nb Act° clôt. +
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionClotureToggle">
+                        <div>
+                            <span style="background-color:#E0EEB4; color:grey;">
+                                Nb Act° clôt. à temps <span style="color:red;">*</span>
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionClotureToggle">
+                        <div>
+                            <span style="background-color:#FCFCA2; color:grey;">
+                                Nb Act° clôt. retard
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45">
+                        <div>
+                            <span style="background-color:#79C267; color:white;">
+                                Nb Act° en cours
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionRetard">
+                        <div>
+                            <span style="background-color:#F94545; color:white;">
+                                TOTAL Act° retard +
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionRetardToggle">
+                        <div>
+                            <span style="background-color:#FCFCA2; color:grey;">
+                                Nb Act° retard < 1 mois
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionRetardToggle">
+                        <div>
+                            <span style="background-color:#FCDAAA; color:grey;">
+                                Nb Act° retard de 1 à 3 mois
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionRetardToggle">
+                        <div>
+                            <span style="background-color:#FDBBBB; color:grey;">
+                                Nb Act° retard > 3 mois
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 FSToggle">
+                        <div>
+                            <span style="background-color:#E0EEB4;  color:grey;">
+                                % FS clôt./émises
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 FSToggle">
+                        <div>
+                            <span style="background-color:#C8E4E8;  color:grey;">
+                                % FS PA clôt./émises
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 FSToggle">
+                        <div>
+                            <span style="background-color:#FCFCA2;  color:grey;">
+                                % FS PA validé/émises
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionCloture">
+                        <div>
+                            <span style="background-color:#459BA8; color:white;">
+                                % Act° clôt./émises +
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionClotureToggle">
+                        <div>
+                            <span style="background-color:#E0EEB4; color:grey;">
+                                % Act° clôt. à temps/émises
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionClotureToggle">
+                        <div>
+                            <span style="background-color:#FCFCA2; color:grey;">
+                                % Act° clôt. en retard
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45">
+                        <div>
+                            <span style="background-color:#79C267; color:white;">
+                                % Act° en cours
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionRetard">
+                        <div>
+                            <span style="background-color:#F94545; color:white;">
+                                TOTAL Act° retard/restantes +
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionRetardToggle">
+                        <div>
+                            <span style="background-color:#FCFCA2; color:grey;">
+                                % Act° retard < 1M/restantes
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionRetardToggle">
+                        <div>
+                            <span style="background-color:#FCDAAA; color:grey;">
+                                % Act° retard de 1 à 3M/restantes
+                            </span>
+                        </div>
+                    </th>
+                    <th class="rotate45 ActionRetardToggle">
+                        <div>
+                            <span style="background-color:#FDBBBB; color:grey;">
+                                % Act° retard > 3M/restantes
+                            </span>
+                        </div>
+                    </th>
+
+
+                    @*
+                        <th class="rotate45">
+                            <div>
+                                <span>
+                                    <%= type  %>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 FS">
+                            <div>
+                                <span style="background-color:#E567A0; color:white;">
+                                    Nb FS émises >>>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 FSToggle">
+                            <div>
+                                <span style="background-color:#E0EEB4;  color:grey;">
+                                    Nb FS clôturées
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 FSToggle">
+                            <div>
+                                <span style="background-color:#C8E4E8;  color:grey;">
+                                    Nb FS dont PA est clôturé
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 FSToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2;  color:grey;">
+                                    Nb FS dont PA est validé
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#BF62A6; color:white;">
+                                    Nb Actions
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionCloture">
+                            <div>
+                                <span style="background-color:#459BA8; color:white;">
+                                    Nb Actions clôturées >>>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionClotureToggle">
+                            <div>
+                                <span style="background-color:#E0EEB4; color:grey;">
+                                    Nb Actions clôturées à temps
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionClotureToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2; color:grey;">
+                                    Nb Actions clôturées en retard
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#79C267; color:white;">
+                                    Nb Actions en cours
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetard">
+                            <div>
+                                <span style="background-color:#F94545; color:white;">
+                                    TOTAL Actions en retard >>>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2; color:grey;">
+                                    Nb Actions retard < 1 mois
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FCDAAA; color:grey;">
+                                    Nb Actions retard de 1 à 3 mois
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FDBBBB; color:grey;">
+                                    Nb Actions retard > 3 mois
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 FSToggle">
+                            <div>
+                                <span style="background-color:#E0EEB4;  color:grey;">
+                                    % FS clôturées/FS émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 FSToggle">
+                            <div>
+                                <span style="background-color:#C8E4E8;  color:grey;">
+                                    % FS PA clôturé/FS émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 FSToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2;  color:grey;">
+                                    % FS PA validé/FS émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionCloture">
+                            <div>
+                                <span style="background-color:#459BA8; color:white;">
+                                    % Actions clôturées/émises >>>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionClotureToggle">
+                            <div>
+                                <span style="background-color:#E0EEB4; color:grey;">
+                                    % Actions clôturée à temps/émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionClotureToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2; color:grey;">
+                                    % Actions clôturée en retard
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#79C267; color:white;">
+                                    % Actions en cours
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetard">
+                            <div>
+                                <span style="background-color:#F94545; color:white;">
+                                    TOTAL Actions retard/restantes >>>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2; color:grey;">
+                                    % Actions retard < 1M/restantes
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FCDAAA; color:grey;">
+                                    % Actions retard de 1 à 3M/restantes
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FDBBBB; color:grey;">
+                                    % Actions retard > 3M/restantes
+                                </span>
+                            </div>
+                        </th>*@
+
+
+
+
+                </tr>
+
+                @*</thead>*@
+            <tbody style="width:1000px;">
+
+                <% typeOccurenceCollection.each( function(typeOccurence){ %>
+
+                <tr style="border: 1px solid black; height:15px;">
+
+
+                    <th>
+                        <%= typeOccurence.get('nom') %>
+                    </th>
+                    <% if (base == "FS"){ %>
+                    <th style="background-color:#E567A0; color:white;" class="FS">
+                        <%= typeOccurence.get('nbFSEmises') %>
+                    </th>
+                    <th style="background-color:#E0EEB4; color:grey;" class="FSToggle">
+                        <%= typeOccurence.get('nbFSCloturees') %>
+                    </th>
+                    <th style="background-color:#C8E4E8; color:grey;" class="FSToggle">
+                        <%= typeOccurence.get('nbFSPACloturees') %>
+                    </th>
+                    <th style="background-color:#FCFCA2; color:grey;" class="FSToggle">
+                        <%= typeOccurence.get('nbFSPAValidees') %>
+                    </th>
+                    <% } %>
+                    <th style="background-color:#BF62A6; color:white;">
+                        <%= typeOccurence.get('nbAction') %>
+                    </th>
+                    <th style="background-color:#459BA8; color:white;" class="ActionCloture">
+                        <%= typeOccurence.get('nbActionCloturees') %>
+                    </th>
+                    <th style="background-color:#D4E898; color:grey;" class="ActionClotureToggle">
+                        <%= typeOccurence.get('nbActionClotureesATemps') %>
+                    </th>
+                    <th style="background-color:#FCFCA2; color:grey;" class="ActionClotureToggle">
+                        <%= typeOccurence.get('nbActionClotureesEnRetard') %>
+                    </th>
+                    <th style="background-color:#79C267; color:white;">
+                        <%= typeOccurence.get('nbActionEnCours') %>
+                    </th>
+                    <th style="background-color:#F94545; color:white;" class="ActionRetard">
+                        <%= typeOccurence.get('nbActionEnRetard') %>
+                    </th>
+                    <th style="background-color:#FCFCA2; color:grey;" class="ActionRetardToggle">
+                        <%= typeOccurence.get('nbActionDepassees') %>
+                    </th>
+                    <th style="background-color:#FCDAAA; color:grey;" class="ActionRetardToggle">
+                        <%= typeOccurence.get('nbActionDepassees1Mois') %>
+                    </th>
+                    <th style="background-color:#FDBBBB; color:grey;" class="ActionRetardToggle">
+                        <%= typeOccurence.get('nbActionDepassees3Mois') %>
+                    </th>
+                    <th style="background-color:#E0EEB4; color:grey;" class="FSToggle">
+                        <%= typeOccurence.get('prctgFSCloturees') %>
+                    </th>
+                    <th style="background-color:#C8E4E8; color:grey;" class="FSToggle">
+                        <%= typeOccurence.get('prctgFSPlanActionCloture') %>
+                    </th>
+                    <th style="background-color:#FCFCA2; color:grey;" class="FSToggle">
+                        <%= typeOccurence.get('prctgFSPlanActionValide') %>
+                    </th>
+                    <th style="background-color:#459BA8; color:white;" class="ActionCloture">
+                        <%= typeOccurence.get('prctgActionCloturees') %>
+                    </th>
+                    <th style="background-color:#E0EEB4; color:grey;" class="ActionClotureToggle">
+                        <%= typeOccurence.get('prctgActionClotureesATemps') %>
+                    </th>
+                    <th style="background-color:#FCFCA2; color:grey;" class="ActionClotureToggle">
+                        <%= typeOccurence.get('prctgActionClotureesEnRetard') %>
+                    </th>
+                    <th style="background-color:#79C267; color:white;">
+                        <%= typeOccurence.get('prctgActionEnCours') %>
+                    </th>
+                    <th style="background-color:#F94545; color:white;" class="ActionRetard">
+                        <%= typeOccurence.get('prctgActionEnRetard') %>
+                    </th>
+                    <th style="background-color:#FCFCA2; color:grey;" class="ActionRetardToggle">
+                        <%= typeOccurence.get('prctgActionDepassees') %>
+                    </th>
+                    <th style="background-color:#FCDAAA; color:grey;" class="ActionRetardToggle">
+                        <%= typeOccurence.get('prctgActionDepassees1Mois') %>
+                    </th>
+                    <th style="background-color:#FDBBBB; color:grey;" class="ActionRetardToggle">
+                        <%= typeOccurence.get('prctgActionDepassees3Mois') %>
+                    </th>
+
+                </tr>
+
+                <% }) %>
+
+            </tbody>
+        </table>
+
+        <% } %>
+
+        @*</div>*@
+    </div>
+
+</script>

@@ -1,0 +1,106 @@
+﻿@model string
+<script type="text/template" id="@Model">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="panel panel-primary" style="border-color: #EB8C07;">
+                <div class="panel-heading" style="background-color :#EB8C07; color: white">
+
+                    <div class="row">
+
+                        <div class="col-md-3">
+                            FILTRES&nbsp;:
+                        </div>
+                        <div class="col-md-9">
+
+                            @*<button id="RechercheBouton" type="submit" class="btn btn-default btn-xs pull-right">
+                                    <span class="glyphicon glyphicon-search"></span> Chercher les Actions
+                                </button>*@
+
+                            <button id="RechercheDialogueSecuriteBouton" type="submit" class="btn btn-default btn-xs pull-right" style="margin-right:10px">
+                                <span class="glyphicon glyphicon-search"></span> Chercher les Dialogues
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body" style="padding:0px;">
+                    <div class="row input-sm">
+                        <div class="col-md-4">
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="Site" class="label-xs">Site&nbsp;:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select id="Site" class="form-control input-xs">
+                                        <option value="0" <% if (rechercheDialogueSecuriteParamModel.get('SiteId') == 0){ %> selected <% } %> ></option>
+                                        <% siteCollection.each( function(site){ %>
+                                        <option value="<%= site.get('SiteID') %>"
+                                            <% if (rechercheDialogueSecuriteParamModel.get('SiteId') == site.get('SiteID')){ %> selected <% } %> >
+                                            <%= site.get('Nom') %>
+                                        </option>
+                                        <% }); %>
+                                        @*%> selected <%*@
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    @*style="padding-right:0px;"*@
+                                    <label for="Atelier" class="label-xs">Lieu&nbsp;:&nbsp;</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="input-group input-group-xs">
+                                        <input type="text" class="form-control input-xs" id="Atelier" value="<%= rechercheDialogueSecuriteParamModel.get('Atelier') %>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="DateDebut" class="label-xs">Date&nbsp;Début&nbsp;:</label>
+                                </div>
+                                <div class='col-sm-8'>
+                                    @*<div class="form-group">*@
+                                    <div class='input-group date' id='DateDebut'>
+                                        <input type='text' name="DateDebut" id="DateDebutInput" class="form-control input-xs" value="<%= rechercheDialogueSecuriteParamModel.get('DateDebutJavascript') %>" />
+                                        <div class="input-group-addon input-xs">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </div>
+                                    </div>
+                                    @*</div>*@
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="DateFin" class="label-xs">Date&nbsp;Fin&nbsp;:</label>
+                                </div>
+                                <div class='col-sm-8'>
+                                    @*<div class="form-group">*@
+                                    <div class='input-group date' id='DateFin'>
+                                        <input type='text' name="DateFin" id="DateFinInput" class="form-control input-xs" value="<%= rechercheDialogueSecuriteParamModel.get('DateFinJavascript') %>" />
+                                        <span class="input-group-addon input-xs">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                    @*</div>*@
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</script>

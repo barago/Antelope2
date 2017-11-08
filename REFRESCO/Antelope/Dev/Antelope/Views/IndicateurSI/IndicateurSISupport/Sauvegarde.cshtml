@@ -1,0 +1,431 @@
+﻿
+@{
+    ViewBag.Title = "Sauvegarde";
+    Layout = "~/Views/IndicateurSI/Shared/_Layout.cshtml";
+}
+
+<h2><img alt="" width="32" height="32" src="~/Content/images/IndicateurSI/histogramme.png" /> Volume et taux de réussite des sauvegardes</h2>
+
+<div class="row" style="background-color: #AADBE0; border-color: black; border-width: 1px; border-style: solid; padding:0px">
+
+    <div class="col-md-3">
+        <br />
+        <button class='regular' name='buttonAddDAta' id="buttonAddData" style="margin:10px"
+                onclick="this.getElementsByTagName('span')[0].innerHTML = (this.getElementsByTagName('span')[0].innerHTML == 'Ajouter des données' ? 'Annuler' : 'Ajouter des données'); addData();">
+            <div class="glyphicon glyphicon-plus-sign"></div>  <span>Ajouter des données</span>
+        </button>
+    </div>
+</div>
+
+<br />
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="addData"></div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="tabData"></div>
+    </div>
+</div>
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+        dataB1C = [49.9, 71.5, 26.4, 29.2, 100.0, 76.0, 35.6, 48.5, 16.4, 94.1, 95.6, 54.4];
+        sites = ["Margès", "Le Quesnoy", "Nuit Saint Georges", "Saint Alban les Eaux"];
+        valAddData = 0;
+        tableauData = new Array();
+        dateSauvegarde = 0;
+        jsonData = null;
+
+        draw();
+
+    });
+
+    function draw() {
+
+        jsonData = $.ajax({
+                        url: "@Url.Action("Draw", "Sauvegarde")",
+                        data: { },
+                        dataType: "json",
+                        type: "POST",
+                        async: false,
+                        error: function () {
+                            alert("Une erreur est survenue...");
+                        },
+                        success: function (data) { }
+                    })
+
+        json = parseJSON(jsonData.responseJSON);
+
+        $('#container').highcharts({
+            credits: {
+                enabled: false
+            },
+            chart: {
+                zoomType: 'xy'
+            },
+            title: {
+                text: 'Volume et taux de réussite B1C des sauvegardes'
+            },
+            xAxis: [{
+                categories: json.TabCat
+            }],
+            yAxis: [{ // Primary yAxis
+                labels: {
+                    format: '{value} Go',
+                    style: {
+                        color: Highcharts.getOptions().colors[1]
+                    }
+                },
+                min: 0,
+                title: {
+                    text: 'Volume total sauvegardé (en Go)',
+                    style: {
+                        color: Highcharts.getOptions().colors[1]
+                    }
+                }
+            }, { // Secondary yAxis
+                max: 60, // si 100 => 150 à l'écran, si 80 => 125 à l'écran... TODO
+                min: 0,
+                title: {
+                    text: 'Taux moyen de réussite B1C',
+                    style: {
+                        color: Highcharts.getOptions().colors[0]
+                    }
+                },
+                labels: {
+                    format: '{value} %',
+                    style: {
+                        color: Highcharts.getOptions().colors[0]
+                    }
+                },
+                opposite: true
+            }],
+            tooltip: {
+                shared: true
+            },
+            series: [{
+
+                name: 'Taux de réussite B1C',
+                point: {
+                    events:
+                    {
+                        click: function (event) {
+                            activetabData(this.x);
+                        }
+                    }
+                },
+                type: 'column',
+                yAxis: 1,
+                data: json.Taux,
+                tooltip: {
+                    valueSuffix: ' %'
+                }
+
+            }, {
+                name: 'Volume sauvegardé',
+                point: {
+                    events:
+                    {
+                        click: function (event) {
+                            activetabData(this.x);
+                        }
+                    }
+                },
+                type: 'spline',
+                data: json.Volume,
+                tooltip: {
+                    valueSuffix: ' Go'
+                }
+            }]
+        });
+    }
+
+    function activetabData(date) {
+
+        var tabData = '<div id="infoDate">'
+            
+        tabData += '<center><b>' + json.TabCat[date] + '</b> - <button title="Editer" onclick="editerData(\'' + date + '\');" class="glyphicon glyphicon-edit"></button></center><br/>'
+
+        tabData += '<div class="row" style="vertical-align:middle; text-align:center"><b>'
+
+                tabData += '<div class="col-md-3">Sites</div>'
+                tabData += '<div class="col-md-3">Volume sauvegardé</div>'
+                tabData += '<div class="col-md-3">Taux de réussite B1C</div>'
+                tabData += '<div class="col-md-3">Durée</div>'
+
+        tabData += '</b></div>'
+
+        for (var i = 0; i < sites.length; i++) {
+
+            tabData += '<div class="row" style="vertical-align:middle">'
+
+                tabData += '<div class="col-md-3"><b>' + sites[i] + '</b></div>'
+                tabData += '<div class="col-md-3" style="text-align:center">' + json.VolumeSite[i][date] + ' Go</div>'
+                tabData += '<div class="col-md-3">'
+                    tabData += '<div class="row">'
+                        tabData += '<div class="col-md-6" style="text-align:right">' + json.TauxSite[i][date] + ' %</div>'
+                        tabData += '<div class="col-md-6" style="text-align:left">'
+                        if (json.TauxSite[i][date] > 95)
+                        {
+                            tabData += '<img alt="" height="24" src="/Content/images/IndicateurSI/Feu_Vert.jpg" />'
+                        }
+                        else if (json.TauxSite[i][date] > 90) {
+                            tabData += '<img alt="" height="24" src="/Content/images/IndicateurSI/Feu_Orange.jpg" />'
+                        }
+                        else {
+                            tabData += '<img alt="" height="24" src="/Content/images/IndicateurSI/Feu_Rouge.jpg" />'
+                        }
+                        tabData += '</div>'
+                    tabData += '</div>'
+                tabData += '</div>'
+                tabData += '<div class="col-md-3" style="text-align:center">' + json.DureeSite[i][date] + ' min.</div>'
+
+            tabData += '</div>'
+        }
+
+        document.getElementById('tabData').innerHTML =  tabData
+
+    }
+
+    function supprInfoDate() {
+
+        $('#infoDate').remove();
+
+    }
+
+    function supprAddData() {
+
+        $('#buttonAddData').click();
+
+    }
+
+    function supprEditData() {
+
+        $('#formulaireData').remove();
+    }
+
+    function enregistrerData() {
+
+        var stringTabData = "";
+
+        for (var i = 0; i < tableauData.length; i++) {
+            for (var j = 0; j < tableauData[i].length; j++) {
+                stringTabData += tableauData[i][j] + '~'
+            }
+            stringTabData = stringTabData.substring(0, stringTabData.length - 1);
+            stringTabData += '|'
+        }
+        stringTabData = stringTabData.substring(0, stringTabData.length - 1);
+
+        $.ajax({
+            url: "@Url.Action("SaveData", "Sauvegarde")",
+            data: { tabData: stringTabData, date: dateSauvegarde },
+            dataType: "json",
+            type: "POST",
+            error: function () {
+                alert("Une erreur est survenue...");
+            },
+            success: function (data) {
+                alert("Données enregistrées !");
+                supprAddData();
+                tableauData = [];
+                draw();
+            }
+        })
+
+    }
+
+    function enregistrerEditData() {
+
+        var stringTabData = "";
+
+        for (var i = 0; i < tableauData.length; i++) {
+            for (var j = 0; j < tableauData[i].length; j++) {
+                stringTabData += tableauData[i][j] + '~'
+            }
+            stringTabData = stringTabData.substring(0, stringTabData.length - 1);
+            stringTabData += '|'
+        }
+        stringTabData = stringTabData.substring(0, stringTabData.length - 1);
+
+        $.ajax({
+            url: "@Url.Action("EditData", "Sauvegarde")",
+            data: { tabData: stringTabData, date: dateSauvegarde },
+        dataType: "json",
+        type: "POST",
+        error: function () {
+            alert("Une erreur est survenue...");
+        },
+        success: function (data) {
+            alert("Données enregistrées !");
+            supprEditData();
+            tableauData = [];
+            draw();
+        }
+    })
+
+    }
+
+    function editerData(date) {
+
+        json = parseJSON(jsonData.responseJSON);
+        console.log(json)
+        
+        var formulaire = '<center><div class="row"><h4>----- Editer une intervention -----</h4>';
+        formulaire += 'Date: ' + json.TabCat[date] + '  -  '
+        formulaire += '<button class="glyphicon glyphicon-floppy-disk" style="margin:5px" onclick="'
+        formulaire += 'for (var i = 0; i < sites.length; i++) {'
+        formulaire += 'tableauData.push([sites[i], $(\'#inputVolume\' + i).val(), $(\'#inputTaux\' + i).val(), $(\'#inputDuree\' + i).val()]);'
+        formulaire += '};'
+        formulaire += 'dateSauvegarde = dateEdition(\'' + json.TabCat[date] + '\');'
+        formulaire += 'enregistrerEditData();'
+        formulaire += '"></button>'
+        formulaire += '<button class="glyphicon glyphicon-remove" style="margin:5px" onclick="supprEditData();"></button><br/>'
+
+        formulaire += '<div class="col-md-3" style="vertical-align:middle"><h5>Site</h5></div>';
+        formulaire += '<div class="col-md-3" style="vertical-align:middle"><h5>Volume sauvegardé</h5></div>';
+        formulaire += '<div class="col-md-3" style="vertical-align:middle"><h5>Taux de réussite B1C</h5></div>';
+        formulaire += '<div class="col-md-3" style="vertical-align:middle"><h5>Durée sauvegarde</h5></div></center>';
+
+        for (var i = 0; i < sites.length; i++) {
+
+            formulaire += '<div class="col-md-3" style="vertical-align:middle"><b>' + sites[i] + '</b></div>';
+            formulaire += '<center><div class="col-md-3" style="vertical-align:middle"><input id="inputVolume' + i + '" size="3" value="' + json.VolumeSite[i][date] + '" /> Go</div></center>';
+            formulaire += '<center><div class="col-md-3" style="vertical-align:middle"><input id="inputTaux' + i + '" size="3" value="' + json.TauxSite[i][date] + '" /> %</div></center>';
+            formulaire += '<center><div class="col-md-3" style="vertical-align:middle"><input id="inputDuree' + i + '" size="3" value="' + json.DureeSite[i][date] + '" /> min.</div></center>';
+
+        }
+
+        document.getElementById('tabData').innerHTML = '<div id="formulaireData">' + formulaire + '</div>'
+    }
+
+    function dateEdition(date) {
+
+        var dateSplit = date.split(' ');
+        var moisChiffre = 0;
+        switch (dateSplit[0]) {
+            case "Janvier":
+                moisChiffre = 1;
+                break;
+            case "Fevrier":
+                moisChiffre = 2;
+                break;
+            case "Mars":
+                moisChiffre = 3;
+                break;
+            case "Avril":
+                moisChiffre = 4;
+                break;
+            case "Mai":
+                moisChiffre = 5;
+                break;
+            case "Juin":
+                moisChiffre = 6;
+                break;
+            case "Juillet":
+                moisChiffre = 7;
+                break;
+            case "Aout":
+                moisChiffre = 8;
+                break;
+            case "Septembre":
+                moisChiffre = 9;
+                break;
+            case "Octobre":
+                moisChiffre = 10;
+                break;
+            case "Novembre":
+                moisChiffre = 11;
+                break;
+            case "Decembre":
+                moisChiffre = 12;
+                break;
+        }
+                console.log(moisChiffre + "/" + dateSplit[1])
+            return (moisChiffre + "/" + dateSplit[1])
+
+
+    }
+
+    function parseJSON(data) {
+        return window.JSON && window.JSON.parse ? window.JSON.parse(data) : (new Function("return " + data))();
+    }
+
+</script>
+
+    @* TODO *@
+
+    <link href="~/Content/cupertino/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/Scripts/jquery-ui-1.10.4.custom.min.js"></script>
+
+<script>
+
+    function addData() {
+
+        if (valAddData == 0) {
+
+            
+
+            var formulaire = '<center><div class="row"><h4>----- Ajouter une intervention -----</h4>';
+            formulaire += 'Date: <input size="8" id="inputDate" />  -  '
+            formulaire += '<button class="glyphicon glyphicon-floppy-disk" style="margin:5px" onclick="'
+            formulaire += 'for (var i = 0; i < sites.length; i++) {'
+            formulaire += 'tableauData.push([sites[i], $(\'#inputVolume\' + i).val(), $(\'#inputTaux\' + i).val(), $(\'#inputDuree\' + i).val()]);'
+            formulaire += '};'
+            formulaire += 'var dateSplit = $(\'#inputDate\').val().split(\'-\');'
+            formulaire += 'dateSauvegarde = new Date(dateSplit[1] + \'-\' + dateSplit[0] + \'-\' + dateSplit[2]).getTime() + 7200000;'
+            formulaire += 'enregistrerData();'
+            formulaire += '"></button>'
+            formulaire += '<button class="glyphicon glyphicon-remove" style="margin:5px" onclick="supprAddData();"></button><br/>'
+
+            formulaire += '<div class="col-md-3" style="vertical-align:middle"><h5>Site</h5></div>';
+            formulaire += '<div class="col-md-3" style="vertical-align:middle"><h5>Volume sauvegardé</h5></div>';
+            formulaire += '<div class="col-md-3" style="vertical-align:middle"><h5>Taux de réussite B1C</h5></div>';
+            formulaire += '<div class="col-md-3" style="vertical-align:middle"><h5>Durée sauvegarde</h5></div></center>';
+
+            for (var i = 0; i < sites.length; i++) {
+
+                formulaire += '<div class="col-md-3" style="vertical-align:middle"><b>' + sites[i] + '</b></div>';
+                formulaire += '<center><div class="col-md-3" style="vertical-align:middle"><input id="inputVolume' + i + '" size="3" /> Go</div></center>';
+                formulaire += '<center><div class="col-md-3" style="vertical-align:middle"><input id="inputTaux' + i + '" size="3" /> %</div></center>';
+                formulaire += '<center><div class="col-md-3" style="vertical-align:middle"><input id="inputDuree' + i + '" size="3" /> min.</div></center>';
+
+            }
+
+            document.getElementById('addData').innerHTML = '<div id="formulaireData">' + formulaire + '</div>'
+
+            $("#inputDate").datepicker({
+                monthNames: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Decembre"],
+                dayNamesMin: ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"],
+                dayNames: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+                dateFormat: "dd-mm-yy",
+                firstDay: 1
+            });
+
+            valAddData = 1;
+        }
+        else {
+            $('#formulaireData').remove();
+            valAddData = 0;
+        }
+
+
+    }
+
+</script>

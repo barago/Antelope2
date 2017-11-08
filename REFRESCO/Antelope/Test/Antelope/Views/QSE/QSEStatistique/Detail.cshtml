@@ -1,0 +1,1154 @@
+﻿@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/QSE/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript" src="/Scripts/underscore.js"></script>
+<script type="text/javascript" src="/Scripts/backbone.js"></script>
+
+<script type="text/javascript" src="~/Scripts/jquery.scrollTableBody-1.0.0.js"></script>
+
+<script type="text/javascript" src="/Scripts/HighStock/highstock.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.ddslick.min.js"></script>
+
+<script type="text/javascript" src="/Scripts/Application/Socle/SiteModel.js"></script>
+@*<script type="text/javascript" src="/Scripts/Application/Socle/ZoneModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/ServiceModel.js"></script>*@
+<script type="text/javascript" src="~/Scripts/Application/QSE/NonConformite/NonConformiteModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/QSE/NonConformite/NonConformiteGraviteModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/QSE/NonConformite/NonConformiteOrigineModel.js"></script>
+<script type="text/javascript" src="~/Scripts/Application/QSE/NonConformite/NonConformiteDomaineModel.js"></script>
+
+<script type="text/javascript" src="/Scripts/moment-with-langs.js"></script>
+<link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/Scripts/bootstrap-datetimepicker.min.js"></script>
+
+<script type="text/template" id="StatistiqueTemplate">
+
+    <div class="row" >
+
+        @*<div class="col-md-2">
+            <img src="../../Content/images/HSE/FicheSecurite/stats.jpg" alt="..." style="max-width:100%;">
+        </div>*@
+        <div class="col-md-2">
+
+            <div class='input-group date' id='DateDebut'>
+                <input type='text' name="DateDebut" id="DateDebutInput" class="form-control input-xs" value="<%= paramModel.get('dateDebutJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <div class='input-group date' id='DateFin'>
+                <input type='text' name="DateFin" id="DateFinInput" class="form-control input-xs" value="<%= paramModel.get('dateFinJavascript') %>" />
+                <div class="input-group-addon input-xs">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <button id="RechercheBouton" type="submit" class="btn btn-default btn-xs pull-right">
+                <span class="glyphicon glyphicon-search"></span> Chercher
+            </button>
+
+            <button id="LegendeButton" type="submit" class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#legendeModale">
+                <span class="glyphicon glyphicon-search"></span> Légende
+            </button>
+        </div>
+
+        <div class="col-md-2">
+            <select id="Site" class="form-control input-xs">
+                <option value="0" <% if (siteId == 0){ %> selected <% } %> ></option>
+                <% siteCollection.each( function(site){ %>
+                <option value="<%= site.get('SiteID') %>"
+                    <% if (site.get('SiteID') == siteId){ %> selected <% } %>
+                    >
+                <%= site.get('Trigramme') %>
+            </option>
+                <% }); %>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select id="Type" class="form-control input-xs">
+                <option value="RESPONSABLE"  <% if (type === 'RESPONSABLE'){ %> selected <%}%> >Responsable</option>
+                <option value="DOMAINE"<% if (type === 'DOMAINE'){ %> selected <%}%>> Domaine </option>
+                <option value="ORIGINE"<% if (type === 'ORIGINE'){ %> selected <%}%>> Origine </option>
+            </select>
+        </div>
+
+    </div>
+
+    <div class="row" style="margin-top:0px;padding-top:0px;">
+
+        @*<div class="col-md-12">*@
+
+            <table id="table" class="StatistiquesPyramideTable">
+                <thead style="border-bottom: 3px solid black;font-size:x-small;">
+                    <tr>
+
+                        <th class="rotate45" >
+                            <div>
+                                <span>
+                                    <%= type  %>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#E567A0; color:white;">
+                                    Nb NC Concernées
+                                </span>
+                            </div>
+                        </th>
+                        @*<th class="rotate45">
+                            <div>
+                                <span style="background-color:#D4E898;">
+                                    Nb NC dont PA est en cours
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#8BAC27;">
+                                    Nb NC dont PA réalisé
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#D4E898;">
+                                    Nb NC vérifiées
+                                </span>
+                            </div>
+                        </th>*@
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#BF62A6; color:white;">
+                                    Nb Actions
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionVerifie">
+                            <div>
+                                <span style="background-color:#459BA8; color:white;">
+                                    Nb Actions vérifiées
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRealise">
+                            <div>
+                                <span style="background-color:#79C267; color:white;">
+                                    Nb Actions réalisées >>>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRealiseToggle">
+                            <div>
+                                <span style="background-color:#E0EEB4; color:grey;">
+                                    Nb Actions réalisées à temps
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRealiseToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2; color:grey;">
+                                    Nb Actions réalisées en retard
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:white; color:black;">
+                                    Nb Actions en cours
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetard">
+                            <div>
+                                <span style="background-color:#F94545; color:white;">
+                                    TOTAL Actions en retard >>>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2; color:grey;">
+                                    Nb Actions retard < 1 mois
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FCDAAA; color:grey;">
+                                    Nb Actions retard de 1 à 3 mois
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FDBBBB; color:grey;">
+                                    Nb Actions retard > 3 mois
+                                </span>
+                            </div>
+                        </th>
+                        @*<th class="rotate45">
+                            <div>
+                                <span style="background-color:#FD9910;">
+                                    % NC clôturées/NC émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#FCD194;">
+                                    % NC PA validé/NC émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:#FD9910;">
+                                    % NC PA clôturé/NC émises
+                                </span>
+                            </div>
+                        </th>*@
+                        <th class="rotate45 ActionVerifie">
+                            <div>
+                                <span style="background-color:#459BA8; color:white;">
+                                    % Actions vérifiées/émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRealise">
+                            <div>
+                                <span style="background-color:#79C267; color:white;">
+                                    % Actions réalisées/émises >>>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRealiseToggle">
+                            <div>
+                                <span style="background-color:#E0EEB4; color:grey;">
+                                    % Actions réalisées à temps/émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRealiseToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2; color:grey;">
+                                    % Actions réalisées en retard
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45">
+                            <div>
+                                <span style="background-color:white; color:black;">
+                                    % Actions en cours
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetard">
+                            <div>
+                                <span style="background-color:#F94545; color:white;">
+                                    % TOTAL Actions retard/émises >>>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FCFCA2; color:grey;">
+                                    % Actions retard < 1M/émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FCDAAA; color:grey;">
+                                    % Actions retard de 1 à 3M/émises
+                                </span>
+                            </div>
+                        </th>
+                        <th class="rotate45 ActionRetardToggle">
+                            <div>
+                                <span style="background-color:#FDBBBB; color:grey;">
+                                    % Actions retard > 3M/émises
+                                </span>
+                            </div>
+                        </th>
+
+
+                    </tr>
+
+                </thead>
+                <tbody style="width:1000px;">
+
+                    <% typeOccurenceCollection.each( function(typeOccurence){ %>
+
+                    <tr style="border: 1px solid black; height:15px;">
+                        <th>
+                            <%= typeOccurence.get('nom') %>
+                        </th>
+                        <th style="background-color:#E567A0; color:white;">
+                            <%= typeOccurence.get('nbNCEmises') %>
+                        </th>
+                        @*<th style="background-color:#D4E898;">
+                            <%= typeOccurence.get('nbNCPAValidees') %>
+                        </th>
+                        <th style="background-color:#8BAC27;">
+                            <%= typeOccurence.get('nbNCPACloturees') %>
+                        </th>
+                        <th style="background-color:#D4E898;">
+                            <%= typeOccurence.get('nbNCCloturees') %>
+                        </th>*@
+                        <th style="background-color:#BF62A6; color:white;">
+                            <%= typeOccurence.get('nbAction') %>
+                        </th>
+                        <th style="background-color:#459BA8; color:white;" class="ActionVerifie">
+                            <%= typeOccurence.get('nbActionVerifiees') %>
+                        </th>
+                        <th style="background-color:#79C267; color:white;" class="ActionRealise">
+                            <%= typeOccurence.get('nbActionRealisees') %>
+                        </th>
+                        <th style="background-color:#D4E898; color:grey;" class="ActionRealiseToggle">
+                            <%= typeOccurence.get('nbActionRealiseesATemps') %>
+                        </th>
+                        <th style="background-color:#FCFCA2; color:grey;" class="ActionRealiseToggle">
+                            <%= typeOccurence.get('nbActionRealiseesEnRetard') %>
+                        </th>
+                        <th style="background-color:white; color:black;">
+                            <%= typeOccurence.get('nbActionEnCours') %>
+                        </th>
+                        <th style="background-color:#F94545; color:white;" class="ActionRetard">
+                            <%= typeOccurence.get('nbActionEnRetard') %>
+                        </th>
+                        <th style="background-color:#FCFCA2; color:grey;" class="ActionRetardToggle">
+                            <%= typeOccurence.get('nbActionDepassees') %>
+                        </th>
+                        <th style="background-color:#FCDAAA; color:grey;" class="ActionRetardToggle">
+                            <%= typeOccurence.get('nbActionDepassees1Mois') %>
+                        </th>
+                        <th style="background-color:#FDBBBB; color:grey;" class="ActionRetardToggle">
+                            <%= typeOccurence.get('nbActionDepassees3Mois') %>
+                        </th>
+                        @*<th style="background-color:#FD9910;">
+                            <%= typeOccurence.get('prctgNCCloturees') %>
+                        </th>
+                        <th style="background-color:#FCD194;">
+                            <%= typeOccurence.get('prctgNCPlanActionValide') %>
+                        </th>
+                        <th style="background-color:#FD9910;">
+                            <%= typeOccurence.get('prctgNCPlanActionCloture') %>
+                        </th>*@
+                        <th style="background-color:#459BA8; color:white;" class="ActionRealise">
+                            <%= typeOccurence.get('prctgActionVerifiees') %>
+                        </th>
+                        <th style="background-color:#79C267; color:white;" class="ActionRealise">
+                            <%= typeOccurence.get('prctgActionRealisees') %>
+                        </th>
+                        <th style="background-color:#E0EEB4; color:grey;" class="ActionRealiseToggle">
+                            <%= typeOccurence.get('prctgActionRealiseesATemps') %>
+                        </th>
+                        <th style="background-color:#FCFCA2; color:grey;" class="ActionRealiseToggle">
+                            <%= typeOccurence.get('prctgActionRealiseesEnRetard') %>
+                        </th>
+                        <th style="background-color:white; color:black;">
+                            <%= typeOccurence.get('prctgActionEnCours') %>
+                        </th>
+                        <th style="background-color:#F94545; color:white;" class="ActionRetard">
+                            <%= typeOccurence.get('prctgActionEnRetard') %>
+                        </th>
+                        <th style="background-color:#FCFCA2; color:grey;" class="ActionRetardToggle">
+                            <%= typeOccurence.get('prctgActionDepassees') %>
+                        </th>
+                        <th style="background-color:#FCDAAA; color:grey;" class="ActionRetardToggle">
+                            <%= typeOccurence.get('prctgActionDepassees1Mois') %>
+                        </th>
+                        <th style="background-color:#FDBBBB; color:grey;" class="ActionRetardToggle">
+                            <%= typeOccurence.get('prctgActionDepassees3Mois') %>
+                        </th>
+
+                    </tr>
+
+                    <% }) %>
+
+                </tbody>
+            </table>
+
+        @*</div>*@
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="legendeModale" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-admin" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Légende des statistiques :</h4>
+                </div>
+                <div class="modal-body">
+                   
+                    <h4>FILTRES : </h4><br/>
+
+                    <table>
+                        <tbody>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td>
+                                    -Dates (début / fin) :
+                                </td>
+                                <td>
+                                    Recherche les actions par rapport à la date de la Non-Conformité à laquelle elles appartiennent.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td>
+                                    -Site :
+                                </td>
+                                <td>
+                                    Recherche les actions par site
+                                </td>
+
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td>
+                                    -Type :
+                                </td>
+                                <td>
+                                    Recherche par Responsable / Domaine / Origine
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br />
+                    Lors d'une recherche par Responsable, le Nombre de NC concernée n'est pas renseigné, car la personne est responsable d'une action et non pas d'une NC<br />
+                    <br/>
+                    <h4>STATISTIQUES : </h4><br /> 
+                    (s'entendent pour le site et le type choisi dans les filtres): <br />
+
+                    <table>
+                        <tbody>
+                            <tr style ="border:dashed;border-width:1px;">
+                                <td style="background-color:#E567A0;color:white;">
+                                    <span>Nb NC Concernées</span> :
+                                </td>
+                                <td>
+                                    Nb de NC entre les dates début et fin.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#BF62A6;color:white;">
+                                    <span>Nb Actions</span> :
+                                </td>
+                                <td>
+                                    Nb d'actions dont la NC (à laquelle elles appartiennent) est entre les date début et fin. (les stats suivantes se comportent à l'identique concernant les dates)
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#459BA8;color:white;">
+                                    <span>Nb Actions vérifiées</span> :
+                                </td>
+                                <td>
+                                    Nb d'actions réalisées ET vérifiées.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#79C267;color:white;">
+                                    <span>Nb Actions réalisées</span> :
+                                </td>
+                                <td>
+                                    Nb d'actions réalisées MAIS non vérifiées.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#D4E898;">
+                                    <span>Nb Actions réalisées à temps</span> :
+                                </td>
+                                <td>
+                                    Réalisées dont la date de réalisation est inférieure à la date butoir initiale ou à la nouvelle date butoir si il y en a une.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#FCFCA2;">
+                                    <span>Nb Actions réalisées en retard</span> :
+                                </td>
+                                <td>
+                                    Réalisées dont la date de réalisation est supérieure à la date butoir initiale ou à la nouvelle date butoir si il y en a une.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td>
+                                    <span>Nb Actions en cours</span> :
+                                </td>
+                                <td>
+                                    Nb d'actions dont la date butoir initiale, ou la nouvelle date butoir si elle existe, n'est pas encore atteinte. (supérieure ou égale à la date du jour)
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#F94545;color:white;">
+                                    <span>Nb Actions en retard</span> :
+                                </td>
+                                <td>
+                                    Nb d'actions dont la date butoir initiale, ou la nouvelle date butoir si elle existe, est atteinte. (inférieure à la date du jour)
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#FCFCA2;">
+                                    <span>Nb Actions retard < 1 mois</span> :
+                                </td>
+                                <td>
+                                    Nb Actions en retard dont la date butoir initiale, ou la nouvelle date butoir si elle existe, est atteinte depuis moins d'1 mois.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#FCDAAA;">
+                                    <span>Nb Actions retard de 1 à 3 mois</span> :
+                                </td>
+                                <td>
+                                    Nb Actions en retard dont la date butoir initiale, ou la nouvelle date butoir si elle existe, est atteinte depuis plus d'1 mois et moins de 3 mois.
+                                </td>
+                            </tr>
+                            <tr style="border:dashed;border-width:1px;">
+                                <td style="background-color:#FDBBBB;">
+                                    <span>Nb Actions > 3 mois</span> :
+                                </td>
+                                <td>
+                                    Nb Actions en retard dont la date butoir initiale, ou la nouvelle date butoir si elle existe, est atteinte depuis plus de 3 mois.
+                                </td>
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+                  
+                    <br />
+                    Tous les %age liés à ces données sont calculés par rapport au <span style="background-color:#BF62A6;color:white;">nombre d'actions</span><br />
+
+</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<div id="PrincipalDiv">
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+    function dateFormatJS(date) {
+        var dateFormated = '';
+        if (date != null) {
+            dateFormated = date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+        }
+        return dateFormated;
+    };
+
+    ParamModel = Backbone.Model.extend({});
+    NonConformiteModel = Backbone.Model.extend({});
+    NonConformiteCollection = Backbone.Collection.extend({ model: NonConformiteModel });
+
+    ResponseModel = Backbone.Model.extend({
+        url: '/api/QSEStatistique/',
+        id: 0
+    });
+
+    responseModel = new ResponseModel();
+
+    responseModel.fetch({ async: false, wait: true/*, url: 'api/action/GetQSEStatistique' */ });
+
+    responseModel.set({ "paramModel": new ParamModel(responseModel.get('ParamModel')) });
+
+    responseModel.get('paramModel').set({ 'dateDebutJavascript': dateFormatJS(responseModel.get('ParamModel').DateDebut) });
+    responseModel.get('paramModel').set({ 'dateFinJavascript': dateFormatJS(responseModel.get('ParamModel').DateFin) });
+
+    responseModel.set({ 'nonConformiteCollection': new NonConformiteCollection(responseModel.get('AllNonConformite')) });
+    responseModel.set({ 'siteCollection': new SiteCollection(responseModel.get('AllSite')) });
+    responseModel.set({ 'nonConformiteOrigineCollection': new NonConformiteOrigineCollection(responseModel.get('AllOrigine')) });
+    responseModel.set({ 'nonConformiteGraviteCollection': new NonConformiteGraviteCollection(responseModel.get('AllGravite')) });
+    responseModel.set({ 'nonConformiteDomaineCollection': new NonConformiteDomaineCollection(responseModel.get('AllDomaine')) });
+    //responseModel.set({ 'zoneCollection': new ZoneCollection(responseModel.get('AllZone')) });
+    //responseModel.set({ 'typeCollection': new NonConformiteTypeCollection(responseModel.get('AllNonConformiteType')) });
+    //responseModel.set({ 'serviceCollection': new ServiceCollection(responseModel.get('AllService')) });
+    responseModel.set({ 'siteId': 0 });
+
+    responseModel.get('nonConformiteCollection').forEach(function (NC) {
+        NC.TimeStamp *= 1000;
+    });
+
+    TypeOccurenceModel = Backbone.Model.extend({});
+    TypeOccurenceCollection = Backbone.Collection.extend({
+        model: TypeOccurenceModel
+    });
+
+    responseModel.set({ 'type': 'RESPONSABLE' });
+    responseModel.set({ 'typeOccurenceCollection': new TypeOccurenceCollection });
+    //responseModel.set({ 'typeOccurenceCollectionForResponsable': new TypeOccurenceCollection });
+    //responseModel.set({ 'typeOccurenceCollectionForOrigine': new TypeOccurenceCollection });
+    //responseModel.set({ 'typeOccurenceCollectionForDomaine': new TypeOccurenceCollection });
+    //responseModel.set({ 'typeOccurenceCollectionForService': new TypeOccurenceCollection });
+
+    calculTableauGeneral(responseModel);
+
+
+    StatistiqueView = Backbone.View.extend({
+        id: 'StatistiqueDiv',
+        template: _.template($('#StatistiqueTemplate').html()),
+        render: function () {
+            this.$el.html(this.template(this.model.toJSON()));
+
+            //this.buildChart();
+
+            $('#DateDebut').datetimepicker({
+                pickTime: false,
+                language: 'fr'
+            });
+            $('#DateFin').datetimepicker({
+                pickTime: false,
+                language: 'fr'
+            });
+
+            //On écoute les changements sur le DatePicker pour les passer à la fonction Backbone
+            $('#DateDebut').on("dp.change", $.proxy(this.changeDateDebut, this));
+            // TODO : Mettre des dp.hide sur tous les DateTimePickers ! >> Si on ne selectionne rien, il choisit date et heure du jour.
+            $('#DateDebut').on("dp.hide", $.proxy(this.changeDateDebut, this));
+            $('#DateFin').on("dp.change", $.proxy(this.changeDateFin, this));
+            $('#DateFin').on("dp.hide", $.proxy(this.changeDateFin, this));
+
+            $('#table').scrollTableBody({ rowsToDisplay: 9 });
+
+            $(".ActionRealise").click(function () {
+                $(".ActionRealiseToggle").toggle();
+            });
+
+            $(".ActionRetard").click(function () {
+                $(".ActionRetardToggle").toggle();
+            });
+
+            $(".ActionRealiseToggle").toggle();
+            $(".ActionRetardToggle").toggle();
+
+            return this;
+        },
+        initialize: function () {
+
+            //// Change the selector if needed
+            //var $table = $('table.scroll'),
+            //    $bodyCells = $table.find('tbody tr:first').children(),
+            //    colWidth;
+
+            //// Adjust the width of thead cells when window resizes
+            //$(window).resize(function () {
+            //    // Get the tbody columns width array
+            //    colWidth = $bodyCells.map(function () {
+            //        return $(this).width();
+            //    }).get();
+
+            //    // Set the width of thead columns
+            //    $table.find('thead tr').children().each(function (i, v) {
+            //        $(v).width(colWidth[i]);
+            //    });
+            //}).resize(); // Trigger resize handler
+
+            
+
+            this.render();
+        },
+        events: {
+            "change #Site": "changeSite",
+            "change #Type": "changeType",
+            "keyup #DateDebutInput": "changeDateDebut",
+            "keyup #DateFinInput": "changeDateFin",
+            "click #RechercheBouton": "recherche"
+
+        },
+        recherche: function () {
+            this.model.get('nonConformiteCollection').fetch({
+                async: false, wait: true,
+                url: '/api/action/QSEStatistique/statistiqueFiltered/',
+                type: "post",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(this.model.get('paramModel')),
+            });
+
+            calculTableauGeneral(this.model);
+
+            this.render();
+
+        },
+        changeSite: function () {
+            this.model.set({ 'siteId': parseInt($('#Site').val()) });
+
+            calculTableauGeneral(this.model);
+
+            this.render();
+
+        },
+        changeType: function () {
+            this.model.set({ 'type': $('#Type').val() });
+
+            calculTableauGeneral(this.model);
+
+            this.render();
+
+        },
+        changeDateDebut: function () {
+            this.model.get('paramModel').set({ 'DateDebut': this.dateFormatMVC($('#DateDebutInput').val()) + 'T' + '00:00:00.0' });
+            this.model.get('paramModel').set({ 'dateDebutJavascript': $('#DateDebutInput').val() });
+        },
+        changeDateFin: function () {
+            this.model.get('paramModel').set({ 'DateFin': this.dateFormatMVC($('#DateFinInput').val()) + 'T' + '00:00:00.0' });
+            this.model.get('paramModel').set({ 'dateFinJavascript': $('#DateFinInput').val() });
+        },
+        dateFormatMVC: function (date) {
+            // De date FR à DateTime
+            var dateFormated = date.substring(6, 10) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2);
+            return dateFormated;
+        },
+
+    });
+
+    var statistiqueView = new StatistiqueView({
+        el: $("#PrincipalDiv"),
+        model: responseModel
+    });
+
+    function calculTableauGeneral(responseModel) {
+
+
+        var totalNbNCEmises = 0;
+        //var totalNbNCPAValide = 0;
+        //var totalNbNCPACloture = 0;
+        //var totalNbNCcloturees = 0;
+        var totalNbAction = 0;
+        var totalNbActionVerifiees = 0;
+        var totalNbActionRealisees = 0;
+        var totalNbActionATemps = 0;
+        var totalNbActionEnRetard = 0;
+        var totalNbActionEnCours = 0;
+        var totalNbActionDepassees = 0;
+        var totalNbActionDepassees1Mois = 0;
+        var totalNbActionDepassees3Mois = 0;
+        var totalNbActionEnRetard = 0;
+
+
+        responseModel.get('typeOccurenceCollection').reset();
+
+        //responseModel.get('typeOccurenceCollectionForResponsable').reset();
+        //responseModel.get('typeOccurenceCollectionForZone').reset();
+        //responseModel.get('typeOccurenceCollectionForType').reset();
+
+        switch (responseModel.get('type')) {
+            //case 'RESPONSABLE':
+            //var typeOccurenceNC = responseModel.get('typeOccurenceCollectionForResponsable').findWhere({ 'nom': NC.get('Responsable').Nom + ' ' + NC.get('Responsable').Prenom });
+            //break;
+            case 'ORIGINE':
+                responseModel.get('nonConformiteOrigineCollection').forEach(function (origine) {
+
+                        responseModel.get('typeOccurenceCollection').add(new TypeOccurenceModel({
+                            'nom': origine.get('Nom'),
+                            'id': origine.get('Id'),
+                            'nbNCEmises': 0,
+                            //'nbNCPAValidees': 0,
+                            //'nbNCPACloturees': 0,
+                            //'nbNCCloturees': 0,
+                            'nbAction': 0,
+                            'nbActionVerifiees': 0,
+                            'nbActionRealisees': 0,
+                            'nbActionRealiseesATemps': 0,
+                            'nbActionRealiseesEnRetard': 0,
+                            'nbActionEnCours': 0,
+                            'nbActionDepassees': 0,
+                            'nbActionDepassees1Mois': 0,
+                            'nbActionDepassees3Mois': 0,
+                            'nbActionEnRetard': 0,
+                            //'prctgNCCloturees': 0,
+                            //'prctgNCPlanActionValide': 0,
+                            //'prctgNCPlanActionCloture': 0,
+                            'prctgActionVerifiees': 0,
+                            'prctgActionRealisees': 0,
+                            'prctgActionRealiseesATemps': 0,
+                            'prctgActionEnCours': 0,
+                            'prctgActionRealiseesEnRetard': 0,
+                            'prctgActionDepassees': 0,
+                            'prctgActionDepassees1Mois': 0,
+                            'prctgActionDepassees3Mois': 0,
+                            'prctgActionEnRetard': 0
+                        }));
+
+                });
+                break;
+            case 'DOMAINE':
+                responseModel.get('nonConformiteDomaineCollection').forEach(function (domaine) {
+
+                    responseModel.get('typeOccurenceCollection').add(new TypeOccurenceModel({
+                        'nom': domaine.get('Nom'),
+                        'id': domaine.get('Id'),
+                        'nbNCEmises': 0,
+                        //'nbNCPAValidees': 0,
+                        //'nbNCPACloturees': 0,
+                        //'nbNCCloturees': 0,
+                        'nbAction': 0,
+                        'nbActionVerifiees': 0,
+                        'nbActionRealisees': 0,
+                        'nbActionRealiseesATemps': 0,
+                        'nbActionRealiseesEnRetard': 0,
+                        'nbActionEnCours': 0,
+                        'nbActionDepassees': 0,
+                        'nbActionDepassees1Mois': 0,
+                        'nbActionDepassees3Mois': 0,
+                        'nbActionEnRetard': 0,
+                        //'prctgNCCloturees': 0,
+                        //'prctgNCPlanActionValide': 0,
+                        //'prctgNCPlanActionCloture': 0,
+                        'prctgActionVerifiees': 0,
+                        'prctgActionRealisees': 0,
+                        'prctgActionRealiseesATemps': 0,
+                        'prctgActionRealiseesEnRetard': 0,
+                        'prctgActionDepassees': 0,
+                        'prctgActionDepassees1Mois': 0,
+                        'prctgActionDepassees3Mois': 0,
+                        'prctgActionEnRetard': 0
+                    }));
+
+                });
+                break;
+            default:
+
+                break;
+        }
+        responseModel.get('nonConformiteCollection').forEach(function (NC) {
+
+            if (NC.get('SiteId') === responseModel.get('siteId') || responseModel.get('siteId') === 0) {
+
+                switch (responseModel.get('type')) {
+                    //case 'RESPONSABLE':
+                    //    var typeOccurenceNC = responseModel.get('typeOccurenceCollection').findWhere({ 'nom': NC.get('Responsable').Nom + ' ' + NC.get('Responsable').Prenom });
+
+                    //    if (typeOccurenceNC === undefined) {
+
+                    //        typeOccurenceNC = new TypeOccurenceModel({
+                    //            'nom': NC.get('Responsable').Nom + ' ' + NC.get('Responsable').Prenom,
+                    //            'nbNCEmises': 0,
+                    //            //'nbNCPAValidees': 0,
+                    //            //'nbNCPACloturees': 0,
+                    //            //'nbNCCloturees': 0,
+                    //            'nbAction': 0,
+                    //            'nbActionCloturees': 0,
+                    //            'nbActionClotureesATemps': 0,
+                    //            'nbActionDepassees1Mois': 0,
+                    //            'nbActionDepassees3Mois': 0,
+                    //            'nbActionEnRetard': 0,
+                    //            //'prctgNCCloturees': 0,
+                    //            //'prctgNCPlanActionValide': 0,
+                    //            //'prctgNCPlanActionCloture': 0,
+                    //            'prctgActionCloturees': 0,
+                    //            'prctgActionClotureesATemps': 0,
+                    //            'prctgActionDepassees1Mois': 0,
+                    //            'prctgActionDepassees3Mois': 0,
+                    //            'prctgActionEnRetard': 0
+                    //        });
+
+                    //        responseModel.get('typeOccurenceCollection').add(typeOccurenceNC)
+
+                    //    }
+
+                    //    break;
+                    case 'ORIGINE':
+                        var typeOccurenceNC = responseModel.get('typeOccurenceCollection').findWhere({ 'id': NC.get('NonConformiteOrigineId') });
+                        typeOccurenceNC.set({ 'nbNCEmises': typeOccurenceNC.get('nbNCEmises') + 1 });
+                        break;
+                    case 'DOMAINE':
+                        var typeOccurenceNC = responseModel.get('typeOccurenceCollection').findWhere({ 'id': NC.get('NonConformiteDomaineId') });
+                        typeOccurenceNC.set({ 'nbNCEmises': typeOccurenceNC.get('nbNCEmises') + 1 });
+                        break;
+                    default:
+                       
+                        break;
+                }
+
+                
+                totalNbNCEmises++;
+                //if (NC.get('WorkFlowASEValidee') === true) {
+                //    typeOccurenceNC.set({ 'nbNCPAValidees': typeOccurenceNC.get('nbNCPAValidees') + 1 });
+                //    totalNbNCPAValide++;
+                //}
+                //if (NC.get('WorkFlowASEValidee') === true && NC.get('WorkFlowCloturee') === true) {
+                //    typeOccurenceNC.set({ 'nbNCPACloturees': typeOccurenceNC.get('nbNCPACloturees') + 1 });
+                //    totalNbNCPACloture++;
+                //}
+                //if (NC.get('WorkFlowNonConformiteCloturee') === true) {
+                //    typeOccurenceNC.set({ 'nbNCCloturees': typeOccurenceNC.get('nbNCCloturees') + 1 });
+                //    totalNbNCcloturees++;
+                //}
+ 
+                    NC.get('ActionQSEs').forEach(function (Action) {
+
+                        Action.DateButoireInitialeJavascript = new Date(Action.DateButoireInitiale.substring(0, 4), Action.DateButoireInitiale.substring(5, 7)-1, Action.DateButoireInitiale.substring(8, 10));
+                        if (Action.DateButoireNouvelle != null) {
+                            Action.DateButoireNouvelleJavascript = new Date(Action.DateButoireNouvelle.substring(0, 4), Action.DateButoireNouvelle.substring(5, 7) - 1, Action.DateButoireNouvelle.substring(8, 10));
+                        }
+                        else {
+                            Action.DateButoireNouvelleJavascript = null;
+                        }
+
+                        if (Action.RealiseDate != null) {
+                            Action.RealiseDateJavascript = new Date(Action.RealiseDate.substring(0, 4), Action.RealiseDate.substring(5, 7) - 1, Action.RealiseDate.substring(8, 10));
+                        }
+                        else {
+                            Action.RealiseDateJavascript = null;
+                        }
+                        if (Action.VerifieDate != null) {
+                            Action.VerifieDateJavascript = new Date(Action.VerifieDate.substring(0, 4), Action.VerifieDate.substring(5, 7) - 1, Action.VerifieDate.substring(8, 10));
+                        }
+                        else {
+                            Action.VerifieDateJavascript = null;
+                        }
+
+                        switch (responseModel.get('type')) {
+                            case 'RESPONSABLE':
+                                var typeOccurenceAction = responseModel.get('typeOccurenceCollection').findWhere({ 'nom': Action.Responsable.Nom + ' ' + Action.Responsable.Prenom });
+
+                                if (typeOccurenceAction === undefined) {
+
+                                    typeOccurenceAction = new TypeOccurenceModel({
+                                        'nom': Action.Responsable.Nom + ' ' + Action.Responsable.Prenom,
+                                        'nbNCEmises': 0,
+                                        //'nbNCPAValidees': 0,
+                                        //'nbNCPACloturees': 0,
+                                        //'nbNCCloturees': 0,
+                                        'nbAction': 0,
+                                        'nbActionVerifiees': 0,
+                                        'nbActionRealisees': 0,
+                                        'nbActionRealiseesATemps': 0,
+                                        'nbActionRealiseesEnRetard': 0,
+                                        'nbActionEnCours': 0,
+                                        'nbActionDepassees': 0,
+                                        'nbActionDepassees1Mois': 0,
+                                        'nbActionDepassees3Mois': 0,
+                                        'nbActionEnRetard': 0,
+                                        //'prctgNCCloturees': 0,
+                                        //'prctgNCPlanActionValide': 0,
+                                        //'prctgNCPlanActionCloture': 0,
+                                        'prctgActionRealisees': 0,
+                                        'prctgActionRealiseesATemps': 0,
+                                        'prctgActionRealiseesEnRetard': 0,
+                                        'prctgActionDepassees': 0,
+                                        'prctgActionDepassees1Mois': 0,
+                                        'prctgActionDepassees3Mois': 0,
+                                        'prctgActionEnRetard': 0
+                                    });
+
+                                    responseModel.get('typeOccurenceCollection').add(typeOccurenceAction)
+
+                                }
+                                break;
+                            case 'ORIGINE':
+                                var typeOccurenceAction = typeOccurenceNC;
+                                break;
+                            case 'DOMAINE':
+                                var typeOccurenceAction = typeOccurenceNC;
+                                break;
+                            default:
+
+                                break;
+                        }
+                        
+
+                        typeOccurenceAction.set({ 'nbAction': typeOccurenceAction.get('nbAction') + 1 });
+                        totalNbAction++;
+
+                        if (Action.VerifieDateJavascript != null) {
+                            typeOccurenceAction.set({ 'nbActionVerifiees': typeOccurenceAction.get('nbActionVerifiees') + 1 });
+                            totalNbActionVerifiees++;
+                        }
+
+                        if (Action.RealiseDateJavascript != null && Action.VerifieDateJavascript === null) {
+                            typeOccurenceAction.set({ 'nbActionRealisees': typeOccurenceAction.get('nbActionRealisees') + 1 });
+                            totalNbActionRealisees++;
+                        }
+
+                        if (Action.RealiseDateJavascript != null && Action.VerifieDateJavascript === null && ((Action.DateButoireNouvelleJavascript === null && Action.RealiseDateJavascript <= Action.DateButoireInitialeJavascript) || (Action.DateButoireNouvelleJavascript != null && Action.RealiseDateJavascript <= Action.DateButoireNouvelleJavascript))) {
+                            typeOccurenceAction.set({ 'nbActionRealiseesATemps': typeOccurenceAction.get('nbActionRealiseesATemps') + 1 });
+                            totalNbActionATemps++;
+                        }
+
+                        if (Action.RealiseDateJavascript != null && Action.VerifieDateJavascript === null && ((Action.DateButoireNouvelleJavascript === null && Action.RealiseDateJavascript > Action.DateButoireInitialeJavascript) || (Action.DateButoireNouvelleJavascript != null && Action.RealiseDateJavascript > Action.DateButoireNouvelleJavascript))) {
+                            typeOccurenceAction.set({ 'nbActionRealiseesEnRetard': typeOccurenceAction.get('nbActionRealiseesEnRetard') + 1 });
+                            totalNbActionEnRetard++;
+                        }
+
+                        var dateDuJour = new Date();
+
+                        if (Action.RealiseDateJavascript === null && ((Action.DateButoireNouvelleJavascript === null && dateDuJour <= Action.DateButoireInitialeJavascript) || (Action.DateButoireNouvelleJavascript != null && dateDuJour <= Action.DateButoireNouvelleJavascript))) {
+                            typeOccurenceAction.set({ 'nbActionEnCours': typeOccurenceAction.get('nbActionEnCours') + 1 });
+                            totalNbActionEnCours++;
+                        }
+
+                        var dateButoireInitiale = new Date(Action.DateButoireInitialeJavascript.getTime());
+
+                        var dateButoireInitialePlus1Mois = new Date(dateButoireInitiale.getTime());
+                        dateButoireInitialePlus1Mois.setMonth(dateButoireInitialePlus1Mois.getMonth() + 1);
+
+                        var dateButoireInitialePlus3Mois = new Date(dateButoireInitiale.getTime());
+                        dateButoireInitialePlus3Mois.setMonth(dateButoireInitialePlus3Mois.getMonth() + 3);
+
+                        if (Action.DateButoireNouvelleJavascript != null) {
+                            var dateButoireNouvelle = new Date(Action.DateButoireNouvelleJavascript.getTime());
+
+                            var dateButoireNouvellePlus1Mois = new Date(dateButoireNouvelle.getTime());
+                            dateButoireNouvellePlus1Mois.setMonth(dateButoireNouvellePlus1Mois.getMonth() + 1);
+
+                            var dateButoireNouvellePlus3Mois = new Date(dateButoireNouvelle.getTime());
+                            dateButoireNouvellePlus3Mois.setMonth(dateButoireNouvellePlus3Mois.getMonth() + 3);
+                        }
+
+
+                        //Action.DateButoireInitialeJavascript.setMonth(Action.DateButoireInitialeJavascript.getMonth() + 1)
+
+                        if (Action.RealiseDateJavascript === null && ((Action.DateButoireNouvelleJavascript === null && dateDuJour > dateButoireInitiale && dateDuJour <= dateButoireInitialePlus1Mois) || (Action.DateButoireNouvelleJavascript != null && dateDuJour > dateButoireNouvelle && dateDuJour <= dateButoireNouvellePlus1Mois))) {
+                            typeOccurenceAction.set({ 'nbActionDepassees': typeOccurenceAction.get('nbActionDepassees') + 1 });
+                            totalNbActionDepassees++;
+                        }
+                        
+                        if (Action.RealiseDateJavascript === null && ((Action.DateButoireNouvelleJavascript === null && dateDuJour > dateButoireInitialePlus1Mois && dateDuJour <= dateButoireInitialePlus3Mois) || (Action.DateButoireNouvelleJavascript != null && dateDuJour > dateButoireNouvellePlus1Mois && dateDuJour <= dateButoireNouvellePlus3Mois))) {
+                            typeOccurenceAction.set({ 'nbActionDepassees1Mois': typeOccurenceAction.get('nbActionDepassees1Mois') + 1 });
+                            totalNbActionDepassees1Mois++;
+                        }
+
+                        //Action.DateButoireInitialeJavascript.setMonth(Action.DateButoireInitialeJavascript.getMonth() + 2)
+                        if (Action.RealiseDateJavascript === null && ((Action.DateButoireNouvelleJavascript === null && dateDuJour > dateButoireInitialePlus3Mois) || (Action.DateButoireNouvelleJavascript != null && dateDuJour > dateButoireNouvellePlus3Mois))) {
+                            typeOccurenceAction.set({ 'nbActionDepassees3Mois': typeOccurenceAction.get('nbActionDepassees3Mois') + 1 });
+                            totalNbActionDepassees3Mois++;
+                        }
+
+                        //Action.DateButoireInitialeJavascript.setMonth(Action.DateButoireInitialeJavascript.getMonth() - 3)
+                                 
+                        if (Action.RealiseDateJavascript === null && ((Action.DateButoireNouvelleJavascript === null && dateDuJour > dateButoireInitiale) || (Action.DateButoireNouvelleJavascript != null && dateDuJour > dateButoireNouvelle))) {
+                            typeOccurenceAction.set({ 'nbActionEnRetard': typeOccurenceAction.get('nbActionEnRetard') + 1 });
+                            totalNbActionEnRetard++;
+                        }
+
+                    });
+            }
+        });
+
+
+        responseModel.get('typeOccurenceCollection').forEach(function (typeOccurence) {
+
+            //var prctgNCPlanActionValide = (Math.round(typeOccurence.get('nbNCPAValidees') / typeOccurence.get('nbNCEmises') * 100));
+            //if (isNaN(prctgNCPlanActionValide)) {
+            //    prctgNCPlanActionValide = '--';
+            //}
+            //var prctgNCPlanActionCloture = (Math.round(typeOccurence.get('nbNCPACloturees') / typeOccurence.get('nbNCEmises') * 100));
+            //if (isNaN(prctgNCPlanActionCloture)) {
+            //    prctgNCPlanActionCloture = '--';
+            //}
+            //var prctgNCCloturees = (Math.round(typeOccurence.get('nbNCCloturees') / typeOccurence.get('nbNCEmises') * 100));
+            //if (isNaN(prctgNCCloturees)) {
+            //    prctgNCCloturees = '--';
+            //}
+            var prctgActionVerifiees = (Math.round(typeOccurence.get('nbActionVerifiees') / typeOccurence.get('nbAction') * 100));
+            if (isNaN(prctgActionVerifiees)) {
+                prctgActionVerifiees = '--';
+            }
+            var prctgActionRealisees = (Math.round(typeOccurence.get('nbActionRealisees') / typeOccurence.get('nbAction') * 100));
+            if (isNaN(prctgActionRealisees)) {
+                prctgActionRealisees = '--';
+            }
+            var prctgActionRealiseesATemps = (Math.round(typeOccurence.get('nbActionRealiseesATemps') / typeOccurence.get('nbAction') * 100));
+            if (isNaN(prctgActionRealiseesATemps)) {
+                prctgActionRealiseesATemps = '--';
+            }
+            var prctgActionRealiseesEnRetard = (Math.round(typeOccurence.get('nbActionRealiseesEnRetard') / typeOccurence.get('nbAction') * 100));
+            if (isNaN(prctgActionRealiseesEnRetard)) {
+                prctgActionRealiseesEnRetard = '--';
+            }
+            var prctgActionEnCours = (Math.round(typeOccurence.get('nbActionEnCours') / typeOccurence.get('nbAction') * 100));
+            if (isNaN(prctgActionEnCours)) {
+                prctgActionEnCours = '--';
+            }
+            var prctgActionDepassees = (Math.round(typeOccurence.get('nbActionDepassees') / (typeOccurence.get('nbAction')) * 100));
+            if (isNaN(prctgActionDepassees)) {
+                prctgActionDepassees = '--';
+            }
+            var prctgActionDepassees1Mois = (Math.round(typeOccurence.get('nbActionDepassees1Mois') / (typeOccurence.get('nbAction')) * 100));
+            if (isNaN(prctgActionDepassees1Mois)) {
+                prctgActionDepassees1Mois = '--';
+            }
+            var prctgActionDepassees3Mois = (Math.round(typeOccurence.get('nbActionDepassees3Mois') / (typeOccurence.get('nbAction')) * 100));
+            if (isNaN(prctgActionDepassees3Mois)) {
+                prctgActionDepassees3Mois = '--';
+            }
+            var prctgActionEnRetard = (Math.round(typeOccurence.get('nbActionEnRetard') / (typeOccurence.get('nbAction')) * 100));
+            if (isNaN(prctgActionEnRetard)) {
+                prctgActionEnRetard = '--';
+            }
+
+            //typeOccurence.set({ 'prctgNCPlanActionValide': prctgNCPlanActionValide });
+            //typeOccurence.set({ 'prctgNCPlanActionCloture': prctgNCPlanActionCloture });
+            //typeOccurence.set({ 'prctgNCCloturees': prctgNCCloturees });
+            typeOccurence.set({ 'prctgActionVerifiees': prctgActionVerifiees });
+            typeOccurence.set({ 'prctgActionRealisees': prctgActionRealisees });
+            typeOccurence.set({ 'prctgActionRealiseesATemps': prctgActionRealiseesATemps });
+            typeOccurence.set({ 'prctgActionRealiseesEnRetard': prctgActionRealiseesEnRetard });
+            typeOccurence.set({ 'prctgActionEnCours': prctgActionEnCours });
+            typeOccurence.set({ 'prctgActionDepassees': prctgActionDepassees });
+            typeOccurence.set({ 'prctgActionDepassees1Mois': prctgActionDepassees1Mois });
+            typeOccurence.set({ 'prctgActionDepassees3Mois': prctgActionDepassees3Mois });
+            typeOccurence.set({ 'prctgActionEnRetard': prctgActionEnRetard });
+            
+        });
+
+
+        responseModel.get('typeOccurenceCollection').add(new TypeOccurenceModel({
+            'nom': 'TOTAL',
+            'nbNCEmises': totalNbNCEmises,
+            //'nbNCPAValidees': totalNbNCPAValide,
+            //'nbNCPACloturees': totalNbNCPACloture,
+            //'nbNCCloturees': totalNbNCcloturees,
+            'nbAction': totalNbAction,
+            'nbActionVerifiees': totalNbActionVerifiees,
+            'nbActionRealisees': totalNbActionRealisees,
+            'nbActionRealiseesATemps': totalNbActionATemps,
+            'nbActionRealiseesEnRetard': totalNbActionEnRetard,
+            'nbActionEnCours': totalNbActionEnCours,
+            'nbActionDepassees': totalNbActionDepassees,
+            'nbActionDepassees1Mois': totalNbActionDepassees1Mois,
+            'nbActionDepassees3Mois': totalNbActionDepassees3Mois,
+            'nbActionEnRetard': totalNbActionEnRetard,
+            //'prctgNCCloturees': (Math.round(totalNbNCcloturees / totalNbNCEmises * 100)) || '--',
+            //'prctgNCPlanActionValide': (Math.round(totalNbNCPAValide / totalNbNCEmises * 100)) || '--',
+            //'prctgNCPlanActionCloture': (Math.round(totalNbNCPACloture / totalNbNCEmises * 100)) || '--',
+            'prctgActionVerifiees': (Math.round(totalNbActionVerifiees / totalNbAction * 100)) || '--',
+            'prctgActionRealisees': (Math.round(totalNbActionRealisees / totalNbAction * 100)) || '--',
+            'prctgActionRealiseesATemps': (Math.round(totalNbActionATemps / totalNbAction * 100)) || '--',
+            'prctgActionRealiseesEnRetard': (Math.round(totalNbActionEnRetard / totalNbAction * 100)) || '--',
+            'prctgActionEnCours': (Math.round(totalNbActionEnCours / totalNbAction * 100)) || '--',
+            'prctgActionDepassees': (Math.round(totalNbActionDepassees / (totalNbAction - totalNbActionRealisees) * 100)) || '--',
+            'prctgActionDepassees1Mois': (Math.round(totalNbActionDepassees1Mois / (totalNbAction - totalNbActionRealisees) * 100)) || '--',
+            'prctgActionDepassees3Mois': (Math.round(totalNbActionDepassees3Mois / (totalNbAction - totalNbActionRealisees) * 100)) || '--',
+            'prctgActionEnRetard': (Math.round(totalNbActionEnRetard / (totalNbAction - totalNbActionRealisees) * 100)) || '--'
+
+
+            //typeOccurence.set({ 'prctgNCPlanActionValide': (Math.round(typeOccurence.get('nbNCPAValidees') / typeOccurence.get('nbNCEmises') * 100)) || '--' });
+    //typeOccurence.set({ 'prctgActionCloturees': (Math.round(typeOccurence.get('nbActionCloturees') / typeOccurence.get('nbAction') * 100)) || '--' });
+    //typeOccurence.set({ 'prctgActionClotureesATemps': (Math.round(typeOccurence.get('nbActionClotureesATemps') / typeOccurence.get('nbAction') * 100)) || '--' });
+    //typeOccurence.set({ 'prctgActionDepassees1Mois': (Math.round(typeOccurence.get('nbActionDepassees1Mois') / (typeOccurence.get('nbAction') - typeOccurence.get('nbActionCloturees')) * 100)) || '--' });
+    //typeOccurence.set({ 'prctgActionDepassees3Mois': (Math.round(typeOccurence.get('nbActionDepassees3Mois') / (typeOccurence.get('nbAction') - typeOccurence.get('nbActionCloturees')) * 100)) || '--' });
+    //typeOccurence.set({ 'prctgActionEnRetard': (Math.round(typeOccurence.get('nbActionEnRetard') / (typeOccurence.get('nbAction') - typeOccurence.get('nbActionCloturees')) * 100)) || '--' });
+
+
+        }));
+
+    }
+
+    });
+
+</script>

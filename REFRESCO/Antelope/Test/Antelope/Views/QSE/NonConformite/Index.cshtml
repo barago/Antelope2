@@ -1,0 +1,1292 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/QSE/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Scripts/DataTables-1.10.10/datatables.min.css" />
+<script type="text/javascript" src="~/Scripts/DataTables-1.10.10/datatables.min.js"></script>
+
+<script type="text/javascript" src="/Scripts/underscore.js"></script>
+<script type="text/javascript" src="/Scripts/backbone.js"></script>
+
+@*<script type="text/javascript" src="~/Scripts/Application/HSE/FicheSecurite/RechercheFicheSecuriteViewModel.js"></script>
+    <script type="text/javascript" src="~/Scripts/Application/HSE/FicheSecurite/RechercheFicheSecuriteParamModel.js"></script>*@
+<script type="text/javascript" src="~/Scripts/Application/QSE/NonConformite/NonConformiteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/Socle/SiteModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/ActionModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Recherche/ViewModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Recherche/RechercheNonConformiteParamModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/RechercheActiveDirectoryModel.js"></script>
+<script type="text/javascript" src="/Scripts/Application/QSE/NonConformite/Formulaire/RechercheActiveDirectoryView.js"></script>
+
+<script type="text/javascript" src="/Scripts/moment-with-langs.js"></script>
+<link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/Scripts/bootstrap-datetimepicker.min.js"></script>
+
+<script type="text/template" id="RechercheActiveDirectory">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Recherche d'un utilisateur dans l'annuaire</h4>
+            </div>
+            <div class="modal-body">
+                <p>Veuillez saisir un nom et/ou un prénom&hellip;&nbsp;Puis selectionner l'utilisateur voulu</p>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            @*style="padding-right:0px;"*@
+                            <label for="NomRecherche" class="label-xs">Nom&nbsp;recherché&nbsp;:&nbsp;</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control input-xs" id="NomRecherche" value="<%= typeof Nom === 'undefined' ? "" : Nom %>">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            @*style="padding-right:0px;"*@
+                            <label for="PrenomRecherche" class="label-xs">Prénom&nbsp;recherché&nbsp;:&nbsp;</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control input-xs" id="PrenomRecherche" value="<%= typeof Prenom === 'undefined' ? "" : Prenom %>">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button id="RechercheADUtilisateur" type="submit" class="btn pull-right btn-xs">
+                            <span class="glyphicon glyphicon-user"></span> Recherche
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <table class="table">
+                        <thead>
+                        <td>
+                            Nom
+                        </td>
+                        <td>
+                            Prénom
+                        </td>
+                        <td>
+                            Choisir
+                        </td>
+                        </thead>
+                        <tbody>
+
+                            <% rechercheActiveDirectoryCollection.each( function(utilisateurActiveDirectory){ %>
+
+                            <% if(utilisateurActiveDirectory.get('IsAnnuaireApplication') == true && utilisateurActiveDirectory.get('IsAnnuaireAD') == false) {%>
+                            <tr style="background-color:#F7E5C5;">
+                                <% } %>
+                                <% if(utilisateurActiveDirectory.get('IsAnnuaireAD') == true) {%>
+                            <tr>
+                                <% } %>
+
+                                <td>
+                                    <%= utilisateurActiveDirectory.get('Nom') %>
+                                </td>
+                                <td>
+                                    <%= utilisateurActiveDirectory.get('Prenom') %>
+                                </td>
+                                <td>
+                                    <button type="button" id="<%= utilisateurActiveDirectory.get('PersonneId') %>" class="BoutonChoixUtilisateurActiveDirectory btn btn-default">
+                                        <span class="glyphicon glyphicon-arrow-right"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</script>
+<div id="RechercheActiveDirectoryDiv">
+</div>
+
+<script type="text/template" id="TableFiltre">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="panel panel-primary" style="border-color: #006573;">
+                <div class="panel-heading" style="background-color :#006573; color: white">
+
+                    <div class="row">
+
+                        <div class="col-md-3">
+                            FILTRES&nbsp;:
+                        </div>
+                        <div class="col-md-9">
+
+                            <button id="RechercheBouton" type="submit" class="btn btn-default btn-xs pull-right">
+                                <span class="glyphicon glyphicon-search"></span> Chercher les Actions
+                            </button>
+
+                            <button id="RechercheNonConformiteBouton" type="submit" class="btn btn-default btn-xs pull-right" style="margin-right:10px">
+                                <span class="glyphicon glyphicon-search"></span> Chercher les Non-Conformités
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body" style="padding:0px;">
+                    <div class="row input-sm">
+                        <div class="col-md-4">
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="Site" class="label-xs">Site&nbsp;:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select id="Site" class="form-control input-xs">
+                                        <option value="0" <% if (rechercheNonConformiteParamModel.get('SiteId') == 0){ %> selected <% } %> ></option>
+                                        <% siteCollection.each( function(site){ %>
+                                        <option value="<%= site.get('SiteID') %>"
+                                            <% if (rechercheNonConformiteParamModel.get('SiteId') == site.get('SiteID')){ %> selected <% } %> >
+                                            <%= site.get('Nom') %>
+                                        </option>
+                                        <% }); %>
+                                        @*%> selected <%*@
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="Origine" class="label-xs">Origine&nbsp;:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select id="Origine" class="form-control input-xs">
+                                        <option value="0" <% if (rechercheNonConformiteParamModel.get('NonConformiteOrigineId') == 0){ %> selected <% } %> ></option>
+                                        <% nonConformiteOrigineCollection.each( function(nonConformiteOrigine){ %>
+                                        <option value="<%= nonConformiteOrigine.get('Id') %>"
+                                            <% if (rechercheNonConformiteParamModel.get('NonConformiteOrigineId') == nonConformiteOrigine.get('Id')){ %> selected <% } %> >
+                                            <%= nonConformiteOrigine.get('Nom') %>
+                                        </option>
+                                        <% }); %>
+                                        @*%> selected <%*@
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="Domaine" class="label-xs">Domaine&nbsp;:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select id="Domaine" class="form-control input-xs">
+                                        <option value="0" <% if (rechercheNonConformiteParamModel.get('NonConformiteDomaineId') == 0){ %> selected <% } %> ></option>
+                                        <% nonConformiteDomaineCollection.each( function(nonConformiteDomaine){ %>
+                                        <option value="<%= nonConformiteDomaine.get('Id') %>"
+                                            <% if (rechercheNonConformiteParamModel.get('NonConformiteDomaineId') == nonConformiteDomaine.get('Id')){ %> selected <% } %> >
+                                            <%= nonConformiteDomaine.get('Nom') %>
+                                        </option>
+                                        <% }); %>
+                                        @*%> selected <%*@
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="Gravite" class="label-xs">Gravite&nbsp;:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select id="Gravite" class="form-control input-xs">
+                                        <option value="0" <% if (rechercheNonConformiteParamModel.get('NonConformiteGraviteId') == 0){ %> selected <% } %> ></option>
+                                        <% nonConformiteGraviteCollection.each( function(nonConformiteGravite){ %>
+                                        <option value="<%= nonConformiteGravite.get('Id') %>"
+                                            <% if (rechercheNonConformiteParamModel.get('NonConformiteGraviteId') == nonConformiteGravite.get('Id')){ %> selected <% } %> >
+                                            <%= nonConformiteGravite.get('Nom') %>
+                                        </option>
+                                        <% }); %>
+                                        @*%> selected <%*@
+                                    </select>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                        <div class="col-md-4">
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="ServiceType" class="label-xs">Appartenance&nbsp;:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select id="ServiceType" class="form-control input-xs">
+                                        <option value="0" <% if (rechercheNonConformiteParamModel.get('ServiceTypeId') == 0){ %> selected <% } %> ></option>
+                                        <% serviceTypeCollection.each( function(serviceType){ %>
+                                        <option value="<%= serviceType.get('ServiceTypeId') %>"
+                                            <% if (rechercheNonConformiteParamModel.get('ServiceTypeId') == serviceType.get('ServiceTypeId')){ %> selected <% } %> >
+                                            <%= serviceType.get('Nom') %>
+                                        </option>
+                                        <% }); %>
+                                        @*%> selected <%*@
+                                    </select>
+                                </div>
+                            </div>
+
+                            @*<div class="row">
+                                <div class="col-sm-4">
+                                    <label for="ResponsableNom" class="label-xs">Nom&nbsp;Resp.&nbsp;Action&nbsp;:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="input-group input-group-xs">
+                                        <input type="text" class="form-control input-xs" id="ResponsableNom" value="<%= rechercheNonConformiteParamModel.get('ResponsableNom') %>">
+                                    </div>
+                                </div>
+                            </div>*@
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="ResponsableNom" class="label-xs">Nom resp. act°&nbsp;:&nbsp;</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="input-group input-group-xs">
+                                        <input type="text" class="form-control input-xs" id="ResponsableNom">
+                                        <span class="input-group-btn">
+                                            <button id="ActiveDirectoryActionResponsableRecherche" class="btn btn-default" type="button" data-toggle="modal" data-sourceutilisateurfield="ActionResponsable">
+                                                <span class="glyphicon glyphicon-user">
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="<%= 'ResponsablePrenom' %>" class="label-xs">Prénom resp.&nbsp;:&nbsp;</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-xs ResponsablePrenom" id="ResponsablePrenom">
+                                </div>
+                            </div>
+
+
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="DateButoirDebut" class="label-xs">Date&nbsp;butoir&nbsp;Début&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        @*<div class="form-group">*@
+                                        <div class='input-group date' id='DateButoirDebut'>
+                                            <input type='text' name="DateButoirDebut" id="DateButoirDebutInput" class="form-control input-xs" value="<%= rechercheNonConformiteParamModel.get('DateButoirDebutJavascript') %>" />
+                                            <div class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </div>
+                                        </div>
+                                        @*</div>*@
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="DateButoirFin" class="label-xs">Date&nbsp;butoir&nbsp;Fin&nbsp;:</label>
+                                    </div>
+                                    <div class='col-sm-8'>
+                                        @*<div class="form-group">*@
+                                        <div class='input-group date' id='DateButoirFin'>
+                                            <input type='text' name="DateButoirFin" id="DateButoirFinInput" class="form-control input-xs" value="<%= rechercheNonConformiteParamModel.get('DateButoirFinJavascript') %>" />
+                                            <span class="input-group-addon input-xs">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                        @*</div>*@
+                                    </div>
+                                </div>
+
+                            </div>
+                        <div class="col-md-4">
+                        </div>
+                    </div>
+
+                     
+                    <div class="row">
+                        <div class="col-md-12">
+                            Filtres sur les Non-Conformités :
+                            <label for="IsNCEnCours" style="font-weight:normal"> <span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:white;height:10px;">&nbsp;NC en cours&nbsp;</span></label>
+                            <input type="checkbox" id="IsNCEnCours"<% if(rechercheNonConformiteParamModel.get('IsNCEnCours')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsNCCloture" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#00FF00;height:10px;">&nbsp;NC clôturées&nbsp;</span></label>
+                            <input type="checkbox" id="IsNCCloture"<% if(rechercheNonConformiteParamModel.get('IsNCEnCours')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                    </div>
+
+
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            Filtres sur les Actions :
+                            <label for="IsActionEnCours" style="font-weight:normal"> <span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:white;height:10px;">&nbsp;Actions en cours&nbsp;</span></label>
+                            <input type="checkbox" id="IsActionEnCours"<% if(rechercheNonConformiteParamModel.get('IsActionEnCours')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsActionRealise" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#FFC000;height:10px;">&nbsp;Actions réalisées&nbsp;</span></label>
+                            <input type="checkbox" id="IsActionRealise"<% if(rechercheNonConformiteParamModel.get('IsActionRealise')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsActionRetard" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#FF0000;height:10px;">&nbsp;Actions en retard&nbsp;</span></label>
+                            <input type="checkbox" id="IsActionRetard"<% if(rechercheNonConformiteParamModel.get('IsActionRetard')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="IsActionCloture" style="font-weight:normal"><span style="border-style:solid;border-width:1px;border-color:#B4B4B4;background-color:#00FF00;height:10px;">&nbsp;Actions clôturées&nbsp;</span></label>
+                            <input type="checkbox" id="IsActionCloture"<% if(rechercheNonConformiteParamModel.get('IsActionCloture')===true) { %> checked <% } %> >&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/template" id="TableRecherche">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="panel panel-primary" style="border-color: #006573;">
+                @*<div class="panel-heading" style="background-color :#c42031; color: white">Résultats&nbsp;:&nbsp;<span class="pull-right">&nbsp;&nbsp;enregistrements&nbsp; <%= (PageSize*(Page-1))+1 %> &nbsp;à&nbsp; <%= (Page*PageSize < RowCount)? Page*PageSize : RowCount  %> &nbsp;sur&nbsp;un&nbsp;total&nbsp;de&nbsp;:&nbsp;<%= RowCount %></span></div>*@
+                <div class="panel-heading" style="background-color :#006573; color: white">
+                    <% if(rechercheNonConformiteParamModel.get('typeRecherche')==="NONCONFORMITE") { %> <span style="text-decoration:underline;font-weight:bold;">NON CONFORMITES</span> :  <% } %>
+                    <% if(rechercheNonConformiteParamModel.get('typeRecherche')==="ACTION") { %> <span style="text-decoration:underline;font-weight:bold;">ACTIONS</span> :  <% } %>
+                </div>
+                <div class="panel-body">
+
+                    <% if(rechercheNonConformiteParamModel.get('typeRecherche')==="ACTION") { %>
+
+                    <table id="Table" class="stripe hover">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>CodeNC</th>
+                                <th>Titre</th>
+                                <th>Responsable</th>
+                                <th>Date Butoir Initiale</th>
+                                <th>Date Butoir Nouvelle</th>
+                                <th>Description</th>
+                                <th>Description Non Conformite</th>
+                                @*<th>Code</th>
+                                    <th>Date </th>
+                                    <th>Origine</th>
+                                    *@
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <% } %>
+
+                    <% if(rechercheNonConformiteParamModel.get('typeRecherche')==="NONCONFORMITE") { %>
+
+                    <table id="Table" class="stripe hover">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Code</th>
+                                <th>Date</th>
+                                <th>Origine</th>
+                                @*<th>Domaine</th>
+                                    <th>Gravité</th>*@
+                                <th>Desciption</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <% } %>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<div id="TableFiltreDiv">
+</div>
+
+<div id="TableRechercheDiv">
+</div>
+
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+
+        function dateFormatJS(date) {
+            var dateFormated = '';
+            if (date != null) {
+                dateFormated = date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+            }
+            return dateFormated;
+        };
+
+        var viewModel = new ViewModel();
+
+        viewModel.fetch({
+            async: false
+        });
+        
+        viewModel.set({ 'rechercheNonConformiteParamModel': new RechercheNonConformiteParamModel(viewModel.get('RechercheNonConformiteParamModel')) });
+
+        viewModel.set({ 'siteCollection': new SiteCollection(viewModel.get('AllSite')) });
+        viewModel.set({ 'nonConformiteDomaineCollection': new SiteCollection(viewModel.get('AllNonConformiteDomaine')) });
+        viewModel.set({ 'nonConformiteOrigineCollection': new SiteCollection(viewModel.get('AllNonConformiteOrigine')) });
+        viewModel.set({ 'nonConformiteGraviteCollection': new SiteCollection(viewModel.get('AllNonConformiteGravite')) });
+        viewModel.set({'serviceTypeCollection': new SiteCollection(viewModel.get('AllServiceType')) });
+
+
+        viewModel.get('rechercheNonConformiteParamModel').set({ 'DateButoirDebutJavascript': dateFormatJS(viewModel.get('rechercheNonConformiteParamModel').get('DateButoirDebut')) });
+        viewModel.get('rechercheNonConformiteParamModel').set({ 'DateButoirFinJavascript': dateFormatJS(viewModel.get('rechercheNonConformiteParamModel').get('DateButoirFin')) });
+
+        viewModel.get('rechercheNonConformiteParamModel').set({ 'typeRecherche': 'ACTION' });
+
+        Backbone.applicationEvents = _.extend({}, Backbone.Events);
+
+        var FiltreTableView = Backbone.View.extend({
+            id: 'FiltreTableNonConformite',
+            template: _.template($('#TableFiltre').html()),
+            render: function () {
+
+                this.$el.html(this.template(this.model.toJSON()));
+
+                $('#DateButoirDebut').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+                $('#DateButoirFin').datetimepicker({
+                    pickTime: false,
+                    language: 'fr'
+                });
+
+                $('#DateButoirDebut').on("dp.change", $.proxy(this.changeDateButoirDebut, this));
+                $('#DateButoirDebut').on("dp.hide", $.proxy(this.changeDateButoirDebut, this));
+                $('#DateButoirFin').on("dp.change", $.proxy(this.changeDateButoirFin, this));
+                $('#DateButoirFin').on("dp.hide", $.proxy(this.changeDateButoirFin, this));
+
+                return this;
+            },
+            fillUtilisateur: function (params) {
+                console.log(params[0]);
+                switch (params[0].get('sourceUtilisateurField')) {
+                    case "ActionResponsable":
+                        console.log('toto');
+
+                        this.model.get('rechercheNonConformiteParamModel').set({ 'Responsable': params[0] });
+
+                        this.model.get('rechercheNonConformiteParamModel').set({ 'ResponsableNom': params[0].get('Nom') });
+                        this.model.get('rechercheNonConformiteParamModel').set({ 'ResponsablePrenom': params[0].get('Prenom') });
+                        this.model.get('rechercheNonConformiteParamModel').set({ 'ResponsableId': params[0].get('PersonneId') });
+
+                        $('#ResponsableNom').val(this.model.get('rechercheNonConformiteParamModel').get('Responsable').get('Nom'));
+                        $('#ResponsablePrenom').val(this.model.get('rechercheNonConformiteParamModel').get('Responsable').get('Prenom'));
+
+                        //this.model.get('rechercheNonConformiteParamModel').set({ 'ResponsableNom': $('#ResponsableNom').val() });
+                        //this.model.get('rechercheNonConformiteParamModel').set({ 'ResponsableGuid': null });
+
+                        //this.model.get('actionModel').set({ 'Responsable': params[0] });
+                        //this.model.get('actionModel').set({ 'ResponsableId': params[0].get('PersonneId') });
+                    
+                        //$('#AddActionResponsableNom').val(this.model.get('actionModel').get('Responsable').get('Nom'));
+                        //$('#AddActionResponsablePrenom').val(this.model.get('actionModel').get('Responsable').get('Prenom'));
+                          
+                        break;
+
+                }
+            },
+            initialize: function () {
+
+                Backbone.applicationEvents.on('selectionUtilisateur', function (params) {
+                    this.fillUtilisateur(params);
+                }, this);
+
+                this.render();
+
+            },
+            events: {
+                "change #Site": "changeSite",
+                "change #ServiceType":"changeServiceType",
+                "change #Origine": "changeOrigine",
+                "change #Domaine": "changeDomaine",
+                "change #Gravite": "changeGravite",
+                "click #RechercheBouton": "recherche",
+                "click #RechercheNonConformiteBouton": "rechercheNonConformite",
+                "keyup #DateButoirDebutInput": "changeDateButoirDebut",
+                "keyup #DateButoirFinInput": "changeDateButoirFin",
+                "keyup #ResponsableNom": "changeResponsableNom",
+                "click #IsNCEnCours": "changeIsNCEnCours",
+                "click #IsNCCloture": "changeIsNCCloture",
+                "click #IsActionEnCours": "changeIsActionEnCours",
+                "click #IsActionRealise": "changeIsActionRealise",
+                "click #IsActionRetard": "changeIsActionRetard",
+                "click #IsActionCloture": "changeIsActionCloture",
+                "click #ActiveDirectoryActionResponsableRecherche": "showActiveDirectoryUtilisateurRecherche",
+                //"click .BoutonChoixUtilisateurActiveDirectory": "choixUtilisateurActiveDirectory",
+
+            },
+            //choixUtilisateurActiveDirectory: function (ev) {
+            //    console.log($(ev.currentTarget).attr('id'));
+            //    var utilisateurSelectionne = this.model.get('rechercheActiveDirectoryCollection').find(
+            //        function (model) { return model.get('PersonneId') == $(ev.currentTarget).attr('id'); }
+            //    );
+            //    console.log('Utilisateur Selectionné : ');
+            //    console.log(utilisateurSelectionne);
+            //    this.model.set({ "utilisateurSelectionne": utilisateurSelectionne });
+            //    this.model.get('utilisateurSelectionne').set({ "sourceUtilisateurField": this.model.get('sourceUtilisateurField') });
+
+            //    Backbone.applicationEvents.trigger('selectionUtilisateur', [this.model.get('utilisateurSelectionne'), this.model.get('sourceId')]);
+
+
+            //    this.$el.modal('hide');
+
+            //},
+            triggerRechercheSurEntree: function (e) {
+                if (e.which === 13) {
+                    if (viewModel.get('paramModel').get('typeRecherche') === 'NONCONFORMITE') {
+                        Backbone.applicationEvents.trigger('rechercheNonConformite');
+                    }
+                    if (viewModel.get('paramModel').get('typeRecherche') === 'ACTION') {
+                        Backbone.applicationEvents.trigger('recherche');
+                    }
+                }
+            },
+            rechercheNonConformite: function () {
+                viewModel.get('rechercheNonConformiteParamModel').set({ 'typeRecherche': 'FICHESECURITE' });
+                Backbone.applicationEvents.trigger('rechercheNonConformite');
+            },
+            recherche: function () {
+                viewModel.get('rechercheNonConformiteParamModel').set({ 'typeRecherche': 'ACTION' });
+                Backbone.applicationEvents.trigger('recherche');
+            },
+            changeResponsableNom: function (e) {
+                this.model.get('rechercheNonConformiteParamModel').set({ 'ResponsableNom': $('#ResponsableNom').val() });
+                this.model.get('rechercheNonConformiteParamModel').set({ 'ResponsableGuid': null });
+
+                //this.triggerRechercheSurEntree(e);
+            },
+            changeDateButoirDebut: function (e) {
+                this.model.get('rechercheNonConformiteParamModel').set({ 'DateButoirDebut': this.dateFormatMVC($('#DateButoirDebutInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('rechercheNonConformiteParamModel').set({ 'DateButoirDebutJavascript': $('#DateButoirDebutInput').val() });
+
+                //this.triggerRechercheSurEntree(e);
+            },
+            changeDateButoirFin: function (e) {
+                this.model.get('rechercheNonConformiteParamModel').set({ 'DateButoirFin': this.dateFormatMVC($('#DateButoirFinInput').val()) + 'T' + '00:00:00.0' });
+                this.model.get('rechercheNonConformiteParamModel').set({ 'DateButoirFinJavascript': $('#DateButoirFinInput').val() });
+
+                //this.triggerRechercheSurEntree(e);
+            },
+            changeSite: function () {
+                this.model.get('rechercheNonConformiteParamModel').set({ 'SiteId': parseInt($('#Site').val()) });
+            },
+            changeServiceType : function (){
+                this.model.get('rechercheNonConformiteParamModel').set({ 'ServiceTypeId': parseInt($('#ServiceType').val()) });
+            },
+            changeOrigine: function () {
+                this.model.get('rechercheNonConformiteParamModel').set({ 'NonConformiteOrigineId': parseInt($('#Origine').val()) });
+            },
+            changeDomaine: function () {
+                this.model.get('rechercheNonConformiteParamModel').set({ 'NonConformiteDomaineId': parseInt($('#Domaine').val()) });
+            },
+            changeGravite: function () {
+                this.model.get('rechercheNonConformiteParamModel').set({ 'NonConformiteGraviteId': parseInt($('#Gravite').val()) });
+            },
+            dateFormatMVC: function (date) {
+                // De date FR à DateTime
+                var dateFormated = date.substring(6, 10) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2);
+                return dateFormated;
+            },
+            changeIsNCEnCours: function(){
+                this.model.get('rechercheNonConformiteParamModel').set({ 'IsNCEnCours': $('#IsNCEnCours').is(":checked") });
+            },
+            changeIsNCCloture: function(){
+                this.model.get('rechercheNonConformiteParamModel').set({ 'IsNCCloture': $('#IsNCCloture').is(":checked") });
+            },
+            changeIsActionEnCours: function(){
+                this.model.get('rechercheNonConformiteParamModel').set({ 'IsActionEnCours': $('#IsActionEnCours').is(":checked") });
+            },
+            changeIsActionRealise: function(){
+                this.model.get('rechercheNonConformiteParamModel').set({ 'IsActionRealise': $('#IsActionRealise').is(":checked") });
+            },
+            changeIsActionRetard: function(){
+                this.model.get('rechercheNonConformiteParamModel').set({ 'IsActionRetard': $('#IsActionRetard').is(":checked") });
+            },
+            changeIsActionCloture: function(){
+                this.model.get('rechercheNonConformiteParamModel').set({ 'IsActionCloture': $('#IsActionCloture').is(":checked") });
+            },
+            showActiveDirectoryUtilisateurRecherche: function (ev) {
+                //TODO :  Créer un constructeur prenant "sourceUtilisateurField" en param. pour créer ce qui suit
+                var rechercheActiveDirectoryView = new window.RechercheActiveDirectoryView({
+                });
+                rechercheActiveDirectoryView.model.set({ "sourceUtilisateurField": $(ev.currentTarget).attr('data-SourceUtilisateurField') });
+                if ($(ev.currentTarget).attr('data-actionid') != null) {
+                    rechercheActiveDirectoryView.model.set({ "sourceId": $(ev.currentTarget).attr('data-actionid') })
+                };
+                rechercheActiveDirectoryView.show()
+            },
+        })
+
+
+
+        var RechercheTableView = Backbone.View.extend({
+            id: 'RechercheTableNonConformite',
+            template: _.template($('#TableRecherche').html()),
+            render: function () {
+                this.$el.html(this.template(this.model.toJSON()));
+
+                this.buildDataTable();
+
+                return this;
+            },
+            initialize: function () {
+
+                Backbone.applicationEvents.on('recherche', function () {
+                    this.recherche();
+                }, this);
+
+                this.render();
+            },
+            events: {
+                //"click #RechercheBouton": "recherche"
+
+            },
+            buildDataTable: function () {
+                // /!\ Les fonctions d'ajout de 'datas' supplémentaires de DataTables ne fonctionnent pas très bien
+                // Donc à chaque recherche, nous réinstancions le tableau
+                // A chaque recherche, les paramètres de tri ne sont donc pas sauvegardés ... A voir si c'est grâve.
+
+                $("#Table").DataTable().destroy();
+
+                table = $("#Table").DataTable({
+                    //dom: 'T<"clear">lfrtip',
+                    dom: 'lf<"floatright"B>rtip',
+                    buttons: [
+                        'copy', 'excel'
+                    ],
+                    "scrollY": "400px",
+                    "autoWidth": false,
+                    "serverSide": true,
+                    "processing": true,
+                    "filter": false,
+                    //"sAjaxSource": "/api/NonConformite",
+                    "ajax": {
+                        "url": "/api/ActionQSE",
+                        "data": {
+                            "siteId": this.model.get('rechercheNonConformiteParamModel').get('SiteId'),
+                            "serviceTypeId": this.model.get('rechercheNonConformiteParamModel').get('ServiceTypeId'),
+                            "nonConformiteOrigineId": this.model.get('rechercheNonConformiteParamModel').get('NonConformiteOrigineId'),
+                            "nonConformiteDomaineId": this.model.get('rechercheNonConformiteParamModel').get('NonConformiteDomaineId'),
+                            "nonConformiteGraviteId": this.model.get('rechercheNonConformiteParamModel').get('NonConformiteGraviteId'),
+                            "responsableNom": this.model.get('rechercheNonConformiteParamModel').get('ResponsableNom'),
+                            "dateButoirDebut": this.model.get('rechercheNonConformiteParamModel').get('DateButoirDebut'),
+                            "dateButoirFin": this.model.get('rechercheNonConformiteParamModel').get('DateButoirFin'),
+                            "isActionEnCours": this.model.get('rechercheNonConformiteParamModel').get('IsActionEnCours'),
+                            "isActionRealise": this.model.get('rechercheNonConformiteParamModel').get('IsActionRealise'),
+                            "isActionRetard": this.model.get('rechercheNonConformiteParamModel').get('IsActionRetard'),
+                            "isActionCloture": this.model.get('rechercheNonConformiteParamModel').get('IsActionCloture')
+                        }
+
+                    },
+                    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tous"]],
+                    "fnRowCallback": function (nRow, aData) {
+
+
+                        var $nRow = $(nRow); // cache the row wrapped up in jQuery
+                        //BLANC EN COURS
+                        $('td:eq(0)', nRow).css({ "border-style": "solid", "border-width": "1px", "border-color": "#B4B4B4" });
+                        var color = "white";
+                        var colorHeavy = "white";
+                        var colorLight = "white";
+                        //if (aData.WorkFlowAttenteASEValidation == true) {
+                        //    colorHeavy = "#BFBFBF";
+                        //    colorLight = "#E0E0E0";
+                        //    $nRow.css({ "background-color": colorLight });
+                        //    $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        //}
+                        //ORANGE REALISE
+                        if (aData.RealiseDate !== null && aData.VerifieDate === null) {
+                            colorHeavy = "#FFC000";
+                            colorLight = "#FCE6A2";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        //ROUGE EN RETARD
+                        //if ((new Date(Date.parse(aData.RealiseDate)) > new Date(Date.parse(aData.DateButoireInitiale))) || (new Date() > new Date(Date.parse(aData.DateButoireInitiale)))) {
+                        if (aData.RealiseDate === null && aData.VerifieDate === null && new Date() > new Date(Date.parse(aData.DateButoireInitiale))) {
+                            colorHeavy = "#FF0000";
+                            colorLight = "#FFE7FF";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        //VERT VERIFIE
+                        if (aData.RealiseDate !== null && aData.VerifieDate !== null) {
+                            colorHeavy = "#00FF00";
+                            colorLight = "#AFFDAF";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+                        //if (aData.WorkFlowFicheSecuriteCloturee == true) {
+                        //    colorHeavy = "#00B0F0";
+                        //    colorLight = "#AFE8FD";
+                        //    $nRow.css({ "background-color": colorLight });
+                        //    $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        //}
+                        $(nRow).hover(function () {
+                            //$nRow.css({ "background-color": "#EAEAEA" });
+                            $nRow.css({ "background-color": "#808181", "color": "white" });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy, "color": "black" });
+                        }, function () {
+                            $nRow.css({ "background-color": colorLight, "color": "black" });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy, "color": "black" });
+                        });
+                        return nRow
+                    },
+                    "columns": [
+                        {
+                            "mData": "NonConformiteCode",
+                            "sTitle": "Code Non-Conformite",
+                            "orderable": true,
+                            "width": "7%",
+                            "mRender": function (date, type, full) {
+                                return full.NonConformite.Code;
+                            }
+                        },
+                        {
+                            "mData": "Titre",
+                            "sTitle": "Titre",
+                            "orderable": false,
+                            "width": "10%"
+                        },
+                        {
+                            "mData": "NonConformiteDescription",
+                            "sTitle": "Description Non-Conformite",
+                            "orderable": false,
+                            "width": "25%",
+                            "mRender": function (date, type, full) {
+                                return full.NonConformite.Description;
+                            }
+                        },
+                        {
+                            "mData": "Description",
+                            "sTitle": "Description",
+                            "orderable": false,
+                            "visible": true,
+                            //"mRender": function (date, type, full) {
+                            //    return '<span title="' + full.Description + '">' + full.Description.substring(0, 40) + '...</span>'
+                            //},
+                            "width": "25%"
+                        },
+                        {
+                            "mData": "Avancement",
+                            "sTitle": "Avancement",
+                            "orderable": false,
+                            "visible": false,
+                            "width": "25%"
+                        },
+                        {
+                            "mData": "ResponsableNom",
+                            "sTitle": "Responsable",
+                            "orderable": true,
+                            "width": "8%",
+                            "mRender": function (date, type, full) {
+                                return full.Responsable.Nom + ' ' + full.Responsable.Prenom;
+                            }
+                        },
+                        {
+                            "mData": "DateButoireInitiale",
+                            "sTitle": "Date Butoir Initiale",
+                            "sType": "date",
+                            "mRender": function (date, type, full) {
+                            //    //return new Date(date).toLocaleString();
+                            //    //return date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+                            //    var date = (full.DateButoireNouvelle == null) ? full.DateButoireInitiale : full.DateButoireNouvelle;
+                            return full.DateButoireInitiale.substring(8, 10) + '/' + full.DateButoireInitiale.substring(5, 7) + '/' + full.DateButoireInitiale.substring(0, 4);
+                            },
+                            "orderable": true,
+                            "width": "6%"
+                        },
+                        {
+                            "mData": "DateButoireNouvelle",
+                            "sTitle": "Date Butoir Nouvelle",
+                            "sType": "date",
+                            "mRender": function (date, type, full) {
+                                //return new Date(date).toLocaleString();
+                                //return date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+                                //var date = (full.DateButoireNouvelle == null) ? full.DateButoireInitiale : full.DateButoireNouvelle;
+                                if (full.DateButoireNouvelle != null || full.DateButoireNouvelle == '') {
+                                    return full.DateButoireNouvelle.substring(8, 10) + '/' + full.DateButoireNouvelle.substring(5, 7) + '/' + full.DateButoireNouvelle.substring(0, 4);
+                                }
+                                else {
+                                    return '';
+                                }
+                            },
+                            "orderable": true,
+                            "width": "6%"
+                        },
+                        {
+                            "mData": "RealiseDate",
+                            "sTitle": "Date de réalisation",
+                            "sType": "date",
+                            "mRender": function (date, type, full) {
+                                if (full.RealiseDate === null || full.RealiseDate === undefined) { return ""; }
+                                return full.RealiseDate.substring(8, 10) + '/' + full.RealiseDate.substring(5, 7) + '/' + full.RealiseDate.substring(0, 4);
+
+                            },
+                            "orderable": true,
+                            "width": "6%",
+                            "visible": false
+                        },
+                        {
+                            "mData": "CritereEfficaciteVerification",
+                            "sTitle": "Critère Vérification",
+                            "orderable": false,
+                            "visible": false,
+                            //"mRender": function (date, type, full) {
+                            //    return '<span title="' + full.Description + '">' + full.Description.substring(0, 40) + '...</span>'
+                            //},
+                        },
+                        {
+                            "mData": "CommentaireEfficaciteVerification",
+                            "sTitle": "Commentaire Vérification",
+                            "orderable": false,
+                            "visible": false,
+                            //"mRender": function (date, type, full) {
+                            //    return '<span title="' + full.Description + '">' + full.Description.substring(0, 40) + '...</span>'
+                            //},
+                        },
+                        {
+                            "mData": "VerificateurNom",
+                            "sTitle": "Verificateur",
+                            "orderable": false,
+                            "visible":false,
+                            "mRender": function (date, type, full) {
+                                return full.Verificateur.Nom + ' ' + full.Verificateur.Prenom;
+                            }
+                        },
+                    ],
+                    "oLanguage": {
+                        "sUrl": "Scripts/datatables_lang_fr.js"
+                    }
+                });
+
+
+                table.$('tr.selected').removeClass('selected');
+
+                $('#Table tbody').on('mousedown', 'tr', function (e) {
+
+                    // !!! Triche >> Pour raison X, le click sur un élément la ligne ou un élément de celle-ci se joue deux fois
+                    // On n'active donc le code qu'une fois sur deux (Ce n'est pas une question de propagation Bubbling ... )
+                    var i = 0;
+                    i++
+                    if (i % 2 > 0) {
+
+                        if (e.button == 0) {
+
+                            if (e.target.id == "deleteFicheSecurite") {
+
+                                var id = e.target.getAttribute("data-id");
+                                var confirmation = confirm("Êtes-vous sûr de vouloir supprimer cette Fiche Sécurité ?");
+                                if (confirmation == true) {
+                                    var ficheSecuriteToDeleteModel = new FicheSecuriteModel({ "FicheSecuriteID": id })
+                                    ficheSecuriteToDeleteModel.destroy({
+                                        async: false, wait: true,
+                                        success: _.bind(function (model, repsonse) {
+                                            //Backbone.applicationEvents.trigger('validFicheSecurite', 'la cause a été supprimée');
+                                        }, this)
+                                    });
+                                    table.ajax.reload(null, false);
+                                }
+                            } else {
+                                // CODE POUR OUVRIR DANS MEME FENETRE NE PAS SUPPRIMER
+                                @*var aData = $("#Table").dataTable().fnGetData(this);
+                                var url = '@Url.Action("Edit", "FicheSecurite", new { id = "__id__" })';
+                                window.location.href = url.replace('__id__', aData.FicheSecuriteID);*@
+
+                                var aData = $("#Table").dataTable().fnGetData(this);
+                                var url = '@Url.Action("Edit", "NonConformite", new { id = "__id__" })';
+                                var realUrl = url.replace('__id__', aData.NonConformiteId)
+                                window.open(realUrl, "_blank");
+                            }
+                        }
+
+                        e.preventDefault();
+
+                        if (e.button == 2 || e.button == 1) {
+                            var aData = $("#Table").dataTable().fnGetData(this);
+                            var url = '@Url.Action("Edit", "NonConformite", new { id = "__id__" })';
+                            var realUrl = url.replace('__id__', aData.NonConformiteId)
+                            window.open(realUrl, "_blank");
+                        }
+
+                    }
+                });
+
+                @*$('#Table tbody').on('click', 'tr', function () {
+
+                    var aData = $("#Table").dataTable().fnGetData(this);
+                    var url = '@Url.Action("Edit", "NonConformite", new { id = "__id__" })';
+                    window.location.href = url.replace('__id__', aData.NonConformiteId);
+
+                    // TODO : Faire un premier clic de selection, puis le deuxième envoi sur la page
+                    // Ne marche pas car les tr sont selected après le Destray, alors que dans le DOM ils ne sont pas selected ...
+
+                    @*if ($(this).hasClass('selected')) {
+
+                        var aData = $("#Table").dataTable().fnGetData(this);
+
+                        var url = '@Url.Action("Create", "NonConformite", new { id = "__id__" })';
+                        window.location.href = url.replace('__id__', aData.Id);
+                    }
+                    else {
+                        table.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                    }
+                });
+
+                $('#Table tbody').on('mousedown', 'tr', function (e) {
+                    e.preventDefault();
+                    if (e.button == 2 || e.button == 1) {
+                        var aData = $("#Table").dataTable().fnGetData(this);
+                        var url = '@Url.Action("Edit", "NonConformite", new { id = "__id__" })';
+                        var realUrl = url.replace('__id__', aData.NonConformiteId)
+                        window.open(realUrl);
+                    }
+                });*@
+
+
+            },
+            recherche: function () {
+                viewModel.get('rechercheNonConformiteParamModel').set({ 'typeRecherche': 'ACTION' });
+                this.render();
+                this.buildDataTable();
+            }
+
+        });
+
+
+        var RechercheNonConformiteTableView = Backbone.View.extend({
+            id: 'RechercheTableFicheSecurite',
+            template: _.template($('#TableRecherche').html()),
+            render: function () {
+                this.$el.html(this.template(this.model.toJSON()));
+
+                this.buildDataTable();
+
+                return this;
+            },
+            initialize: function () {
+
+                Backbone.applicationEvents.on('rechercheNonConformite', function () {
+                    this.rechercheNonConformite();
+                }, this);
+
+            },
+            events: {
+                // "click #RechercheNonConformiteBouton": "rechercheNonConformite"
+            },
+            buildDataTable: function () {
+                // /!\ Les fonctions d'ajout de 'datas' supplémentaires de DataTables ne fonctionnent pas très bien
+                // Donc à chaque recherche, nous réinstancions le tableau
+                // A chaque recherche, les paramètres de tri ne sont donc pas sauvegardés ... A voir si c'est grâve.
+
+                $("#Table").DataTable().destroy();
+
+                table = $("#Table").DataTable({
+                    //dom: 'T<"clear">lfrtip',
+                    dom: 'lf<"floatright"B>rtip',
+                    buttons: [
+                        'copy', 'excel'
+                    ],
+                    "scrollY": "400px",
+                    "autoWidth": false,
+                    "serverSide": true,
+                    "processing": true,
+                    "filter": false,
+                    //"sAjaxSource": "/api/NonConformite",
+                    "ajax": {
+                        "url": "/api/NonConformite",
+                        "data": {
+                            "siteId": this.model.get('rechercheNonConformiteParamModel').get('SiteId'),
+                            "serviceTypeId": this.model.get('rechercheNonConformiteParamModel').get('ServiceTypeId'),
+                            "nonConformiteOrigineId": this.model.get('rechercheNonConformiteParamModel').get('NonConformiteOrigineId'),
+                            "nonConformiteDomaineId": this.model.get('rechercheNonConformiteParamModel').get('NonConformiteDomaineId'),
+                            "nonConformiteGraviteId": this.model.get('rechercheNonConformiteParamModel').get('NonConformiteGraviteId'),
+                            "responsableNom": this.model.get('rechercheNonConformiteParamModel').get('ResponsableNom'),
+                            "dateButoirDebut": this.model.get('rechercheNonConformiteParamModel').get('DateButoirDebut'),
+                            "dateButoirFin": this.model.get('rechercheNonConformiteParamModel').get('DateButoirFin'),
+                            "isNCEnCours": this.model.get('rechercheNonConformiteParamModel').get('IsNCEnCours'),
+                            "isNCCloture": this.model.get('rechercheNonConformiteParamModel').get('IsNCCloture')
+                        }
+
+                    },
+                    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tous"]],
+                    "fnRowCallback": function (nRow, aData) {
+                        var $nRow = $(nRow); // cache the row wrapped up in jQuery
+
+                        $('td:eq(0)', nRow).css({ "border-style": "solid", "border-width": "1px", "border-color": "#B4B4B4" });
+                        var color = "white";
+                        var colorHeavy = "white";
+                        var colorLight = "white";
+
+                        var isCloture = true;
+                        var nbAction = 0;
+                        
+             
+                        for (action in aData.ActionQSEs) {
+                            nbAction++;
+                                console.log(aData.ActionQSEs[action].VerifieDate);
+                                if (typeof aData.ActionQSEs[action].VerifieDate === 'undefined' || aData.ActionQSEs[action].VerifieDate === null) {
+                                    isCloture = false;
+                                }
+                        }
+
+
+
+                        if (isCloture == true && nbAction > 0) {
+                            colorHeavy = "#00FF00";
+                            colorLight = "#AFFDAF";
+                            $nRow.css({ "background-color": colorLight });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        }
+
+                        //if (aData.NonConformite.WorkFlowAttenteASEValidation == true) {
+                        //    colorHeavy = "#BFBFBF";
+                        //    colorLight = "#E0E0E0";
+                        //    $nRow.css({ "background-color": colorLight });
+                        //    $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        //}
+                        //if (aData.FicheSecurite.WorkFlowASERejetee == true) {
+                        //    colorHeavy = "#FF0000";
+                        //    colorLight = "#FFE7FF";
+                        //    $nRow.css({ "background-color": colorLight });
+                        //    $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        //}
+                        //if (aData.FicheSecurite.WorkFlowASEValidee == true) {
+                        //    colorHeavy = "#FFC000";
+                        //    colorLight = "#FCE6A2";
+                        //    $nRow.css({ "background-color": colorLight });
+                        //    $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        //}
+                        //if (aData.FicheSecurite.WorkFlowCloturee == true && aData.FicheSecurite.WorkFlowASEValidee == true) {
+                        //    colorHeavy = "#00B0F0";
+                        //    colorLight = "#AFE8FD";
+                        //    $nRow.css({ "background-color": colorLight });
+                        //    $('td:eq(0)', nRow).css({ "background-color": colorHeavy });
+                        //}
+
+                        $(nRow).hover(function () {
+                            //$nRow.css({ "background-color": "#EAEAEA" });
+                            $nRow.css({ "background-color": "#808181", "color": "white" });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy, "color": "black" });
+                        }, function () {
+                            $nRow.css({ "background-color": colorLight, "color": "black" });
+                            $('td:eq(0)', nRow).css({ "background-color": colorHeavy, "color": "black" });
+                        });
+                        return nRow
+                    },
+                    "columns": [
+                        {
+                            "mData": "Id",
+                            "sTitle": "Id",
+                            "visible": false,
+                            "orderable": false,
+                        },
+                        {
+                            "mData": "Code",
+                            "sTitle": "Code",
+                            "orderable": true,
+                            "width": "10%"
+                        },
+                        {
+                            "mData": "Site.Nom",
+                            "sTitle": "Site",
+                            "visible": false,
+                        },
+                        {
+                            "mData": "Date",
+                            "sTitle": "Date",
+                            "sType": "date",
+                            "mRender": function (date, type, full) {
+                                //return new Date(date).toLocaleString();
+                                return date.substring(8, 10) + '/' + date.substring(5, 7) + '/' + date.substring(0, 4);
+                            },
+                            "orderable": true,
+                            "width": "10%"
+                        },
+                        {
+                            "mData": "NonConformiteDomaine.Nom",
+                            "sTitle": "Domaine",
+                            "visible": false,
+                        },
+                        {
+                            "mData": "NonConformiteOrigine.Nom",
+                            "sTitle": "Origine",
+                            "orderable": true,
+                            "width": "15%"
+                        },
+                        {
+                            "mData": "NonConformiteGravite.Nom",
+                            "sTitle": "Gravité",
+                            "visible": false,
+                        },
+                        {
+                            "mData": "Description",
+                            "sTitle": "Description",
+                            "orderable": false
+                        },
+                        {
+                            "mData": "Attendu",
+                            "sTitle": "Attendu",
+                            "visible": false,
+                        },
+                        {
+                            "mData": "Cause",
+                            "sTitle": "Cause",
+                            "visible": false,
+                        },
+                        {
+                            "mData": "NonConformiteID",
+                            "sTitle": "Action",
+                            "orderable": false,
+                            "width": "5%",
+                            "mRender": function (date, type, full) {
+
+                                @*var urlEdit = '@Url.Action("Edit", new { id=-1 })';
+                                urlEdit = urlEdit.replace('-1', full.FicheSecuriteID);*@
+
+                                var links =  '<a id="deleteNonConformite" data-id="' + full.Id + '" class="glyphicon glyphicon-remove"></a></div>';
+                                
+                                return links;
+                            }
+                        }
+                    ],
+                    "oLanguage": {
+                        "sUrl": "Scripts/datatables_lang_fr.js"
+                    }
+                });
+
+
+                table.$('tr.selected').removeClass('selected');
+
+                $('#Table tbody').on('mousedown', 'tr', function (e) {
+
+                    // !!! Triche >> Pour raison X, le click sur un élément la ligne ou un élément de celle-ci se joue deux fois
+                    // On n'active donc le code qu'une fois sur deux (Ce n'est pas une question de propagation Bubbling ... )
+                    var i = 0;
+                    i++
+                    if (i % 2 > 0) {
+
+                        if (e.button == 0) {
+
+                            if (e.target.id == "deleteNonConformite") {
+
+                                var id = e.target.getAttribute("data-id");
+                                var confirmation = confirm("Êtes-vous sûr de vouloir supprimer cette Non-Conformité ?");
+                                if (confirmation == true) {
+                                    var nonConformiteToDeleteModel = new NonConformiteModel({ "Id": id })
+                                    nonConformiteToDeleteModel.destroy({
+                                        async: false, wait: true,
+                                        success: _.bind(function (model, repsonse) {
+                                            //Backbone.applicationEvents.trigger('validFicheSecurite', 'la cause a été supprimée');
+                                        }, this)
+                                    });
+                                    table.ajax.reload(null, false);
+                                }
+                            } else {
+                                // CODE POUR OUVRIR DANS MEME FENETRE NE PAS SUPPRIMER
+                                @*var aData = $("#Table").dataTable().fnGetData(this);
+                                var url = '@Url.Action("Edit", "FicheSecurite", new { id = "__id__" })';
+                                window.location.href = url.replace('__id__', aData.FicheSecuriteID);*@
+
+                                var aData = $("#Table").dataTable().fnGetData(this);
+                                var url = '@Url.Action("Edit", "NonConformite", new { id = "__id__" })';
+                                var realUrl = url.replace('__id__', aData.Id)
+                                window.open(realUrl, "_blank");
+                            }
+                        }
+
+                        e.preventDefault();
+
+                        if (e.button == 2 || e.button == 1) {
+                            var aData = $("#Table").dataTable().fnGetData(this);
+                            var url = '@Url.Action("Edit", "NonConformite", new { id = "__id__" })';
+                            var realUrl = url.replace('__id__', aData.Id)
+                            window.open(realUrl, "_blank");
+                        }
+
+                    }
+                });
+
+                @*$('#Table tbody').on('click', 'tr', function () {
+
+                    var aData = $("#Table").dataTable().fnGetData(this);
+                    var url = '@Url.Action("Edit", "NonConformite", new { id = "__id__" })';
+                    window.location.href = url.replace('__id__', aData.Id);
+
+                    // TODO : Faire un premier clic de selection, puis le deuxième envoi sur la page
+                    // Ne marche pas car les tr sont selected après le Destray, alors que dans le DOM ils ne sont pas selected ...
+
+                    @*if ($(this).hasClass('selected')) {
+
+                            var aData = $("#Table").dataTable().fnGetData(this);
+
+                            var url = '@Url.Action("Create", "NonConformite", new { id = "__id__" })';
+                            window.location.href = url.replace('__id__', aData.Id);
+                        }
+                    else {
+                        table.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                    }
+                });
+
+                $('#Table tbody').on('mousedown', 'tr', function (e) {
+                    e.preventDefault();
+                    if (e.button == 2 || e.button == 1) {
+                        var aData = $("#Table").dataTable().fnGetData(this);
+                        var url = '@Url.Action("Edit", "NonConformite", new { id = "__id__" })';
+                        var realUrl = url.replace('__id__', aData.Id)
+                        window.open(realUrl);
+                    }
+                });*@
+
+            },
+            rechercheNonConformite: function () {
+                viewModel.get('rechercheNonConformiteParamModel').set({ 'typeRecherche': 'NONCONFORMITE' });
+                this.render();
+                this.buildDataTable();
+            }
+
+        });
+
+
+
+
+        var filtreTableView = new FiltreTableView({
+            el: $("#TableFiltreDiv"),
+            model: viewModel
+        });
+
+        var rechercheTableView = new RechercheTableView({
+            el: $("#TableRechercheDiv"),
+            model: viewModel
+        });
+
+        var rechercheNonConformiteTableView = new RechercheNonConformiteTableView({
+            el: $("#TableRechercheDiv"),
+            model: viewModel
+        });
+
+    });
+
+
+</script>
+

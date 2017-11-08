@@ -1,0 +1,3094 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="AntelopeModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="__RefactorLog">
+          <Key>
+            <PropertyRef Name="OperationKey" />
+          </Key>
+          <Property Name="OperationKey" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ActionQSEs">
+          <Key>
+            <PropertyRef Name="ActionQSEId" />
+          </Key>
+          <Property Name="ActionQSEId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="DateButoireInitiale" Type="datetime" Nullable="false" />
+          <Property Name="DateButoireNouvelle" Type="datetime" />
+          <Property Name="ResponsableId" Type="int" Nullable="false" />
+          <Property Name="Avancement" Type="nvarchar(max)" />
+          <Property Name="CotationHumain" Type="smallint" Nullable="false" />
+          <Property Name="CotationOrganisationnel" Type="smallint" Nullable="false" />
+          <Property Name="CotationTechnique" Type="smallint" Nullable="false" />
+          <Property Name="CotationEfficacite" Type="smallint" Nullable="false" />
+          <Property Name="VerificateurId" Type="int" />
+          <Property Name="PreuveVerification" Type="nvarchar(max)" />
+          <Property Name="CommentaireEfficaciteVerification" Type="nvarchar(max)" />
+          <Property Name="Realise" Type="bit" Nullable="false" />
+          <Property Name="RealiseDate" Type="datetime" />
+          <Property Name="Verifie" Type="bit" Nullable="false" />
+          <Property Name="VerifieDate" Type="datetime" />
+          <Property Name="Cloture" Type="bit" Nullable="false" />
+          <Property Name="ClotureDate" Type="datetime" />
+          <Property Name="CauseQSEId" Type="int" />
+          <Property Name="NonConformiteId" Type="int" />
+          <Property Name="CritereEfficaciteVerification" Type="nvarchar(max)" />
+          <Property Name="Titre" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="ActionSecurites">
+          <Key>
+            <PropertyRef Name="ActionSecuriteId" />
+          </Key>
+          <Property Name="ActionSecuriteId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FicheSecuriteId" Type="int" Nullable="false" />
+          <Property Name="Code" Type="nvarchar(max)" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="FaitPar" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="ADRoles">
+          <Key>
+            <PropertyRef Name="ADRoleID" />
+          </Key>
+          <Property Name="ADRoleID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoleCode" Type="nvarchar(max)" />
+          <Property Name="RoleType" Type="nvarchar(max)" />
+          <Property Name="Name" Type="nvarchar(max)" />
+          <Property Name="Guid" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="CauseQSEs">
+          <Key>
+            <PropertyRef Name="CauseQSEId" />
+          </Key>
+          <Property Name="CauseQSEId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="FicheSecuriteId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CorpsHumainZones">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar(max)" />
+          <Property Name="Code" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Dangers">
+          <Key>
+            <PropertyRef Name="DangerID" />
+          </Key>
+          <Property Name="DangerID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar(max)" />
+          <Property Name="Rang" Type="int" />
+        </EntityType>
+        <EntityType Name="DialogueSecurites">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
+          <Property Name="Contexte" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Observation" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Reflexion" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Action" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Atelier" Type="nchar" MaxLength="10" />
+          <Property Name="SiteId" Type="int" Nullable="false" />
+          <Property Name="CompteurAnnuelSite" Type="int" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ZoneId" Type="int" Nullable="false" />
+          <Property Name="LieuId" Type="int" Nullable="false" />
+          <Property Name="Dialogueur1Id" Type="int" Nullable="false" />
+          <Property Name="Dialogueur2Id" Type="int" />
+          <Property Name="Dialogueur3Id" Type="int" />
+          <Property Name="Entretenu1Id" Type="int" Nullable="false" />
+          <Property Name="Entretenu2Id" Type="int" />
+          <Property Name="Entretenu3Id" Type="int" />
+          <Property Name="ServiceTypeDialogueur1Id" Type="int" Nullable="false" />
+          <Property Name="ServiceTypeDialogueur2Id" Type="int" />
+          <Property Name="ServiceTypeDialogueur3Id" Type="int" />
+          <Property Name="ServiceTypeEntretenu1Id" Type="int" Nullable="false" />
+          <Property Name="ServiceTypeEntretenu2Id" Type="int" />
+          <Property Name="ServiceTypeEntretenu3Id" Type="int" />
+          <Property Name="ThematiqueId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FicheSecurites">
+          <Key>
+            <PropertyRef Name="FicheSecuriteID" />
+          </Key>
+          <Property Name="FicheSecuriteID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar(max)" />
+          <Property Name="Type" Type="nvarchar(max)" />
+          <Property Name="Age" Type="nvarchar(max)" />
+          <Property Name="PosteDeTravailId" Type="int" />
+          <Property Name="ServiceId" Type="int" />
+          <Property Name="DateCreation" Type="datetime" Nullable="false" />
+          <Property Name="DateEvenement" Type="datetime" Nullable="false" />
+          <Property Name="PersonnesConcernees" Type="nvarchar(max)" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ActionImmediate1" Type="nvarchar(max)" />
+          <Property Name="ActionImmediate2" Type="nvarchar(max)" />
+          <Property Name="Temoins" Type="nvarchar(max)" />
+          <Property Name="CotationFrequence" Type="smallint" Nullable="false" />
+          <Property Name="CotationGravite" Type="smallint" Nullable="false" />
+          <Property Name="FicheSecuriteTypeId" Type="int" Nullable="false" />
+          <Property Name="RisqueId" Type="int" Nullable="false" />
+          <Property Name="DangerId" Type="int" Nullable="false" />
+          <Property Name="CorpsHumainZoneId" Type="int" Nullable="false" />
+          <Property Name="PlageHoraireId" Type="int" />
+          <Property Name="SiteId" Type="int" Nullable="false" />
+          <Property Name="ZoneId" Type="int" />
+          <Property Name="LieuId" Type="int" />
+          <Property Name="EnqueteRealisee" Type="bit" Nullable="false" />
+          <Property Name="EnqueteDate" Type="datetime" />
+          <Property Name="EnqueteProtagoniste" Type="nvarchar(max)" />
+          <Property Name="CHSCTMembre" Type="nvarchar(max)" />
+          <Property Name="PersonneConcerneeId" Type="int" />
+          <Property Name="ResponsableId" Type="int" />
+          <Property Name="WorkFlowDiffusee" Type="bit" Nullable="false" />
+          <Property Name="WorkFlowAttenteASEValidation" Type="bit" Nullable="false" />
+          <Property Name="WorkFlowASEValidee" Type="bit" Nullable="false" />
+          <Property Name="WorkFlowASERejetee" Type="bit" Nullable="false" />
+          <Property Name="WorkFlowCloturee" Type="bit" Nullable="false" />
+          <Property Name="WorkFlowASERejeteeCause" Type="nvarchar(max)" />
+          <Property Name="CompteurAnnuelSite" Type="int" Nullable="false" />
+          <Property Name="WorkFlowFicheSecuriteCloturee" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FicheSecuriteTypes">
+          <Key>
+            <PropertyRef Name="FicheSecuriteTypeID" />
+          </Key>
+          <Property Name="FicheSecuriteTypeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="FilePaths">
+          <Key>
+            <PropertyRef Name="FilePathId" />
+          </Key>
+          <Property Name="FilePathId" Type="int" Nullable="false" />
+          <Property Name="FileName" Type="text" Nullable="false" />
+          <Property Name="FileType" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NonConformiteId" Type="int" />
+          <Property Name="FicheSecuriteId" Type="int" />
+          <Property Name="Show" Type="bit" />
+        </EntityType>
+        <EntityType Name="ImportActions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="NonConformiteId" Type="int" Nullable="false" />
+          <Property Name="Titre" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DateButoireInitiale" Type="datetime" Nullable="false" />
+          <Property Name="DateButoireNouvelle" Type="datetime" />
+          <Property Name="ResponsableNom" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="ResponsablePrenom" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="VerificateurNom" Type="nvarchar" MaxLength="255" />
+          <Property Name="VerificateurPrenom" Type="nvarchar" MaxLength="255" />
+          <Property Name="Avancement" Type="nvarchar(max)" />
+          <Property Name="CritereEfficaciteVerification" Type="nvarchar(max)" />
+          <Property Name="CommentaireEfficaciteVerification" Type="nvarchar(max)" />
+          <Property Name="RealiseDate" Type="datetime" />
+          <Property Name="VerifieDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="ImportNonConformites">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Attendu" Type="nvarchar(max)" />
+          <Property Name="Cause" Type="nvarchar(max)" />
+          <Property Name="NonConformiteDomaineId" Type="int" Nullable="false" />
+          <Property Name="NonConformiteGraviteId" Type="int" Nullable="false" />
+          <Property Name="NonConformiteOrigineId" Type="int" Nullable="false" />
+          <Property Name="SiteId" Type="int" Nullable="false" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Interventions">
+          <Key>
+            <PropertyRef Name="InterventionID" />
+          </Key>
+          <Property Name="InterventionID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Intervenant" Type="nvarchar(max)" />
+          <Property Name="DateIntervention" Type="nvarchar(max)" />
+          <Property Name="Planifie" Type="bit" Nullable="false" />
+          <Property Name="Demandeur" Type="nvarchar(max)" />
+          <Property Name="Motif" Type="nvarchar(max)" />
+          <Property Name="DureeIntervention" Type="int" Nullable="false" />
+          <Property Name="NoteFrais" Type="bit" Nullable="false" />
+          <Property Name="PrimeIntervention" Type="real" Nullable="false" />
+          <Property Name="PrimeDimanche" Type="real" Nullable="false" />
+          <Property Name="Valide" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Lieux">
+          <Key>
+            <PropertyRef Name="LieuID" />
+          </Key>
+          <Property Name="LieuID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ZoneId" Type="int" Nullable="false" />
+          <Property Name="LieuTypeId" Type="int" />
+          <Property Name="Nom" Type="nvarchar" MaxLength="100" />
+          <Property Name="Rang" Type="int" />
+        </EntityType>
+        <EntityType Name="NonConformiteDomaines">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="NonConformiteGravites">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="NonConformiteOrigines">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar" MaxLength="50" />
+          <Property Name="ServiceTypeId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="NonConformites">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="date" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="Attendu" Type="nvarchar(max)" />
+          <Property Name="Cause" Type="nvarchar(max)" />
+          <Property Name="NonConformiteDomaineId" Type="int" />
+          <Property Name="NonConformiteGraviteId" Type="int" />
+          <Property Name="NonConformiteOrigineId" Type="int" />
+          <Property Name="SiteId" Type="int" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DateCreation" Type="datetime" Nullable="false" />
+          <Property Name="CompteurAnnuelSite" Type="int" Nullable="false" />
+          <Property Name="ServiceTypeId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ParametrageHSEs">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EmailDiffusionFS" Type="nvarchar" MaxLength="250" />
+          <Property Name="EmailValidationRejetPlanActionFS" Type="nvarchar" MaxLength="250" />
+          <Property Name="EmailDiffusionPlanAction" Type="nvarchar" MaxLength="250" />
+          <Property Name="IsEmailDiffusion" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ParametrageQSE">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Personnes">
+          <Key>
+            <PropertyRef Name="PersonneId" />
+          </Key>
+          <Property Name="PersonneId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar(max)" />
+          <Property Name="Prenom" Type="nvarchar(max)" />
+          <Property Name="Guid" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PlageHoraires">
+          <Key>
+            <PropertyRef Name="PlageHoraireID" />
+          </Key>
+          <Property Name="PlageHoraireID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar(max)" />
+          <Property Name="Rang" Type="int" />
+        </EntityType>
+        <EntityType Name="PosteDeTravails">
+          <Key>
+            <PropertyRef Name="PosteDeTravailId" />
+          </Key>
+          <Property Name="PosteDeTravailId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ZoneId" Type="int" Nullable="false" />
+          <Property Name="PosteDeTravailTypeId" Type="int" />
+          <Property Name="Nom" Type="nvarchar" MaxLength="100" />
+          <Property Name="Rang" Type="int" />
+        </EntityType>
+        <EntityType Name="Projets">
+          <Key>
+            <PropertyRef Name="ProjetID" />
+          </Key>
+          <Property Name="ProjetID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NomProjet" Type="nvarchar(max)" />
+          <Property Name="StatutCouleur" Type="int" Nullable="false" />
+          <Property Name="StatutVisage" Type="int" Nullable="false" />
+          <Property Name="Commentaire" Type="nvarchar(max)" />
+          <Property Name="ProchaineEtape" Type="nvarchar(max)" />
+          <Property Name="DateOuverture" Type="nvarchar(max)" />
+          <Property Name="DateCloture" Type="nvarchar(max)" />
+          <Property Name="Service" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Risques">
+          <Key>
+            <PropertyRef Name="RisqueId" />
+          </Key>
+          <Property Name="RisqueId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar(max)" />
+          <Property Name="RisqueTypeId" Type="int" />
+        </EntityType>
+        <EntityType Name="RisqueTypes">
+          <Key>
+            <PropertyRef Name="RisqueTypeId" />
+          </Key>
+          <Property Name="RisqueTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar(max)" />
+          <Property Name="Rang" Type="int" />
+        </EntityType>
+        <EntityType Name="Sauvegardes">
+          <Key>
+            <PropertyRef Name="SauvegardeID" />
+          </Key>
+          <Property Name="SauvegardeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Site" Type="nvarchar(max)" />
+          <Property Name="Date" Type="float" Nullable="false" />
+          <Property Name="Volume" Type="real" Nullable="false" />
+          <Property Name="Taux" Type="real" Nullable="false" />
+          <Property Name="Duree" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Services">
+          <Key>
+            <PropertyRef Name="ServiceID" />
+          </Key>
+          <Property Name="ServiceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SiteId" Type="int" Nullable="false" />
+          <Property Name="ServiceTypeId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ServiceTypes">
+          <Key>
+            <PropertyRef Name="ServiceTypeId" />
+          </Key>
+          <Property Name="ServiceTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar(max)" />
+          <Property Name="Rang" Type="int" />
+        </EntityType>
+        <EntityType Name="Sites">
+          <Key>
+            <PropertyRef Name="SiteID" />
+          </Key>
+          <Property Name="SiteID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar(max)" />
+          <Property Name="Trigramme" Type="nvarchar(max)" />
+          <Property Name="Arouperr" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Thematiques">
+          <Key>
+            <PropertyRef Name="ThematiqueId" />
+          </Key>
+          <Property Name="ThematiqueId" Type="int" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Zones">
+          <Key>
+            <PropertyRef Name="ZoneID" />
+          </Key>
+          <Property Name="ZoneID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SiteId" Type="int" Nullable="false" />
+          <Property Name="ZoneTypeId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ZoneTypes">
+          <Key>
+            <PropertyRef Name="ZoneTypeId" />
+          </Key>
+          <Property Name="ZoneTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nom" Type="nvarchar(max)" />
+          <Property Name="Rang" Type="int" />
+        </EntityType>
+        <Association Name="FK_ActionQSEs_NonConformites">
+          <End Role="NonConformites" Type="Self.NonConformites" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ActionQSEs" Type="Self.ActionQSEs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NonConformites">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ActionQSEs">
+              <PropertyRef Name="NonConformiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_ActionQSEs_dbo_CauseQSEs_CauseQSEId">
+          <End Role="CauseQSEs" Type="Self.CauseQSEs" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ActionQSEs" Type="Self.ActionQSEs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CauseQSEs">
+              <PropertyRef Name="CauseQSEId" />
+            </Principal>
+            <Dependent Role="ActionQSEs">
+              <PropertyRef Name="CauseQSEId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_ActionQSEs_dbo_Personnes_ResponsableId">
+          <End Role="Personnes" Type="Self.Personnes" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ActionQSEs" Type="Self.ActionQSEs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="ActionQSEs">
+              <PropertyRef Name="ResponsableId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_ActionQSEs_dbo_Personnes_VerificateurId">
+          <End Role="Personnes" Type="Self.Personnes" Multiplicity="0..1" />
+          <End Role="ActionQSEs" Type="Self.ActionQSEs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="ActionQSEs">
+              <PropertyRef Name="VerificateurId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_ActionSecurites_dbo_FicheSecurites_FicheSecuriteId">
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ActionSecurites" Type="Self.ActionSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FicheSecurites">
+              <PropertyRef Name="FicheSecuriteID" />
+            </Principal>
+            <Dependent Role="ActionSecurites">
+              <PropertyRef Name="FicheSecuriteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_CauseQSEs_dbo_FicheSecurites_FicheSecuriteId">
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="CauseQSEs" Type="Self.CauseQSEs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FicheSecurites">
+              <PropertyRef Name="FicheSecuriteID" />
+            </Principal>
+            <Dependent Role="CauseQSEs">
+              <PropertyRef Name="FicheSecuriteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_Lieux_LieuId">
+          <End Role="Lieux" Type="Self.Lieux" Multiplicity="1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Lieux">
+              <PropertyRef Name="LieuID" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="LieuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur1_PersonneId">
+          <End Role="Personnes" Type="Self.Personnes" Multiplicity="1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="Dialogueur1Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur2_PersonneId">
+          <End Role="Personnes" Type="Self.Personnes" Multiplicity="0..1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="Dialogueur2Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur3_PersonneId">
+          <End Role="Personnes" Type="Self.Personnes" Multiplicity="0..1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="Dialogueur3Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu1_PersonneId">
+          <End Role="Personnes" Type="Self.Personnes" Multiplicity="1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="Entretenu1Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu2_PersonneId">
+          <End Role="Personnes" Type="Self.Personnes" Multiplicity="0..1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="Entretenu2Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu3_PersonneId">
+          <End Role="Personnes" Type="Self.Personnes" Multiplicity="0..1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="Entretenu3Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur1_PersonneId">
+          <End Role="ServiceTypes" Type="Self.ServiceTypes" Multiplicity="1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceTypes">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="ServiceTypeDialogueur1Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur2_PersonneId">
+          <End Role="ServiceTypes" Type="Self.ServiceTypes" Multiplicity="0..1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceTypes">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="ServiceTypeDialogueur2Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur3_PersonneId">
+          <End Role="ServiceTypes" Type="Self.ServiceTypes" Multiplicity="0..1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceTypes">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="ServiceTypeDialogueur3Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu1_PersonneId">
+          <End Role="ServiceTypes" Type="Self.ServiceTypes" Multiplicity="1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceTypes">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="ServiceTypeEntretenu1Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu2_PersonneId">
+          <End Role="ServiceTypes" Type="Self.ServiceTypes" Multiplicity="0..1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceTypes">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="ServiceTypeEntretenu2Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu3_PersonneId">
+          <End Role="ServiceTypes" Type="Self.ServiceTypes" Multiplicity="0..1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceTypes">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="ServiceTypeEntretenu3Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_Sites_SiteId">
+          <End Role="Sites" Type="Self.Sites" Multiplicity="1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sites">
+              <PropertyRef Name="SiteID" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="SiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_Thematiques_ThematiqueId">
+          <End Role="Thematiques" Type="Self.Thematiques" Multiplicity="1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Thematiques">
+              <PropertyRef Name="ThematiqueId" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="ThematiqueId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_Zones_ZoneId">
+          <End Role="Zones" Type="Self.Zones" Multiplicity="1" />
+          <End Role="DialogueSecurites" Type="Self.DialogueSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Zones">
+              <PropertyRef Name="ZoneID" />
+            </Principal>
+            <Dependent Role="DialogueSecurites">
+              <PropertyRef Name="ZoneId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_CorpsHumainZones_CorpsHumainZoneId">
+          <End Role="CorpsHumainZones" Type="Self.CorpsHumainZones" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CorpsHumainZones">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="CorpsHumainZoneId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Dangers_DangerId">
+          <End Role="Dangers" Type="Self.Dangers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Dangers">
+              <PropertyRef Name="DangerID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="DangerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_FicheSecuriteTypes_FicheSecuriteTypeId">
+          <End Role="FicheSecuriteTypes" Type="Self.FicheSecuriteTypes" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FicheSecuriteTypes">
+              <PropertyRef Name="FicheSecuriteTypeID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="FicheSecuriteTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Lieux_LieuId">
+          <End Role="Lieux" Type="Self.Lieux" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Lieux">
+              <PropertyRef Name="LieuID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="LieuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Personnes_PersonneConcerneeId">
+          <End Role="Personnes" Type="Self.Personnes" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="PersonneConcerneeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Personnes_ResponsableId">
+          <End Role="Personnes" Type="Self.Personnes" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="ResponsableId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_PlageHoraires_PlageHoraireId">
+          <End Role="PlageHoraires" Type="Self.PlageHoraires" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PlageHoraires">
+              <PropertyRef Name="PlageHoraireID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="PlageHoraireId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_PosteDeTravails_PosteDeTravailId">
+          <End Role="PosteDeTravails" Type="Self.PosteDeTravails" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PosteDeTravails">
+              <PropertyRef Name="PosteDeTravailId" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="PosteDeTravailId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Risques_RisqueId">
+          <End Role="Risques" Type="Self.Risques" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Risques">
+              <PropertyRef Name="RisqueId" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="RisqueId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Services_ServiceId">
+          <End Role="Services" Type="Self.Services" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Services">
+              <PropertyRef Name="ServiceID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Sites_SiteId">
+          <End Role="Sites" Type="Self.Sites" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sites">
+              <PropertyRef Name="SiteID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="SiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Zones_ZoneId">
+          <End Role="Zones" Type="Self.Zones" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Zones">
+              <PropertyRef Name="ZoneID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="ZoneId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Lieux_dbo_Zones_ZoneId">
+          <End Role="Zones" Type="Self.Zones" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Lieux" Type="Self.Lieux" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Zones">
+              <PropertyRef Name="ZoneID" />
+            </Principal>
+            <Dependent Role="Lieux">
+              <PropertyRef Name="ZoneId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_PosteDeTravails_dbo_Zones_ZoneId">
+          <End Role="Zones" Type="Self.Zones" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="PosteDeTravails" Type="Self.PosteDeTravails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Zones">
+              <PropertyRef Name="ZoneID" />
+            </Principal>
+            <Dependent Role="PosteDeTravails">
+              <PropertyRef Name="ZoneId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Risques_dbo_RisqueTypes_RisqueTypeId">
+          <End Role="RisqueTypes" Type="Self.RisqueTypes" Multiplicity="0..1" />
+          <End Role="Risques" Type="Self.Risques" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RisqueTypes">
+              <PropertyRef Name="RisqueTypeId" />
+            </Principal>
+            <Dependent Role="Risques">
+              <PropertyRef Name="RisqueTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Services_dbo_ServiceTypes_ServiceTypeId">
+          <End Role="ServiceTypes" Type="Self.ServiceTypes" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Services" Type="Self.Services" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceTypes">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="Services">
+              <PropertyRef Name="ServiceTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Services_dbo_Sites_SiteId">
+          <End Role="Sites" Type="Self.Sites" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Services" Type="Self.Services" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sites">
+              <PropertyRef Name="SiteID" />
+            </Principal>
+            <Dependent Role="Services">
+              <PropertyRef Name="SiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Zones_dbo_Sites_SiteId">
+          <End Role="Sites" Type="Self.Sites" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Zones" Type="Self.Zones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sites">
+              <PropertyRef Name="SiteID" />
+            </Principal>
+            <Dependent Role="Zones">
+              <PropertyRef Name="SiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Zones_dbo_ZoneTypes_ZoneTypeId">
+          <End Role="ZoneTypes" Type="Self.ZoneTypes" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Zones" Type="Self.Zones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ZoneTypes">
+              <PropertyRef Name="ZoneTypeId" />
+            </Principal>
+            <Dependent Role="Zones">
+              <PropertyRef Name="ZoneTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FilePaths_FicheSecurites">
+          <End Role="FicheSecurites" Type="Self.FicheSecurites" Multiplicity="0..1" />
+          <End Role="FilePaths" Type="Self.FilePaths" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FicheSecurites">
+              <PropertyRef Name="FicheSecuriteID" />
+            </Principal>
+            <Dependent Role="FilePaths">
+              <PropertyRef Name="FicheSecuriteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FilePaths_NonConformites">
+          <End Role="NonConformites" Type="Self.NonConformites" Multiplicity="0..1" />
+          <End Role="FilePaths" Type="Self.FilePaths" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NonConformites">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FilePaths">
+              <PropertyRef Name="NonConformiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NonConformite_NonConformiteDomaines">
+          <End Role="NonConformiteDomaines" Type="Self.NonConformiteDomaines" Multiplicity="0..1" />
+          <End Role="NonConformites" Type="Self.NonConformites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NonConformiteDomaines">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="NonConformites">
+              <PropertyRef Name="NonConformiteDomaineId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NonConformiteOrigines_ServiceTypes">
+          <End Role="ServiceTypes" Type="Self.ServiceTypes" Multiplicity="1" />
+          <End Role="NonConformiteOrigines" Type="Self.NonConformiteOrigines" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceTypes">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="NonConformiteOrigines">
+              <PropertyRef Name="ServiceTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NonConformites_NonConformiteGravites">
+          <End Role="NonConformiteGravites" Type="Self.NonConformiteGravites" Multiplicity="0..1" />
+          <End Role="NonConformites" Type="Self.NonConformites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NonConformiteGravites">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="NonConformites">
+              <PropertyRef Name="NonConformiteGraviteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NonConformites_NonConformiteOrigines">
+          <End Role="NonConformiteOrigines" Type="Self.NonConformiteOrigines" Multiplicity="0..1" />
+          <End Role="NonConformites" Type="Self.NonConformites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NonConformiteOrigines">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="NonConformites">
+              <PropertyRef Name="NonConformiteOrigineId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NonConformites_ServiceTypes">
+          <End Role="ServiceTypes" Type="Self.ServiceTypes" Multiplicity="1" />
+          <End Role="NonConformites" Type="Self.NonConformites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceTypes">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="NonConformites">
+              <PropertyRef Name="ServiceTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NonConformites_Sites">
+          <End Role="Sites" Type="Self.Sites" Multiplicity="1" />
+          <End Role="NonConformites" Type="Self.NonConformites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sites">
+              <PropertyRef Name="SiteID" />
+            </Principal>
+            <Dependent Role="NonConformites">
+              <PropertyRef Name="SiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="AntelopeModelStoreContainer">
+          <EntitySet Name="__RefactorLog" EntityType="Self.__RefactorLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ActionQSEs" EntityType="Self.ActionQSEs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ActionSecurites" EntityType="Self.ActionSecurites" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ADRoles" EntityType="Self.ADRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CauseQSEs" EntityType="Self.CauseQSEs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CorpsHumainZones" EntityType="Self.CorpsHumainZones" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Dangers" EntityType="Self.Dangers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DialogueSecurites" EntityType="Self.DialogueSecurites" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FicheSecurites" EntityType="Self.FicheSecurites" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FicheSecuriteTypes" EntityType="Self.FicheSecuriteTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FilePaths" EntityType="Self.FilePaths" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ImportActions" EntityType="Self.ImportActions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ImportNonConformites" EntityType="Self.ImportNonConformites" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Interventions" EntityType="Self.Interventions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Lieux" EntityType="Self.Lieux" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NonConformiteDomaines" EntityType="Self.NonConformiteDomaines" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NonConformiteGravites" EntityType="Self.NonConformiteGravites" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NonConformiteOrigines" EntityType="Self.NonConformiteOrigines" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NonConformites" EntityType="Self.NonConformites" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ParametrageHSEs" EntityType="Self.ParametrageHSEs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ParametrageQSE" EntityType="Self.ParametrageQSE" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Personnes" EntityType="Self.Personnes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PlageHoraires" EntityType="Self.PlageHoraires" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PosteDeTravails" EntityType="Self.PosteDeTravails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Projets" EntityType="Self.Projets" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Risques" EntityType="Self.Risques" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RisqueTypes" EntityType="Self.RisqueTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sauvegardes" EntityType="Self.Sauvegardes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Services" EntityType="Self.Services" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServiceTypes" EntityType="Self.ServiceTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sites" EntityType="Self.Sites" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Thematiques" EntityType="Self.Thematiques" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Zones" EntityType="Self.Zones" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ZoneTypes" EntityType="Self.ZoneTypes" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ActionQSEs_NonConformites" Association="Self.FK_ActionQSEs_NonConformites">
+            <End Role="NonConformites" EntitySet="NonConformites" />
+            <End Role="ActionQSEs" EntitySet="ActionQSEs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_ActionQSEs_dbo_CauseQSEs_CauseQSEId" Association="Self.FK_dbo_ActionQSEs_dbo_CauseQSEs_CauseQSEId">
+            <End Role="CauseQSEs" EntitySet="CauseQSEs" />
+            <End Role="ActionQSEs" EntitySet="ActionQSEs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_ActionQSEs_dbo_Personnes_ResponsableId" Association="Self.FK_dbo_ActionQSEs_dbo_Personnes_ResponsableId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="ActionQSEs" EntitySet="ActionQSEs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_ActionQSEs_dbo_Personnes_VerificateurId" Association="Self.FK_dbo_ActionQSEs_dbo_Personnes_VerificateurId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="ActionQSEs" EntitySet="ActionQSEs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_ActionSecurites_dbo_FicheSecurites_FicheSecuriteId" Association="Self.FK_dbo_ActionSecurites_dbo_FicheSecurites_FicheSecuriteId">
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+            <End Role="ActionSecurites" EntitySet="ActionSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_CauseQSEs_dbo_FicheSecurites_FicheSecuriteId" Association="Self.FK_dbo_CauseQSEs_dbo_FicheSecurites_FicheSecuriteId">
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+            <End Role="CauseQSEs" EntitySet="CauseQSEs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_Lieux_LieuId" Association="Self.FK_dbo_DialogueSecurites_dbo_Lieux_LieuId">
+            <End Role="Lieux" EntitySet="Lieux" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur1_PersonneId" Association="Self.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur1_PersonneId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur2_PersonneId" Association="Self.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur2_PersonneId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur3_PersonneId" Association="Self.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur3_PersonneId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu1_PersonneId" Association="Self.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu1_PersonneId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu2_PersonneId" Association="Self.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu2_PersonneId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu3_PersonneId" Association="Self.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu3_PersonneId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur1_PersonneId" Association="Self.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur1_PersonneId">
+            <End Role="ServiceTypes" EntitySet="ServiceTypes" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur2_PersonneId" Association="Self.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur2_PersonneId">
+            <End Role="ServiceTypes" EntitySet="ServiceTypes" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur3_PersonneId" Association="Self.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur3_PersonneId">
+            <End Role="ServiceTypes" EntitySet="ServiceTypes" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu1_PersonneId" Association="Self.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu1_PersonneId">
+            <End Role="ServiceTypes" EntitySet="ServiceTypes" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu2_PersonneId" Association="Self.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu2_PersonneId">
+            <End Role="ServiceTypes" EntitySet="ServiceTypes" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu3_PersonneId" Association="Self.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu3_PersonneId">
+            <End Role="ServiceTypes" EntitySet="ServiceTypes" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_Sites_SiteId" Association="Self.FK_dbo_DialogueSecurites_dbo_Sites_SiteId">
+            <End Role="Sites" EntitySet="Sites" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_Thematiques_ThematiqueId" Association="Self.FK_dbo_DialogueSecurites_dbo_Thematiques_ThematiqueId">
+            <End Role="Thematiques" EntitySet="Thematiques" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_Zones_ZoneId" Association="Self.FK_dbo_DialogueSecurites_dbo_Zones_ZoneId">
+            <End Role="Zones" EntitySet="Zones" />
+            <End Role="DialogueSecurites" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_CorpsHumainZones_CorpsHumainZoneId" Association="Self.FK_dbo_FicheSecurites_dbo_CorpsHumainZones_CorpsHumainZoneId">
+            <End Role="CorpsHumainZones" EntitySet="CorpsHumainZones" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Dangers_DangerId" Association="Self.FK_dbo_FicheSecurites_dbo_Dangers_DangerId">
+            <End Role="Dangers" EntitySet="Dangers" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_FicheSecuriteTypes_FicheSecuriteTypeId" Association="Self.FK_dbo_FicheSecurites_dbo_FicheSecuriteTypes_FicheSecuriteTypeId">
+            <End Role="FicheSecuriteTypes" EntitySet="FicheSecuriteTypes" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Lieux_LieuId" Association="Self.FK_dbo_FicheSecurites_dbo_Lieux_LieuId">
+            <End Role="Lieux" EntitySet="Lieux" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Personnes_PersonneConcerneeId" Association="Self.FK_dbo_FicheSecurites_dbo_Personnes_PersonneConcerneeId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Personnes_ResponsableId" Association="Self.FK_dbo_FicheSecurites_dbo_Personnes_ResponsableId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_PlageHoraires_PlageHoraireId" Association="Self.FK_dbo_FicheSecurites_dbo_PlageHoraires_PlageHoraireId">
+            <End Role="PlageHoraires" EntitySet="PlageHoraires" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_PosteDeTravails_PosteDeTravailId" Association="Self.FK_dbo_FicheSecurites_dbo_PosteDeTravails_PosteDeTravailId">
+            <End Role="PosteDeTravails" EntitySet="PosteDeTravails" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Risques_RisqueId" Association="Self.FK_dbo_FicheSecurites_dbo_Risques_RisqueId">
+            <End Role="Risques" EntitySet="Risques" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Services_ServiceId" Association="Self.FK_dbo_FicheSecurites_dbo_Services_ServiceId">
+            <End Role="Services" EntitySet="Services" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Sites_SiteId" Association="Self.FK_dbo_FicheSecurites_dbo_Sites_SiteId">
+            <End Role="Sites" EntitySet="Sites" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Zones_ZoneId" Association="Self.FK_dbo_FicheSecurites_dbo_Zones_ZoneId">
+            <End Role="Zones" EntitySet="Zones" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Lieux_dbo_Zones_ZoneId" Association="Self.FK_dbo_Lieux_dbo_Zones_ZoneId">
+            <End Role="Zones" EntitySet="Zones" />
+            <End Role="Lieux" EntitySet="Lieux" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_PosteDeTravails_dbo_Zones_ZoneId" Association="Self.FK_dbo_PosteDeTravails_dbo_Zones_ZoneId">
+            <End Role="Zones" EntitySet="Zones" />
+            <End Role="PosteDeTravails" EntitySet="PosteDeTravails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Risques_dbo_RisqueTypes_RisqueTypeId" Association="Self.FK_dbo_Risques_dbo_RisqueTypes_RisqueTypeId">
+            <End Role="RisqueTypes" EntitySet="RisqueTypes" />
+            <End Role="Risques" EntitySet="Risques" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Services_dbo_ServiceTypes_ServiceTypeId" Association="Self.FK_dbo_Services_dbo_ServiceTypes_ServiceTypeId">
+            <End Role="ServiceTypes" EntitySet="ServiceTypes" />
+            <End Role="Services" EntitySet="Services" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Services_dbo_Sites_SiteId" Association="Self.FK_dbo_Services_dbo_Sites_SiteId">
+            <End Role="Sites" EntitySet="Sites" />
+            <End Role="Services" EntitySet="Services" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Zones_dbo_Sites_SiteId" Association="Self.FK_dbo_Zones_dbo_Sites_SiteId">
+            <End Role="Sites" EntitySet="Sites" />
+            <End Role="Zones" EntitySet="Zones" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Zones_dbo_ZoneTypes_ZoneTypeId" Association="Self.FK_dbo_Zones_dbo_ZoneTypes_ZoneTypeId">
+            <End Role="ZoneTypes" EntitySet="ZoneTypes" />
+            <End Role="Zones" EntitySet="Zones" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FilePaths_FicheSecurites" Association="Self.FK_FilePaths_FicheSecurites">
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+            <End Role="FilePaths" EntitySet="FilePaths" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FilePaths_NonConformites" Association="Self.FK_FilePaths_NonConformites">
+            <End Role="NonConformites" EntitySet="NonConformites" />
+            <End Role="FilePaths" EntitySet="FilePaths" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NonConformite_NonConformiteDomaines" Association="Self.FK_NonConformite_NonConformiteDomaines">
+            <End Role="NonConformiteDomaines" EntitySet="NonConformiteDomaines" />
+            <End Role="NonConformites" EntitySet="NonConformites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NonConformiteOrigines_ServiceTypes" Association="Self.FK_NonConformiteOrigines_ServiceTypes">
+            <End Role="ServiceTypes" EntitySet="ServiceTypes" />
+            <End Role="NonConformiteOrigines" EntitySet="NonConformiteOrigines" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NonConformites_NonConformiteGravites" Association="Self.FK_NonConformites_NonConformiteGravites">
+            <End Role="NonConformiteGravites" EntitySet="NonConformiteGravites" />
+            <End Role="NonConformites" EntitySet="NonConformites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NonConformites_NonConformiteOrigines" Association="Self.FK_NonConformites_NonConformiteOrigines">
+            <End Role="NonConformiteOrigines" EntitySet="NonConformiteOrigines" />
+            <End Role="NonConformites" EntitySet="NonConformites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NonConformites_ServiceTypes" Association="Self.FK_NonConformites_ServiceTypes">
+            <End Role="ServiceTypes" EntitySet="ServiceTypes" />
+            <End Role="NonConformites" EntitySet="NonConformites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NonConformites_Sites" Association="Self.FK_NonConformites_Sites">
+            <End Role="Sites" EntitySet="Sites" />
+            <End Role="NonConformites" EntitySet="NonConformites" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AntelopeModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ActionQSE">
+          <Key>
+            <PropertyRef Name="ActionQSEId" />
+          </Key>
+          <Property Name="ActionQSEId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateButoireInitiale" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateButoireNouvelle" Type="DateTime" Precision="3" />
+          <Property Name="ResponsableId" Type="Int32" Nullable="false" />
+          <Property Name="Avancement" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CotationHumain" Type="Int16" Nullable="false" />
+          <Property Name="CotationOrganisationnel" Type="Int16" Nullable="false" />
+          <Property Name="CotationTechnique" Type="Int16" Nullable="false" />
+          <Property Name="CotationEfficacite" Type="Int16" Nullable="false" />
+          <Property Name="VerificateurId" Type="Int32" />
+          <Property Name="PreuveVerification" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CommentaireEfficaciteVerification" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Realise" Type="Boolean" Nullable="false" />
+          <Property Name="RealiseDate" Type="DateTime" Precision="3" />
+          <Property Name="Verifie" Type="Boolean" Nullable="false" />
+          <Property Name="VerifieDate" Type="DateTime" Precision="3" />
+          <Property Name="Cloture" Type="Boolean" Nullable="false" />
+          <Property Name="ClotureDate" Type="DateTime" Precision="3" />
+          <Property Name="CauseQSEId" Type="Int32" />
+          <NavigationProperty Name="Responsable" Relationship="Self.FK_dbo_ActionQSEs_dbo_Personnes_ResponsableId" FromRole="ActionQSEs" ToRole="Personnes" />
+          <NavigationProperty Name="Verificateur" Relationship="Self.FK_dbo_ActionQSEs_dbo_Personnes_VerificateurId" FromRole="ActionQSEs" ToRole="Personnes" />
+          <Property Name="NonConformiteId" Type="Int32" />
+          <NavigationProperty Name="NonConformite" Relationship="AntelopeModel.FK_ActionQSEs_NonConformites" FromRole="ActionQSE" ToRole="NonConformite" />
+          <Property Name="CritereEfficaciteVerification" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="CauseQS" Relationship="AntelopeModel.FK_dbo_ActionQSEs_dbo_CauseQSEs_CauseQSEId" FromRole="ActionQSE" ToRole="CauseQSE" />
+          <Property Name="Titre" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ActionSecurite">
+          <Key>
+            <PropertyRef Name="ActionSecuriteId" />
+          </Key>
+          <Property Name="ActionSecuriteId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FicheSecuriteId" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FaitPar" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="FicheSecurite" Relationship="Self.FK_dbo_ActionSecurites_dbo_FicheSecurites_FicheSecuriteId" FromRole="ActionSecurites" ToRole="FicheSecurites" />
+        </EntityType>
+        <EntityType Name="ADRole">
+          <Key>
+            <PropertyRef Name="ADRoleID" />
+          </Key>
+          <Property Name="ADRoleID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoleCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RoleType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Guid" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="CauseQSE">
+          <Key>
+            <PropertyRef Name="CauseQSEId" />
+          </Key>
+          <Property Name="CauseQSEId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FicheSecuriteId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="FicheSecurite" Relationship="Self.FK_dbo_CauseQSEs_dbo_FicheSecurites_FicheSecuriteId" FromRole="CauseQSEs" ToRole="FicheSecurites" />
+          <NavigationProperty Name="ActionQSEs" Relationship="AntelopeModel.FK_dbo_ActionQSEs_dbo_CauseQSEs_CauseQSEId" FromRole="CauseQSE" ToRole="ActionQSE" />
+        </EntityType>
+        <EntityType Name="CorpsHumainZone">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nom" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="FicheSecurites" Relationship="Self.FK_dbo_FicheSecurites_dbo_CorpsHumainZones_CorpsHumainZoneId" FromRole="CorpsHumainZones" ToRole="FicheSecurites" />
+        </EntityType>
+        <EntityType Name="Danger">
+          <Key>
+            <PropertyRef Name="DangerID" />
+          </Key>
+          <Property Name="DangerID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nom" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="FicheSecurites" Relationship="Self.FK_dbo_FicheSecurites_dbo_Dangers_DangerId" FromRole="Dangers" ToRole="FicheSecurites" />
+          <Property Name="Rang" Type="Int32" />
+        </EntityType>
+        <EntityType Name="FicheSecurite">
+          <Key>
+            <PropertyRef Name="FicheSecuriteID" />
+          </Key>
+          <Property Name="FicheSecuriteID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Age" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PosteDeTravailId" Type="Int32" />
+          <Property Name="ServiceId" Type="Int32" />
+          <Property Name="DateCreation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateEvenement" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PersonnesConcernees" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ActionImmediate1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ActionImmediate2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Temoins" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CotationFrequence" Type="Int16" Nullable="false" />
+          <Property Name="CotationGravite" Type="Int16" Nullable="false" />
+          <Property Name="FicheSecuriteTypeId" Type="Int32" Nullable="false" />
+          <Property Name="RisqueId" Type="Int32" Nullable="false" />
+          <Property Name="DangerId" Type="Int32" Nullable="false" />
+          <Property Name="CorpsHumainZoneId" Type="Int32" Nullable="false" />
+          <Property Name="PlageHoraireId" Type="Int32" />
+          <Property Name="SiteId" Type="Int32" Nullable="false" />
+          <Property Name="ZoneId" Type="Int32" />
+          <Property Name="LieuId" Type="Int32" />
+          <Property Name="EnqueteRealisee" Type="Boolean" Nullable="false" />
+          <Property Name="EnqueteDate" Type="DateTime" Precision="3" />
+          <Property Name="EnqueteProtagoniste" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CHSCTMembre" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PersonneConcerneeId" Type="Int32" />
+          <Property Name="ResponsableId" Type="Int32" />
+          <Property Name="WorkFlowDiffusee" Type="Boolean" Nullable="false" />
+          <Property Name="WorkFlowAttenteASEValidation" Type="Boolean" Nullable="false" />
+          <Property Name="WorkFlowASEValidee" Type="Boolean" Nullable="false" />
+          <Property Name="WorkFlowASERejetee" Type="Boolean" Nullable="false" />
+          <Property Name="WorkFlowCloturee" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="CauseQSEs" Relationship="Self.FK_dbo_CauseQSEs_dbo_FicheSecurites_FicheSecuriteId" FromRole="FicheSecurites" ToRole="CauseQSEs" />
+          <NavigationProperty Name="CorpsHumainZone" Relationship="Self.FK_dbo_FicheSecurites_dbo_CorpsHumainZones_CorpsHumainZoneId" FromRole="FicheSecurites" ToRole="CorpsHumainZones" />
+          <NavigationProperty Name="Danger" Relationship="Self.FK_dbo_FicheSecurites_dbo_Dangers_DangerId" FromRole="FicheSecurites" ToRole="Dangers" />
+          <NavigationProperty Name="FicheSecuriteType" Relationship="Self.FK_dbo_FicheSecurites_dbo_FicheSecuriteTypes_FicheSecuriteTypeId" FromRole="FicheSecurites" ToRole="FicheSecuriteTypes" />
+          <NavigationProperty Name="Lieu" Relationship="Self.FK_dbo_FicheSecurites_dbo_Lieux_LieuId" FromRole="FicheSecurites" ToRole="Lieux" />
+          <NavigationProperty Name="PersonneConcernee" Relationship="Self.FK_dbo_FicheSecurites_dbo_Personnes_PersonneConcerneeId" FromRole="FicheSecurites" ToRole="Personnes" />
+          <NavigationProperty Name="Responsable" Relationship="Self.FK_dbo_FicheSecurites_dbo_Personnes_ResponsableId" FromRole="FicheSecurites" ToRole="Personnes" />
+          <NavigationProperty Name="PlageHoraire" Relationship="Self.FK_dbo_FicheSecurites_dbo_PlageHoraires_PlageHoraireId" FromRole="FicheSecurites" ToRole="PlageHoraires" />
+          <NavigationProperty Name="PosteDeTravail" Relationship="Self.FK_dbo_FicheSecurites_dbo_PosteDeTravails_PosteDeTravailId" FromRole="FicheSecurites" ToRole="PosteDeTravails" />
+          <NavigationProperty Name="Risque" Relationship="Self.FK_dbo_FicheSecurites_dbo_Risques_RisqueId" FromRole="FicheSecurites" ToRole="Risques" />
+          <NavigationProperty Name="Service" Relationship="Self.FK_dbo_FicheSecurites_dbo_Services_ServiceId" FromRole="FicheSecurites" ToRole="Services" />
+          <NavigationProperty Name="Site" Relationship="Self.FK_dbo_FicheSecurites_dbo_Sites_SiteId" FromRole="FicheSecurites" ToRole="Sites" />
+          <NavigationProperty Name="Zone" Relationship="Self.FK_dbo_FicheSecurites_dbo_Zones_ZoneId" FromRole="FicheSecurites" ToRole="Zones" />
+          <Property Name="WorkFlowASERejeteeCause" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CompteurAnnuelSite" Type="Int32" Nullable="false" />
+          <Property Name="WorkFlowFicheSecuriteCloturee" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="FilePaths" Relationship="AntelopeModel.FK_FilePaths_FicheSecurites" FromRole="FicheSecurite" ToRole="FilePath" />
+        </EntityType>
+        <EntityType Name="FicheSecuriteType">
+          <Key>
+            <PropertyRef Name="FicheSecuriteTypeID" />
+          </Key>
+          <Property Name="FicheSecuriteTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nom" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="FicheSecurites" Relationship="Self.FK_dbo_FicheSecurites_dbo_FicheSecuriteTypes_FicheSecuriteTypeId" FromRole="FicheSecuriteTypes" ToRole="FicheSecurites" />
+        </EntityType>
+        <EntityType Name="Intervention">
+          <Key>
+            <PropertyRef Name="InterventionID" />
+          </Key>
+          <Property Name="InterventionID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Intervenant" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateIntervention" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Planifie" Type="Boolean" Nullable="false" />
+          <Property Name="Demandeur" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Motif" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DureeIntervention" Type="Int32" Nullable="false" />
+          <Property Name="NoteFrais" Type="Boolean" Nullable="false" />
+          <Property Name="PrimeIntervention" Type="Single" Nullable="false" />
+          <Property Name="PrimeDimanche" Type="Single" Nullable="false" />
+          <Property Name="Valide" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Lieu">
+          <Key>
+            <PropertyRef Name="LieuID" />
+          </Key>
+          <Property Name="LieuID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ZoneId" Type="Int32" Nullable="false" />
+          <Property Name="LieuTypeId" Type="Int32" Nullable="true" />
+          <Property Name="Nom" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="FicheSecurites" Relationship="Self.FK_dbo_FicheSecurites_dbo_Lieux_LieuId" FromRole="Lieux" ToRole="FicheSecurites" />
+          <NavigationProperty Name="Zone" Relationship="Self.FK_dbo_Lieux_dbo_Zones_ZoneId" FromRole="Lieux" ToRole="Zones" />
+          <Property Name="Rang" Type="Int32" />
+          <NavigationProperty Name="DialogueSecurites" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Lieux_LieuId" FromRole="Lieu" ToRole="DialogueSecurite" />
+        </EntityType>
+        <EntityType Name="Personne">
+          <Key>
+            <PropertyRef Name="PersonneId" />
+          </Key>
+          <Property Name="PersonneId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nom" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Prenom" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Guid" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="ActionQSEs" Relationship="Self.FK_dbo_ActionQSEs_dbo_Personnes_ResponsableId" FromRole="Personnes" ToRole="ActionQSEs" />
+          <NavigationProperty Name="ActionQSEs1" Relationship="Self.FK_dbo_ActionQSEs_dbo_Personnes_VerificateurId" FromRole="Personnes" ToRole="ActionQSEs" />
+          <NavigationProperty Name="FicheSecurites1" Relationship="Self.FK_dbo_FicheSecurites_dbo_Personnes_PersonneConcerneeId" FromRole="Personnes" ToRole="FicheSecurites" />
+          <NavigationProperty Name="FicheSecurites2" Relationship="Self.FK_dbo_FicheSecurites_dbo_Personnes_ResponsableId" FromRole="Personnes" ToRole="FicheSecurites" />
+          <NavigationProperty Name="DialogueSecurites" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur1_PersonneId" FromRole="Personne" ToRole="DialogueSecurite" />
+          <NavigationProperty Name="DialogueSecurites1" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur2_PersonneId" FromRole="Personne" ToRole="DialogueSecurite" />
+          <NavigationProperty Name="DialogueSecurites2" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur3_PersonneId" FromRole="Personne" ToRole="DialogueSecurite" />
+          <NavigationProperty Name="DialogueSecurites3" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu1_PersonneId" FromRole="Personne" ToRole="DialogueSecurite" />
+          <NavigationProperty Name="DialogueSecurites4" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu2_PersonneId" FromRole="Personne" ToRole="DialogueSecurite" />
+          <NavigationProperty Name="DialogueSecurites5" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu3_PersonneId" FromRole="Personne" ToRole="DialogueSecurite" />
+        </EntityType>
+        <EntityType Name="PlageHoraire">
+          <Key>
+            <PropertyRef Name="PlageHoraireID" />
+          </Key>
+          <Property Name="PlageHoraireID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nom" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="FicheSecurites" Relationship="Self.FK_dbo_FicheSecurites_dbo_PlageHoraires_PlageHoraireId" FromRole="PlageHoraires" ToRole="FicheSecurites" />
+          <Property Name="Rang" Type="Int32" />
+        </EntityType>
+        <EntityType Name="PosteDeTravail">
+          <Key>
+            <PropertyRef Name="PosteDeTravailId" />
+          </Key>
+          <Property Name="PosteDeTravailId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ZoneId" Type="Int32" Nullable="false" />
+          <Property Name="PosteDeTravailTypeId" Type="Int32" Nullable="true" />
+          <NavigationProperty Name="FicheSecurites" Relationship="Self.FK_dbo_FicheSecurites_dbo_PosteDeTravails_PosteDeTravailId" FromRole="PosteDeTravails" ToRole="FicheSecurites" />
+          <NavigationProperty Name="Zone" Relationship="Self.FK_dbo_PosteDeTravails_dbo_Zones_ZoneId" FromRole="PosteDeTravails" ToRole="Zones" />
+          <Property Name="Nom" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Rang" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Projet">
+          <Key>
+            <PropertyRef Name="ProjetID" />
+          </Key>
+          <Property Name="ProjetID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NomProjet" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="StatutCouleur" Type="Int32" Nullable="false" />
+          <Property Name="StatutVisage" Type="Int32" Nullable="false" />
+          <Property Name="Commentaire" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProchaineEtape" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateOuverture" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCloture" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Service" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Risque">
+          <Key>
+            <PropertyRef Name="RisqueId" />
+          </Key>
+          <Property Name="RisqueId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nom" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RisqueTypeId" Type="Int32" />
+          <NavigationProperty Name="FicheSecurites" Relationship="Self.FK_dbo_FicheSecurites_dbo_Risques_RisqueId" FromRole="Risques" ToRole="FicheSecurites" />
+          <NavigationProperty Name="RisqueType" Relationship="Self.FK_dbo_Risques_dbo_RisqueTypes_RisqueTypeId" FromRole="Risques" ToRole="RisqueTypes" />
+        </EntityType>
+        <EntityType Name="RisqueType">
+          <Key>
+            <PropertyRef Name="RisqueTypeId" />
+          </Key>
+          <Property Name="RisqueTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nom" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Risques" Relationship="Self.FK_dbo_Risques_dbo_RisqueTypes_RisqueTypeId" FromRole="RisqueTypes" ToRole="Risques" />
+          <Property Name="Rang" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Sauvegarde">
+          <Key>
+            <PropertyRef Name="SauvegardeID" />
+          </Key>
+          <Property Name="SauvegardeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Site" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="Double" Nullable="false" />
+          <Property Name="Volume" Type="Single" Nullable="false" />
+          <Property Name="Taux" Type="Single" Nullable="false" />
+          <Property Name="Duree" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Service">
+          <Key>
+            <PropertyRef Name="ServiceID" />
+          </Key>
+          <Property Name="ServiceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SiteId" Type="Int32" Nullable="false" />
+          <Property Name="ServiceTypeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="FicheSecurites" Relationship="Self.FK_dbo_FicheSecurites_dbo_Services_ServiceId" FromRole="Services" ToRole="FicheSecurites" />
+          <NavigationProperty Name="ServiceType" Relationship="Self.FK_dbo_Services_dbo_ServiceTypes_ServiceTypeId" FromRole="Services" ToRole="ServiceTypes" />
+          <NavigationProperty Name="Site" Relationship="Self.FK_dbo_Services_dbo_Sites_SiteId" FromRole="Services" ToRole="Sites" />
+        </EntityType>
+        <EntityType Name="ServiceType">
+          <Key>
+            <PropertyRef Name="ServiceTypeId" />
+          </Key>
+          <Property Name="ServiceTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nom" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Services" Relationship="Self.FK_dbo_Services_dbo_ServiceTypes_ServiceTypeId" FromRole="ServiceTypes" ToRole="Services" />
+          <Property Name="Rang" Type="Int32" />
+          <NavigationProperty Name="NonConformiteOrigines" Relationship="AntelopeModel.FK_NonConformiteOrigines_ServiceTypes" FromRole="ServiceType" ToRole="NonConformiteOrigine" />
+          <NavigationProperty Name="NonConformites" Relationship="AntelopeModel.FK_NonConformites_ServiceTypes" FromRole="ServiceType" ToRole="NonConformite" />
+          <NavigationProperty Name="DialogueSecurites" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur1_PersonneId" FromRole="ServiceType" ToRole="DialogueSecurite" />
+          <NavigationProperty Name="DialogueSecurites1" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur2_PersonneId" FromRole="ServiceType" ToRole="DialogueSecurite" />
+          <NavigationProperty Name="DialogueSecurites2" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur3_PersonneId" FromRole="ServiceType" ToRole="DialogueSecurite" />
+          <NavigationProperty Name="DialogueSecurites3" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu1_PersonneId" FromRole="ServiceType" ToRole="DialogueSecurite" />
+          <NavigationProperty Name="DialogueSecurites4" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu2_PersonneId" FromRole="ServiceType" ToRole="DialogueSecurite" />
+          <NavigationProperty Name="DialogueSecurites5" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu3_PersonneId" FromRole="ServiceType" ToRole="DialogueSecurite" />
+        </EntityType>
+        <EntityType Name="Site">
+          <Key>
+            <PropertyRef Name="SiteID" />
+          </Key>
+          <Property Name="SiteID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nom" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Trigramme" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Arouperr" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="FicheSecurites" Relationship="Self.FK_dbo_FicheSecurites_dbo_Sites_SiteId" FromRole="Sites" ToRole="FicheSecurites" />
+          <NavigationProperty Name="Services" Relationship="Self.FK_dbo_Services_dbo_Sites_SiteId" FromRole="Sites" ToRole="Services" />
+          <NavigationProperty Name="Zones" Relationship="Self.FK_dbo_Zones_dbo_Sites_SiteId" FromRole="Sites" ToRole="Zones" />
+          <NavigationProperty Name="NonConformites" Relationship="AntelopeModel.FK_NonConformites_Sites" FromRole="Site" ToRole="NonConformite" />
+          <NavigationProperty Name="DialogueSecurites" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Sites_SiteId" FromRole="Site" ToRole="DialogueSecurite" />
+        </EntityType>
+        <EntityType Name="Zone">
+          <Key>
+            <PropertyRef Name="ZoneID" />
+          </Key>
+          <Property Name="ZoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SiteId" Type="Int32" Nullable="false" />
+          <Property Name="ZoneTypeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="FicheSecurites" Relationship="Self.FK_dbo_FicheSecurites_dbo_Zones_ZoneId" FromRole="Zones" ToRole="FicheSecurites" />
+          <NavigationProperty Name="Lieux" Relationship="Self.FK_dbo_Lieux_dbo_Zones_ZoneId" FromRole="Zones" ToRole="Lieux" />
+          <NavigationProperty Name="PosteDeTravails" Relationship="Self.FK_dbo_PosteDeTravails_dbo_Zones_ZoneId" FromRole="Zones" ToRole="PosteDeTravails" />
+          <NavigationProperty Name="Site" Relationship="Self.FK_dbo_Zones_dbo_Sites_SiteId" FromRole="Zones" ToRole="Sites" />
+          <NavigationProperty Name="ZoneType" Relationship="Self.FK_dbo_Zones_dbo_ZoneTypes_ZoneTypeId" FromRole="Zones" ToRole="ZoneTypes" />
+          <NavigationProperty Name="DialogueSecurites" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Zones_ZoneId" FromRole="Zone" ToRole="DialogueSecurite" />
+        </EntityType>
+        <EntityType Name="ZoneType">
+          <Key>
+            <PropertyRef Name="ZoneTypeId" />
+          </Key>
+          <Property Name="ZoneTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nom" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Zones" Relationship="Self.FK_dbo_Zones_dbo_ZoneTypes_ZoneTypeId" FromRole="ZoneTypes" ToRole="Zones" />
+          <Property Name="Rang" Type="Int32" />
+        </EntityType>
+        <Association Name="FK_dbo_ActionQSEs_dbo_Personnes_ResponsableId">
+          <End Role="Personnes" Type="Self.Personne" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ActionQSEs" Type="AntelopeModel.ActionQSE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="ActionQSEs">
+              <PropertyRef Name="ResponsableId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_ActionQSEs_dbo_Personnes_VerificateurId">
+          <End Role="Personnes" Type="Self.Personne" Multiplicity="0..1" />
+          <End Role="ActionQSEs" Type="AntelopeModel.ActionQSE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="ActionQSEs">
+              <PropertyRef Name="VerificateurId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_ActionSecurites_dbo_FicheSecurites_FicheSecuriteId">
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ActionSecurites" Type="Self.ActionSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FicheSecurites">
+              <PropertyRef Name="FicheSecuriteID" />
+            </Principal>
+            <Dependent Role="ActionSecurites">
+              <PropertyRef Name="FicheSecuriteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_CauseQSEs_dbo_FicheSecurites_FicheSecuriteId">
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="CauseQSEs" Type="AntelopeModel.CauseQSE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FicheSecurites">
+              <PropertyRef Name="FicheSecuriteID" />
+            </Principal>
+            <Dependent Role="CauseQSEs">
+              <PropertyRef Name="FicheSecuriteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_CorpsHumainZones_CorpsHumainZoneId">
+          <End Role="CorpsHumainZones" Type="Self.CorpsHumainZone" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CorpsHumainZones">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="CorpsHumainZoneId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Dangers_DangerId">
+          <End Role="Dangers" Type="Self.Danger" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Dangers">
+              <PropertyRef Name="DangerID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="DangerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_FicheSecuriteTypes_FicheSecuriteTypeId">
+          <End Role="FicheSecuriteTypes" Type="Self.FicheSecuriteType" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FicheSecuriteTypes">
+              <PropertyRef Name="FicheSecuriteTypeID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="FicheSecuriteTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Lieux_LieuId">
+          <End Role="Lieux" Type="Self.Lieu" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Lieux">
+              <PropertyRef Name="LieuID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="LieuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Personnes_PersonneConcerneeId">
+          <End Role="Personnes" Type="Self.Personne" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="PersonneConcerneeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Personnes_ResponsableId">
+          <End Role="Personnes" Type="Self.Personne" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personnes">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="ResponsableId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_PlageHoraires_PlageHoraireId">
+          <End Role="PlageHoraires" Type="Self.PlageHoraire" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PlageHoraires">
+              <PropertyRef Name="PlageHoraireID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="PlageHoraireId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_PosteDeTravails_PosteDeTravailId">
+          <End Role="PosteDeTravails" Type="Self.PosteDeTravail" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PosteDeTravails">
+              <PropertyRef Name="PosteDeTravailId" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="PosteDeTravailId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Risques_RisqueId">
+          <End Role="Risques" Type="Self.Risque" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Risques">
+              <PropertyRef Name="RisqueId" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="RisqueId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Services_ServiceId">
+          <End Role="Services" Type="Self.Service" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Services">
+              <PropertyRef Name="ServiceID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="ServiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Sites_SiteId">
+          <End Role="Sites" Type="Self.Site" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sites">
+              <PropertyRef Name="SiteID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="SiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_FicheSecurites_dbo_Zones_ZoneId">
+          <End Role="Zones" Type="Self.Zone" Multiplicity="0..1" />
+          <End Role="FicheSecurites" Type="Self.FicheSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Zones">
+              <PropertyRef Name="ZoneID" />
+            </Principal>
+            <Dependent Role="FicheSecurites">
+              <PropertyRef Name="ZoneId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Lieux_dbo_Zones_ZoneId">
+          <End Role="Zones" Type="Self.Zone" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Lieux" Type="Self.Lieu" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Zones">
+              <PropertyRef Name="ZoneID" />
+            </Principal>
+            <Dependent Role="Lieux">
+              <PropertyRef Name="ZoneId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_PosteDeTravails_dbo_Zones_ZoneId">
+          <End Role="Zones" Type="Self.Zone" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="PosteDeTravails" Type="Self.PosteDeTravail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Zones">
+              <PropertyRef Name="ZoneID" />
+            </Principal>
+            <Dependent Role="PosteDeTravails">
+              <PropertyRef Name="ZoneId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Risques_dbo_RisqueTypes_RisqueTypeId">
+          <End Role="RisqueTypes" Type="Self.RisqueType" Multiplicity="0..1" />
+          <End Role="Risques" Type="Self.Risque" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RisqueTypes">
+              <PropertyRef Name="RisqueTypeId" />
+            </Principal>
+            <Dependent Role="Risques">
+              <PropertyRef Name="RisqueTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Services_dbo_ServiceTypes_ServiceTypeId">
+          <End Role="ServiceTypes" Type="Self.ServiceType" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Services" Type="Self.Service" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceTypes">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="Services">
+              <PropertyRef Name="ServiceTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Services_dbo_Sites_SiteId">
+          <End Role="Sites" Type="Self.Site" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Services" Type="Self.Service" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sites">
+              <PropertyRef Name="SiteID" />
+            </Principal>
+            <Dependent Role="Services">
+              <PropertyRef Name="SiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Zones_dbo_Sites_SiteId">
+          <End Role="Sites" Type="Self.Site" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Zones" Type="Self.Zone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sites">
+              <PropertyRef Name="SiteID" />
+            </Principal>
+            <Dependent Role="Zones">
+              <PropertyRef Name="SiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Zones_dbo_ZoneTypes_ZoneTypeId">
+          <End Role="ZoneTypes" Type="Self.ZoneType" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Zones" Type="Self.Zone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ZoneTypes">
+              <PropertyRef Name="ZoneTypeId" />
+            </Principal>
+            <Dependent Role="Zones">
+              <PropertyRef Name="ZoneTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="AntelopeEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ActionQSEs" EntityType="AntelopeModel.ActionQSE" />
+          <EntitySet Name="ActionSecurites" EntityType="Self.ActionSecurite" />
+          <EntitySet Name="ADRoles" EntityType="Self.ADRole" />
+          <EntitySet Name="CauseQSEs" EntityType="AntelopeModel.CauseQSE" />
+          <EntitySet Name="CorpsHumainZones" EntityType="Self.CorpsHumainZone" />
+          <EntitySet Name="Dangers" EntityType="Self.Danger" />
+          <EntitySet Name="FicheSecurites" EntityType="Self.FicheSecurite" />
+          <EntitySet Name="FicheSecuriteTypes" EntityType="Self.FicheSecuriteType" />
+          <EntitySet Name="Interventions" EntityType="Self.Intervention" />
+          <EntitySet Name="Lieux" EntityType="Self.Lieu" />
+          <EntitySet Name="Personnes" EntityType="Self.Personne" />
+          <EntitySet Name="PlageHoraires" EntityType="Self.PlageHoraire" />
+          <EntitySet Name="PosteDeTravails" EntityType="Self.PosteDeTravail" />
+          <EntitySet Name="Projets" EntityType="Self.Projet" />
+          <EntitySet Name="Risques" EntityType="Self.Risque" />
+          <EntitySet Name="RisqueTypes" EntityType="Self.RisqueType" />
+          <EntitySet Name="Sauvegardes" EntityType="Self.Sauvegarde" />
+          <EntitySet Name="Services" EntityType="Self.Service" />
+          <EntitySet Name="ServiceTypes" EntityType="Self.ServiceType" />
+          <EntitySet Name="Sites" EntityType="Self.Site" />
+          <EntitySet Name="Zones" EntityType="Self.Zone" />
+          <EntitySet Name="ZoneTypes" EntityType="Self.ZoneType" />
+          <AssociationSet Name="FK_dbo_ActionQSEs_dbo_Personnes_ResponsableId" Association="Self.FK_dbo_ActionQSEs_dbo_Personnes_ResponsableId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="ActionQSEs" EntitySet="ActionQSEs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_ActionQSEs_dbo_Personnes_VerificateurId" Association="Self.FK_dbo_ActionQSEs_dbo_Personnes_VerificateurId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="ActionQSEs" EntitySet="ActionQSEs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_ActionSecurites_dbo_FicheSecurites_FicheSecuriteId" Association="Self.FK_dbo_ActionSecurites_dbo_FicheSecurites_FicheSecuriteId">
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+            <End Role="ActionSecurites" EntitySet="ActionSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_CauseQSEs_dbo_FicheSecurites_FicheSecuriteId" Association="Self.FK_dbo_CauseQSEs_dbo_FicheSecurites_FicheSecuriteId">
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+            <End Role="CauseQSEs" EntitySet="CauseQSEs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_CorpsHumainZones_CorpsHumainZoneId" Association="Self.FK_dbo_FicheSecurites_dbo_CorpsHumainZones_CorpsHumainZoneId">
+            <End Role="CorpsHumainZones" EntitySet="CorpsHumainZones" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Dangers_DangerId" Association="Self.FK_dbo_FicheSecurites_dbo_Dangers_DangerId">
+            <End Role="Dangers" EntitySet="Dangers" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_FicheSecuriteTypes_FicheSecuriteTypeId" Association="Self.FK_dbo_FicheSecurites_dbo_FicheSecuriteTypes_FicheSecuriteTypeId">
+            <End Role="FicheSecuriteTypes" EntitySet="FicheSecuriteTypes" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Lieux_LieuId" Association="Self.FK_dbo_FicheSecurites_dbo_Lieux_LieuId">
+            <End Role="Lieux" EntitySet="Lieux" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Personnes_PersonneConcerneeId" Association="Self.FK_dbo_FicheSecurites_dbo_Personnes_PersonneConcerneeId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Personnes_ResponsableId" Association="Self.FK_dbo_FicheSecurites_dbo_Personnes_ResponsableId">
+            <End Role="Personnes" EntitySet="Personnes" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_PlageHoraires_PlageHoraireId" Association="Self.FK_dbo_FicheSecurites_dbo_PlageHoraires_PlageHoraireId">
+            <End Role="PlageHoraires" EntitySet="PlageHoraires" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_PosteDeTravails_PosteDeTravailId" Association="Self.FK_dbo_FicheSecurites_dbo_PosteDeTravails_PosteDeTravailId">
+            <End Role="PosteDeTravails" EntitySet="PosteDeTravails" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Risques_RisqueId" Association="Self.FK_dbo_FicheSecurites_dbo_Risques_RisqueId">
+            <End Role="Risques" EntitySet="Risques" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Services_ServiceId" Association="Self.FK_dbo_FicheSecurites_dbo_Services_ServiceId">
+            <End Role="Services" EntitySet="Services" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Sites_SiteId" Association="Self.FK_dbo_FicheSecurites_dbo_Sites_SiteId">
+            <End Role="Sites" EntitySet="Sites" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_FicheSecurites_dbo_Zones_ZoneId" Association="Self.FK_dbo_FicheSecurites_dbo_Zones_ZoneId">
+            <End Role="Zones" EntitySet="Zones" />
+            <End Role="FicheSecurites" EntitySet="FicheSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Lieux_dbo_Zones_ZoneId" Association="Self.FK_dbo_Lieux_dbo_Zones_ZoneId">
+            <End Role="Zones" EntitySet="Zones" />
+            <End Role="Lieux" EntitySet="Lieux" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_PosteDeTravails_dbo_Zones_ZoneId" Association="Self.FK_dbo_PosteDeTravails_dbo_Zones_ZoneId">
+            <End Role="Zones" EntitySet="Zones" />
+            <End Role="PosteDeTravails" EntitySet="PosteDeTravails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Risques_dbo_RisqueTypes_RisqueTypeId" Association="Self.FK_dbo_Risques_dbo_RisqueTypes_RisqueTypeId">
+            <End Role="RisqueTypes" EntitySet="RisqueTypes" />
+            <End Role="Risques" EntitySet="Risques" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Services_dbo_ServiceTypes_ServiceTypeId" Association="Self.FK_dbo_Services_dbo_ServiceTypes_ServiceTypeId">
+            <End Role="ServiceTypes" EntitySet="ServiceTypes" />
+            <End Role="Services" EntitySet="Services" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Services_dbo_Sites_SiteId" Association="Self.FK_dbo_Services_dbo_Sites_SiteId">
+            <End Role="Sites" EntitySet="Sites" />
+            <End Role="Services" EntitySet="Services" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Zones_dbo_Sites_SiteId" Association="Self.FK_dbo_Zones_dbo_Sites_SiteId">
+            <End Role="Sites" EntitySet="Sites" />
+            <End Role="Zones" EntitySet="Zones" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Zones_dbo_ZoneTypes_ZoneTypeId" Association="Self.FK_dbo_Zones_dbo_ZoneTypes_ZoneTypeId">
+            <End Role="ZoneTypes" EntitySet="ZoneTypes" />
+            <End Role="Zones" EntitySet="Zones" />
+          </AssociationSet>
+          <EntitySet Name="ParametrageHSEs" EntityType="AntelopeModel.ParametrageHSE" />
+          <EntitySet Name="NonConformiteDomaines" EntityType="AntelopeModel.NonConformiteDomaine" />
+          <EntitySet Name="NonConformiteGravites" EntityType="AntelopeModel.NonConformiteGravite" />
+          <EntitySet Name="NonConformiteOrigines" EntityType="AntelopeModel.NonConformiteOrigine" />
+          <EntitySet Name="NonConformites" EntityType="AntelopeModel.NonConformite" />
+          <AssociationSet Name="FK_ActionQSEs_NonConformites" Association="AntelopeModel.FK_ActionQSEs_NonConformites">
+            <End Role="NonConformite" EntitySet="NonConformites" />
+            <End Role="ActionQSE" EntitySet="ActionQSEs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NonConformite_NonConformiteDomaines" Association="AntelopeModel.FK_NonConformite_NonConformiteDomaines">
+            <End Role="NonConformiteDomaine" EntitySet="NonConformiteDomaines" />
+            <End Role="NonConformite" EntitySet="NonConformites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NonConformites_NonConformiteGravites" Association="AntelopeModel.FK_NonConformites_NonConformiteGravites">
+            <End Role="NonConformiteGravite" EntitySet="NonConformiteGravites" />
+            <End Role="NonConformite" EntitySet="NonConformites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NonConformites_NonConformiteOrigines" Association="AntelopeModel.FK_NonConformites_NonConformiteOrigines">
+            <End Role="NonConformiteOrigine" EntitySet="NonConformiteOrigines" />
+            <End Role="NonConformite" EntitySet="NonConformites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NonConformites_Sites" Association="AntelopeModel.FK_NonConformites_Sites">
+            <End Role="Site" EntitySet="Sites" />
+            <End Role="NonConformite" EntitySet="NonConformites" />
+          </AssociationSet>
+          <EntitySet Name="ParametrageQSEs" EntityType="AntelopeModel.ParametrageQSE" />
+          <AssociationSet Name="FK_dbo_ActionQSEs_dbo_CauseQSEs_CauseQSEId" Association="AntelopeModel.FK_dbo_ActionQSEs_dbo_CauseQSEs_CauseQSEId">
+            <End Role="CauseQSE" EntitySet="CauseQSEs" />
+            <End Role="ActionQSE" EntitySet="ActionQSEs" />
+          </AssociationSet>
+          <EntitySet Name="C__RefactorLog" EntityType="AntelopeModel.C__RefactorLog" />
+          <EntitySet Name="ImportActions" EntityType="AntelopeModel.ImportAction" />
+          <EntitySet Name="ImportNonConformites" EntityType="AntelopeModel.ImportNonConformite" />
+          <AssociationSet Name="FK_ImportActions_ImportNonConformites" Association="AntelopeModel.FK_ImportActions_ImportNonConformites">
+            <End Role="ImportNonConformite" EntitySet="ImportNonConformites" />
+            <End Role="ImportAction" EntitySet="ImportActions" />
+          </AssociationSet>
+          <EntitySet Name="FilePaths" EntityType="AntelopeModel.FilePath" />
+          <AssociationSet Name="FK_FilePaths_FicheSecurites" Association="AntelopeModel.FK_FilePaths_FicheSecurites">
+            <End Role="FicheSecurite" EntitySet="FicheSecurites" />
+            <End Role="FilePath" EntitySet="FilePaths" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FilePaths_NonConformites" Association="AntelopeModel.FK_FilePaths_NonConformites">
+            <End Role="NonConformite" EntitySet="NonConformites" />
+            <End Role="FilePath" EntitySet="FilePaths" />
+          </AssociationSet>
+          <EntitySet Name="DialogueSecurites" EntityType="AntelopeModel.DialogueSecurite" />
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_Sites_SiteId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Sites_SiteId">
+            <End Role="Site" EntitySet="Sites" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NonConformiteOrigines_ServiceTypes" Association="AntelopeModel.FK_NonConformiteOrigines_ServiceTypes">
+            <End Role="ServiceType" EntitySet="ServiceTypes" />
+            <End Role="NonConformiteOrigine" EntitySet="NonConformiteOrigines" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NonConformites_ServiceTypes" Association="AntelopeModel.FK_NonConformites_ServiceTypes">
+            <End Role="ServiceType" EntitySet="ServiceTypes" />
+            <End Role="NonConformite" EntitySet="NonConformites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_Lieux_LieuId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Lieux_LieuId">
+            <End Role="Lieu" EntitySet="Lieux" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur1_PersonneId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur1_PersonneId">
+            <End Role="Personne" EntitySet="Personnes" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur2_PersonneId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur2_PersonneId">
+            <End Role="Personne" EntitySet="Personnes" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur3_PersonneId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur3_PersonneId">
+            <End Role="Personne" EntitySet="Personnes" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu1_PersonneId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu1_PersonneId">
+            <End Role="Personne" EntitySet="Personnes" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu2_PersonneId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu2_PersonneId">
+            <End Role="Personne" EntitySet="Personnes" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu3_PersonneId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu3_PersonneId">
+            <End Role="Personne" EntitySet="Personnes" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <EntitySet Name="Thematiques" EntityType="AntelopeModel.Thematique" />
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_Thematiques_ThematiqueId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Thematiques_ThematiqueId">
+            <End Role="Thematique" EntitySet="Thematiques" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_Zones_ZoneId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Zones_ZoneId">
+            <End Role="Zone" EntitySet="Zones" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur1_PersonneId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur1_PersonneId">
+            <End Role="ServiceType" EntitySet="ServiceTypes" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur2_PersonneId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur2_PersonneId">
+            <End Role="ServiceType" EntitySet="ServiceTypes" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur3_PersonneId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur3_PersonneId">
+            <End Role="ServiceType" EntitySet="ServiceTypes" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu1_PersonneId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu1_PersonneId">
+            <End Role="ServiceType" EntitySet="ServiceTypes" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu2_PersonneId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu2_PersonneId">
+            <End Role="ServiceType" EntitySet="ServiceTypes" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu3_PersonneId" Association="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu3_PersonneId">
+            <End Role="ServiceType" EntitySet="ServiceTypes" />
+            <End Role="DialogueSecurite" EntitySet="DialogueSecurites" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="ParametrageHSE">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="EmailDiffusionFS" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="EmailValidationRejetPlanActionFS" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="EmailDiffusionPlanAction" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="IsEmailDiffusion" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="NonConformiteDomaine">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="NonConformites" Relationship="AntelopeModel.FK_NonConformite_NonConformiteDomaines" FromRole="NonConformiteDomaine" ToRole="NonConformite" />
+        </EntityType>
+        <EntityType Name="NonConformiteGravite">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="NonConformites" Relationship="AntelopeModel.FK_NonConformites_NonConformiteGravites" FromRole="NonConformiteGravite" ToRole="NonConformite" />
+        </EntityType>
+        <EntityType Name="NonConformiteOrigine">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="NonConformites" Relationship="AntelopeModel.FK_NonConformites_NonConformiteOrigines" FromRole="NonConformiteOrigine" ToRole="NonConformite" />
+          <Property Name="ServiceTypeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="ServiceType" Relationship="AntelopeModel.FK_NonConformiteOrigines_ServiceTypes" FromRole="NonConformiteOrigine" ToRole="ServiceType" />
+        </EntityType>
+        <EntityType Name="NonConformite">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Precision="0" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Attendu" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Cause" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="NonConformiteDomaineId" Type="Int32" />
+          <Property Name="NonConformiteGraviteId" Type="Int32" />
+          <Property Name="NonConformiteOrigineId" Type="Int32" />
+          <NavigationProperty Name="ActionQSEs" Relationship="AntelopeModel.FK_ActionQSEs_NonConformites" FromRole="NonConformite" ToRole="ActionQSE" />
+          <NavigationProperty Name="NonConformiteDomaine" Relationship="AntelopeModel.FK_NonConformite_NonConformiteDomaines" FromRole="NonConformite" ToRole="NonConformiteDomaine" />
+          <NavigationProperty Name="NonConformiteGravite" Relationship="AntelopeModel.FK_NonConformites_NonConformiteGravites" FromRole="NonConformite" ToRole="NonConformiteGravite" />
+          <NavigationProperty Name="NonConformiteOrigine" Relationship="AntelopeModel.FK_NonConformites_NonConformiteOrigines" FromRole="NonConformite" ToRole="NonConformiteOrigine" />
+          <Property Name="SiteId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Site" Relationship="AntelopeModel.FK_NonConformites_Sites" FromRole="NonConformite" ToRole="Site" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CompteurAnnuelSite" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="FilePaths" Relationship="AntelopeModel.FK_FilePaths_NonConformites" FromRole="NonConformite" ToRole="FilePath" />
+          <Property Name="ServiceTypeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="ServiceType" Relationship="AntelopeModel.FK_NonConformites_ServiceTypes" FromRole="NonConformite" ToRole="ServiceType" />
+        </EntityType>
+        <Association Name="FK_ActionQSEs_NonConformites">
+          <End Type="AntelopeModel.NonConformite" Role="NonConformite" Multiplicity="0..1" />
+          <End Type="AntelopeModel.ActionQSE" Role="ActionQSE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NonConformite">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ActionQSE">
+              <PropertyRef Name="NonConformiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NonConformite_NonConformiteDomaines">
+          <End Type="AntelopeModel.NonConformiteDomaine" Role="NonConformiteDomaine" Multiplicity="0..1" />
+          <End Type="AntelopeModel.NonConformite" Role="NonConformite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NonConformiteDomaine">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="NonConformite">
+              <PropertyRef Name="NonConformiteDomaineId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NonConformites_NonConformiteGravites">
+          <End Type="AntelopeModel.NonConformiteGravite" Role="NonConformiteGravite" Multiplicity="0..1" />
+          <End Type="AntelopeModel.NonConformite" Role="NonConformite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NonConformiteGravite">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="NonConformite">
+              <PropertyRef Name="NonConformiteGraviteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NonConformites_NonConformiteOrigines">
+          <End Type="AntelopeModel.NonConformiteOrigine" Role="NonConformiteOrigine" Multiplicity="0..1" />
+          <End Type="AntelopeModel.NonConformite" Role="NonConformite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NonConformiteOrigine">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="NonConformite">
+              <PropertyRef Name="NonConformiteOrigineId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NonConformites_Sites">
+          <End Type="AntelopeModel.Site" Role="Site" Multiplicity="1" />
+          <End Type="AntelopeModel.NonConformite" Role="NonConformite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Site">
+              <PropertyRef Name="SiteID" />
+            </Principal>
+            <Dependent Role="NonConformite">
+              <PropertyRef Name="SiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ParametrageQSE">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <Association Name="FK_dbo_ActionQSEs_dbo_CauseQSEs_CauseQSEId">
+          <End Type="AntelopeModel.CauseQSE" Role="CauseQSE" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="AntelopeModel.ActionQSE" Role="ActionQSE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CauseQSE">
+              <PropertyRef Name="CauseQSEId" />
+            </Principal>
+            <Dependent Role="ActionQSE">
+              <PropertyRef Name="CauseQSEId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="C__RefactorLog">
+          <Key>
+            <PropertyRef Name="OperationKey" />
+          </Key>
+          <Property Name="OperationKey" Type="Guid" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ImportAction">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="NonConformiteId" Type="Int32" Nullable="false" />
+          <Property Name="Titre" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateButoireInitiale" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateButoireNouvelle" Type="DateTime" Precision="3" />
+          <Property Name="ResponsableNom" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ResponsablePrenom" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="VerificateurNom" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="VerificateurPrenom" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Avancement" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CritereEfficaciteVerification" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CommentaireEfficaciteVerification" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RealiseDate" Type="DateTime" Precision="3" />
+          <Property Name="VerifieDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ImportNonConformite" Relationship="AntelopeModel.FK_ImportActions_ImportNonConformites" FromRole="ImportAction" ToRole="ImportNonConformite" />
+        </EntityType>
+        <EntityType Name="ImportNonConformite">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Attendu" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Cause" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="NonConformiteDomaineId" Type="Int32" Nullable="false" />
+          <Property Name="NonConformiteGraviteId" Type="Int32" Nullable="false" />
+          <Property Name="NonConformiteOrigineId" Type="Int32" Nullable="false" />
+          <Property Name="SiteId" Type="Int32" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="ImportActions" Relationship="AntelopeModel.FK_ImportActions_ImportNonConformites" FromRole="ImportNonConformite" ToRole="ImportAction" />
+        </EntityType>
+        <Association Name="FK_ImportActions_ImportNonConformites">
+          <End Type="AntelopeModel.ImportNonConformite" Role="ImportNonConformite" Multiplicity="1" />
+          <End Type="AntelopeModel.ImportAction" Role="ImportAction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ImportNonConformite">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ImportAction">
+              <PropertyRef Name="NonConformiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="FilePath">
+          <Key>
+            <PropertyRef Name="FilePathId" />
+          </Key>
+          <Property Name="FilePathId" Type="Int32" Nullable="false" />
+          <Property Name="FileName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FileType" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NonConformiteId" Type="Int32" />
+          <Property Name="FicheSecuriteId" Type="Int32" />
+          <NavigationProperty Name="FicheSecurite" Relationship="AntelopeModel.FK_FilePaths_FicheSecurites" FromRole="FilePath" ToRole="FicheSecurite" />
+          <NavigationProperty Name="NonConformite" Relationship="AntelopeModel.FK_FilePaths_NonConformites" FromRole="FilePath" ToRole="NonConformite" />
+          <Property Name="Show" Type="Boolean" />
+        </EntityType>
+        <Association Name="FK_FilePaths_FicheSecurites">
+          <End Type="AntelopeModel.FicheSecurite" Role="FicheSecurite" Multiplicity="0..1" />
+          <End Type="AntelopeModel.FilePath" Role="FilePath" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FicheSecurite">
+              <PropertyRef Name="FicheSecuriteID" />
+            </Principal>
+            <Dependent Role="FilePath">
+              <PropertyRef Name="FicheSecuriteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FilePaths_NonConformites">
+          <End Type="AntelopeModel.NonConformite" Role="NonConformite" Multiplicity="0..1" />
+          <End Type="AntelopeModel.FilePath" Role="FilePath" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NonConformite">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FilePath">
+              <PropertyRef Name="NonConformiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="DialogueSecurite">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Contexte" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Observation" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Reflexion" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Action" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Atelier" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="SiteId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Site" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Sites_SiteId" FromRole="DialogueSecurite" ToRole="Site" />
+          <Property Name="CompteurAnnuelSite" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LieuId" Type="Int32" Nullable="false" />
+          <Property Name="Dialogueur1Id" Type="Int32" Nullable="false" />
+          <Property Name="Dialogueur2Id" Type="Int32" />
+          <Property Name="Dialogueur3Id" Type="Int32" />
+          <Property Name="Entretenu1Id" Type="Int32" Nullable="false" />
+          <Property Name="Entretenu2Id" Type="Int32" />
+          <Property Name="Entretenu3Id" Type="Int32" />
+          <Property Name="ServiceTypeDialogueur1Id" Type="Int32" Nullable="false" />
+          <Property Name="ServiceTypeDialogueur2Id" Type="Int32" />
+          <Property Name="ServiceTypeDialogueur3Id" Type="Int32" />
+          <Property Name="ServiceTypeEntretenu1Id" Type="Int32" Nullable="false" />
+          <Property Name="ServiceTypeEntretenu2Id" Type="Int32" />
+          <Property Name="ServiceTypeEntretenu3Id" Type="Int32" />
+          <Property Name="ThematiqueId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Lieu" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Lieux_LieuId" FromRole="DialogueSecurite" ToRole="Lieu" />
+          <NavigationProperty Name="Dialogueur1" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur1_PersonneId" FromRole="DialogueSecurite" ToRole="Personne" />
+          <NavigationProperty Name="Dialogueur2" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur2_PersonneId" FromRole="DialogueSecurite" ToRole="Personne" />
+          <NavigationProperty Name="Dialogueur3" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur3_PersonneId" FromRole="DialogueSecurite" ToRole="Personne" />
+          <NavigationProperty Name="Entretenu1" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu1_PersonneId" FromRole="DialogueSecurite" ToRole="Personne" />
+          <NavigationProperty Name="Entretenu2" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu2_PersonneId" FromRole="DialogueSecurite" ToRole="Personne" />
+          <NavigationProperty Name="Entretenu3" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu3_PersonneId" FromRole="DialogueSecurite" ToRole="Personne" />
+          <NavigationProperty Name="Thematique" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Thematiques_ThematiqueId" FromRole="DialogueSecurite" ToRole="Thematique" />
+          <Property Name="ZoneId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Zone" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Zones_ZoneId" FromRole="DialogueSecurite" ToRole="Zone" />
+          <NavigationProperty Name="ServiceType" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur1_PersonneId" FromRole="DialogueSecurite" ToRole="ServiceType" />
+          <NavigationProperty Name="ServiceType1" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur2_PersonneId" FromRole="DialogueSecurite" ToRole="ServiceType" />
+          <NavigationProperty Name="ServiceType2" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur3_PersonneId" FromRole="DialogueSecurite" ToRole="ServiceType" />
+          <NavigationProperty Name="ServiceType3" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu1_PersonneId" FromRole="DialogueSecurite" ToRole="ServiceType" />
+          <NavigationProperty Name="ServiceType4" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu2_PersonneId" FromRole="DialogueSecurite" ToRole="ServiceType" />
+          <NavigationProperty Name="ServiceType5" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu3_PersonneId" FromRole="DialogueSecurite" ToRole="ServiceType" />
+        </EntityType>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_Sites_SiteId">
+          <End Type="AntelopeModel.Site" Role="Site" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Site">
+              <PropertyRef Name="SiteID" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="SiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NonConformiteOrigines_ServiceTypes">
+          <End Type="AntelopeModel.ServiceType" Role="ServiceType" Multiplicity="1" />
+          <End Type="AntelopeModel.NonConformiteOrigine" Role="NonConformiteOrigine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceType">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="NonConformiteOrigine">
+              <PropertyRef Name="ServiceTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NonConformites_ServiceTypes">
+          <End Type="AntelopeModel.ServiceType" Role="ServiceType" Multiplicity="1" />
+          <End Type="AntelopeModel.NonConformite" Role="NonConformite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceType">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="NonConformite">
+              <PropertyRef Name="ServiceTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_Lieux_LieuId">
+          <End Type="AntelopeModel.Lieu" Role="Lieu" Multiplicity="1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Lieu">
+              <PropertyRef Name="LieuID" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="LieuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur1_PersonneId">
+          <End Type="AntelopeModel.Personne" Role="Personne" Multiplicity="1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personne">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="Dialogueur1Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur2_PersonneId">
+          <End Type="AntelopeModel.Personne" Role="Personne" Multiplicity="0..1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personne">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="Dialogueur2Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_PersonnesDialogueur3_PersonneId">
+          <End Type="AntelopeModel.Personne" Role="Personne" Multiplicity="0..1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personne">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="Dialogueur3Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu1_PersonneId">
+          <End Type="AntelopeModel.Personne" Role="Personne" Multiplicity="1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personne">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="Entretenu1Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu2_PersonneId">
+          <End Type="AntelopeModel.Personne" Role="Personne" Multiplicity="0..1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personne">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="Entretenu2Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_PersonnesEntretenu3_PersonneId">
+          <End Type="AntelopeModel.Personne" Role="Personne" Multiplicity="0..1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Personne">
+              <PropertyRef Name="PersonneId" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="Entretenu3Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Thematique">
+          <Key>
+            <PropertyRef Name="ThematiqueId" />
+          </Key>
+          <Property Name="ThematiqueId" Type="Int32" Nullable="false" />
+          <Property Name="Nom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="DialogueSecurites" Relationship="AntelopeModel.FK_dbo_DialogueSecurites_dbo_Thematiques_ThematiqueId" FromRole="Thematique" ToRole="DialogueSecurite" />
+        </EntityType>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_Thematiques_ThematiqueId">
+          <End Type="AntelopeModel.Thematique" Role="Thematique" Multiplicity="1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Thematique">
+              <PropertyRef Name="ThematiqueId" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="ThematiqueId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_Zones_ZoneId">
+          <End Type="AntelopeModel.Zone" Role="Zone" Multiplicity="1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Zone">
+              <PropertyRef Name="ZoneID" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="ZoneId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur1_PersonneId">
+          <End Type="AntelopeModel.ServiceType" Role="ServiceType" Multiplicity="1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceType">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="ServiceTypeDialogueur1Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur2_PersonneId">
+          <End Type="AntelopeModel.ServiceType" Role="ServiceType" Multiplicity="0..1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceType">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="ServiceTypeDialogueur2Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesDialogueur3_PersonneId">
+          <End Type="AntelopeModel.ServiceType" Role="ServiceType" Multiplicity="0..1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceType">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="ServiceTypeDialogueur3Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu1_PersonneId">
+          <End Type="AntelopeModel.ServiceType" Role="ServiceType" Multiplicity="1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceType">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="ServiceTypeEntretenu1Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu2_PersonneId">
+          <End Type="AntelopeModel.ServiceType" Role="ServiceType" Multiplicity="0..1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceType">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="ServiceTypeEntretenu2Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_DialogueSecurites_dbo_ServiceTypesEntretenu3_PersonneId">
+          <End Type="AntelopeModel.ServiceType" Role="ServiceType" Multiplicity="0..1" />
+          <End Type="AntelopeModel.DialogueSecurite" Role="DialogueSecurite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServiceType">
+              <PropertyRef Name="ServiceTypeId" />
+            </Principal>
+            <Dependent Role="DialogueSecurite">
+              <PropertyRef Name="ServiceTypeEntretenu3Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AntelopeModelStoreContainer" CdmEntityContainer="AntelopeEntities">
+          <EntitySetMapping Name="ActionQSEs">
+            <EntityTypeMapping TypeName="AntelopeModel.ActionQSE">
+              <MappingFragment StoreEntitySet="ActionQSEs">
+                <ScalarProperty Name="Titre" ColumnName="Titre" />
+                <ScalarProperty Name="CritereEfficaciteVerification" ColumnName="CritereEfficaciteVerification" />
+                <ScalarProperty Name="NonConformiteId" ColumnName="NonConformiteId" />
+                <ScalarProperty Name="ActionQSEId" ColumnName="ActionQSEId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="DateButoireInitiale" ColumnName="DateButoireInitiale" />
+                <ScalarProperty Name="DateButoireNouvelle" ColumnName="DateButoireNouvelle" />
+                <ScalarProperty Name="ResponsableId" ColumnName="ResponsableId" />
+                <ScalarProperty Name="Avancement" ColumnName="Avancement" />
+                <ScalarProperty Name="CotationHumain" ColumnName="CotationHumain" />
+                <ScalarProperty Name="CotationOrganisationnel" ColumnName="CotationOrganisationnel" />
+                <ScalarProperty Name="CotationTechnique" ColumnName="CotationTechnique" />
+                <ScalarProperty Name="CotationEfficacite" ColumnName="CotationEfficacite" />
+                <ScalarProperty Name="VerificateurId" ColumnName="VerificateurId" />
+                <ScalarProperty Name="PreuveVerification" ColumnName="PreuveVerification" />
+                <ScalarProperty Name="CommentaireEfficaciteVerification" ColumnName="CommentaireEfficaciteVerification" />
+                <ScalarProperty Name="Realise" ColumnName="Realise" />
+                <ScalarProperty Name="RealiseDate" ColumnName="RealiseDate" />
+                <ScalarProperty Name="Verifie" ColumnName="Verifie" />
+                <ScalarProperty Name="VerifieDate" ColumnName="VerifieDate" />
+                <ScalarProperty Name="Cloture" ColumnName="Cloture" />
+                <ScalarProperty Name="ClotureDate" ColumnName="ClotureDate" />
+                <ScalarProperty Name="CauseQSEId" ColumnName="CauseQSEId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ActionSecurites">
+            <EntityTypeMapping TypeName="AntelopeModel.ActionSecurite">
+              <MappingFragment StoreEntitySet="ActionSecurites">
+                <ScalarProperty Name="ActionSecuriteId" ColumnName="ActionSecuriteId" />
+                <ScalarProperty Name="FicheSecuriteId" ColumnName="FicheSecuriteId" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="FaitPar" ColumnName="FaitPar" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ADRoles">
+            <EntityTypeMapping TypeName="AntelopeModel.ADRole">
+              <MappingFragment StoreEntitySet="ADRoles">
+                <ScalarProperty Name="ADRoleID" ColumnName="ADRoleID" />
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="RoleType" ColumnName="RoleType" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Guid" ColumnName="Guid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CauseQSEs">
+            <EntityTypeMapping TypeName="AntelopeModel.CauseQSE">
+              <MappingFragment StoreEntitySet="CauseQSEs">
+                <ScalarProperty Name="CauseQSEId" ColumnName="CauseQSEId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="FicheSecuriteId" ColumnName="FicheSecuriteId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CorpsHumainZones">
+            <EntityTypeMapping TypeName="AntelopeModel.CorpsHumainZone">
+              <MappingFragment StoreEntitySet="CorpsHumainZones">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Dangers">
+            <EntityTypeMapping TypeName="AntelopeModel.Danger">
+              <MappingFragment StoreEntitySet="Dangers">
+                <ScalarProperty Name="Rang" ColumnName="Rang" />
+                <ScalarProperty Name="DangerID" ColumnName="DangerID" />
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FicheSecurites">
+            <EntityTypeMapping TypeName="AntelopeModel.FicheSecurite">
+              <MappingFragment StoreEntitySet="FicheSecurites">
+                <ScalarProperty Name="WorkFlowFicheSecuriteCloturee" ColumnName="WorkFlowFicheSecuriteCloturee" />
+                <ScalarProperty Name="CompteurAnnuelSite" ColumnName="CompteurAnnuelSite" />
+                <ScalarProperty Name="WorkFlowASERejeteeCause" ColumnName="WorkFlowASERejeteeCause" />
+                <ScalarProperty Name="FicheSecuriteID" ColumnName="FicheSecuriteID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Age" ColumnName="Age" />
+                <ScalarProperty Name="PosteDeTravailId" ColumnName="PosteDeTravailId" />
+                <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+                <ScalarProperty Name="DateCreation" ColumnName="DateCreation" />
+                <ScalarProperty Name="DateEvenement" ColumnName="DateEvenement" />
+                <ScalarProperty Name="PersonnesConcernees" ColumnName="PersonnesConcernees" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ActionImmediate1" ColumnName="ActionImmediate1" />
+                <ScalarProperty Name="ActionImmediate2" ColumnName="ActionImmediate2" />
+                <ScalarProperty Name="Temoins" ColumnName="Temoins" />
+                <ScalarProperty Name="CotationFrequence" ColumnName="CotationFrequence" />
+                <ScalarProperty Name="CotationGravite" ColumnName="CotationGravite" />
+                <ScalarProperty Name="FicheSecuriteTypeId" ColumnName="FicheSecuriteTypeId" />
+                <ScalarProperty Name="RisqueId" ColumnName="RisqueId" />
+                <ScalarProperty Name="DangerId" ColumnName="DangerId" />
+                <ScalarProperty Name="CorpsHumainZoneId" ColumnName="CorpsHumainZoneId" />
+                <ScalarProperty Name="PlageHoraireId" ColumnName="PlageHoraireId" />
+                <ScalarProperty Name="SiteId" ColumnName="SiteId" />
+                <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
+                <ScalarProperty Name="LieuId" ColumnName="LieuId" />
+                <ScalarProperty Name="EnqueteRealisee" ColumnName="EnqueteRealisee" />
+                <ScalarProperty Name="EnqueteDate" ColumnName="EnqueteDate" />
+                <ScalarProperty Name="EnqueteProtagoniste" ColumnName="EnqueteProtagoniste" />
+                <ScalarProperty Name="CHSCTMembre" ColumnName="CHSCTMembre" />
+                <ScalarProperty Name="PersonneConcerneeId" ColumnName="PersonneConcerneeId" />
+                <ScalarProperty Name="ResponsableId" ColumnName="ResponsableId" />
+                <ScalarProperty Name="WorkFlowDiffusee" ColumnName="WorkFlowDiffusee" />
+                <ScalarProperty Name="WorkFlowAttenteASEValidation" ColumnName="WorkFlowAttenteASEValidation" />
+                <ScalarProperty Name="WorkFlowASEValidee" ColumnName="WorkFlowASEValidee" />
+                <ScalarProperty Name="WorkFlowASERejetee" ColumnName="WorkFlowASERejetee" />
+                <ScalarProperty Name="WorkFlowCloturee" ColumnName="WorkFlowCloturee" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FicheSecuriteTypes">
+            <EntityTypeMapping TypeName="AntelopeModel.FicheSecuriteType">
+              <MappingFragment StoreEntitySet="FicheSecuriteTypes">
+                <ScalarProperty Name="FicheSecuriteTypeID" ColumnName="FicheSecuriteTypeID" />
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Interventions">
+            <EntityTypeMapping TypeName="AntelopeModel.Intervention">
+              <MappingFragment StoreEntitySet="Interventions">
+                <ScalarProperty Name="InterventionID" ColumnName="InterventionID" />
+                <ScalarProperty Name="Intervenant" ColumnName="Intervenant" />
+                <ScalarProperty Name="DateIntervention" ColumnName="DateIntervention" />
+                <ScalarProperty Name="Planifie" ColumnName="Planifie" />
+                <ScalarProperty Name="Demandeur" ColumnName="Demandeur" />
+                <ScalarProperty Name="Motif" ColumnName="Motif" />
+                <ScalarProperty Name="DureeIntervention" ColumnName="DureeIntervention" />
+                <ScalarProperty Name="NoteFrais" ColumnName="NoteFrais" />
+                <ScalarProperty Name="PrimeIntervention" ColumnName="PrimeIntervention" />
+                <ScalarProperty Name="PrimeDimanche" ColumnName="PrimeDimanche" />
+                <ScalarProperty Name="Valide" ColumnName="Valide" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Lieux">
+            <EntityTypeMapping TypeName="AntelopeModel.Lieu">
+              <MappingFragment StoreEntitySet="Lieux">
+                <ScalarProperty Name="Rang" ColumnName="Rang" />
+                <ScalarProperty Name="LieuID" ColumnName="LieuID" />
+                <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
+                <ScalarProperty Name="LieuTypeId" ColumnName="LieuTypeId" />
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Personnes">
+            <EntityTypeMapping TypeName="AntelopeModel.Personne">
+              <MappingFragment StoreEntitySet="Personnes">
+                <ScalarProperty Name="PersonneId" ColumnName="PersonneId" />
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+                <ScalarProperty Name="Prenom" ColumnName="Prenom" />
+                <ScalarProperty Name="Guid" ColumnName="Guid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PlageHoraires">
+            <EntityTypeMapping TypeName="AntelopeModel.PlageHoraire">
+              <MappingFragment StoreEntitySet="PlageHoraires">
+                <ScalarProperty Name="Rang" ColumnName="Rang" />
+                <ScalarProperty Name="PlageHoraireID" ColumnName="PlageHoraireID" />
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PosteDeTravails">
+            <EntityTypeMapping TypeName="AntelopeModel.PosteDeTravail">
+              <MappingFragment StoreEntitySet="PosteDeTravails">
+                <ScalarProperty Name="Rang" ColumnName="Rang" />
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+                <ScalarProperty Name="PosteDeTravailId" ColumnName="PosteDeTravailId" />
+                <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
+                <ScalarProperty Name="PosteDeTravailTypeId" ColumnName="PosteDeTravailTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Projets">
+            <EntityTypeMapping TypeName="AntelopeModel.Projet">
+              <MappingFragment StoreEntitySet="Projets">
+                <ScalarProperty Name="ProjetID" ColumnName="ProjetID" />
+                <ScalarProperty Name="NomProjet" ColumnName="NomProjet" />
+                <ScalarProperty Name="StatutCouleur" ColumnName="StatutCouleur" />
+                <ScalarProperty Name="StatutVisage" ColumnName="StatutVisage" />
+                <ScalarProperty Name="Commentaire" ColumnName="Commentaire" />
+                <ScalarProperty Name="ProchaineEtape" ColumnName="ProchaineEtape" />
+                <ScalarProperty Name="DateOuverture" ColumnName="DateOuverture" />
+                <ScalarProperty Name="DateCloture" ColumnName="DateCloture" />
+                <ScalarProperty Name="Service" ColumnName="Service" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Risques">
+            <EntityTypeMapping TypeName="AntelopeModel.Risque">
+              <MappingFragment StoreEntitySet="Risques">
+                <ScalarProperty Name="RisqueId" ColumnName="RisqueId" />
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+                <ScalarProperty Name="RisqueTypeId" ColumnName="RisqueTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RisqueTypes">
+            <EntityTypeMapping TypeName="AntelopeModel.RisqueType">
+              <MappingFragment StoreEntitySet="RisqueTypes">
+                <ScalarProperty Name="Rang" ColumnName="Rang" />
+                <ScalarProperty Name="RisqueTypeId" ColumnName="RisqueTypeId" />
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sauvegardes">
+            <EntityTypeMapping TypeName="AntelopeModel.Sauvegarde">
+              <MappingFragment StoreEntitySet="Sauvegardes">
+                <ScalarProperty Name="SauvegardeID" ColumnName="SauvegardeID" />
+                <ScalarProperty Name="Site" ColumnName="Site" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Volume" ColumnName="Volume" />
+                <ScalarProperty Name="Taux" ColumnName="Taux" />
+                <ScalarProperty Name="Duree" ColumnName="Duree" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Services">
+            <EntityTypeMapping TypeName="AntelopeModel.Service">
+              <MappingFragment StoreEntitySet="Services">
+                <ScalarProperty Name="ServiceID" ColumnName="ServiceID" />
+                <ScalarProperty Name="SiteId" ColumnName="SiteId" />
+                <ScalarProperty Name="ServiceTypeId" ColumnName="ServiceTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServiceTypes">
+            <EntityTypeMapping TypeName="AntelopeModel.ServiceType">
+              <MappingFragment StoreEntitySet="ServiceTypes">
+                <ScalarProperty Name="Rang" ColumnName="Rang" />
+                <ScalarProperty Name="ServiceTypeId" ColumnName="ServiceTypeId" />
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sites">
+            <EntityTypeMapping TypeName="AntelopeModel.Site">
+              <MappingFragment StoreEntitySet="Sites">
+                <ScalarProperty Name="SiteID" ColumnName="SiteID" />
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+                <ScalarProperty Name="Trigramme" ColumnName="Trigramme" />
+                <ScalarProperty Name="Arouperr" ColumnName="Arouperr" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Zones">
+            <EntityTypeMapping TypeName="AntelopeModel.Zone">
+              <MappingFragment StoreEntitySet="Zones">
+                <ScalarProperty Name="ZoneID" ColumnName="ZoneID" />
+                <ScalarProperty Name="SiteId" ColumnName="SiteId" />
+                <ScalarProperty Name="ZoneTypeId" ColumnName="ZoneTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ZoneTypes">
+            <EntityTypeMapping TypeName="AntelopeModel.ZoneType">
+              <MappingFragment StoreEntitySet="ZoneTypes">
+                <ScalarProperty Name="Rang" ColumnName="Rang" />
+                <ScalarProperty Name="ZoneTypeId" ColumnName="ZoneTypeId" />
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ParametrageHSEs">
+            <EntityTypeMapping TypeName="AntelopeModel.ParametrageHSE">
+              <MappingFragment StoreEntitySet="ParametrageHSEs">
+                <ScalarProperty Name="IsEmailDiffusion" ColumnName="IsEmailDiffusion" />
+                <ScalarProperty Name="EmailDiffusionPlanAction" ColumnName="EmailDiffusionPlanAction" />
+                <ScalarProperty Name="EmailValidationRejetPlanActionFS" ColumnName="EmailValidationRejetPlanActionFS" />
+                <ScalarProperty Name="EmailDiffusionFS" ColumnName="EmailDiffusionFS" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NonConformiteDomaines">
+            <EntityTypeMapping TypeName="AntelopeModel.NonConformiteDomaine">
+              <MappingFragment StoreEntitySet="NonConformiteDomaines">
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NonConformiteGravites">
+            <EntityTypeMapping TypeName="AntelopeModel.NonConformiteGravite">
+              <MappingFragment StoreEntitySet="NonConformiteGravites">
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NonConformiteOrigines">
+            <EntityTypeMapping TypeName="AntelopeModel.NonConformiteOrigine">
+              <MappingFragment StoreEntitySet="NonConformiteOrigines">
+                <ScalarProperty Name="ServiceTypeId" ColumnName="ServiceTypeId" />
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NonConformites">
+            <EntityTypeMapping TypeName="AntelopeModel.NonConformite">
+              <MappingFragment StoreEntitySet="NonConformites">
+                <ScalarProperty Name="ServiceTypeId" ColumnName="ServiceTypeId" />
+                <ScalarProperty Name="CompteurAnnuelSite" ColumnName="CompteurAnnuelSite" />
+                <ScalarProperty Name="DateCreation" ColumnName="DateCreation" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="SiteId" ColumnName="SiteId" />
+                <ScalarProperty Name="NonConformiteOrigineId" ColumnName="NonConformiteOrigineId" />
+                <ScalarProperty Name="NonConformiteGraviteId" ColumnName="NonConformiteGraviteId" />
+                <ScalarProperty Name="NonConformiteDomaineId" ColumnName="NonConformiteDomaineId" />
+                <ScalarProperty Name="Cause" ColumnName="Cause" />
+                <ScalarProperty Name="Attendu" ColumnName="Attendu" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ParametrageQSEs">
+            <EntityTypeMapping TypeName="AntelopeModel.ParametrageQSE">
+              <MappingFragment StoreEntitySet="ParametrageQSE">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="C__RefactorLog">
+            <EntityTypeMapping TypeName="AntelopeModel.C__RefactorLog">
+              <MappingFragment StoreEntitySet="__RefactorLog">
+                <ScalarProperty Name="OperationKey" ColumnName="OperationKey" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ImportActions">
+            <EntityTypeMapping TypeName="AntelopeModel.ImportAction">
+              <MappingFragment StoreEntitySet="ImportActions">
+                <ScalarProperty Name="VerifieDate" ColumnName="VerifieDate" />
+                <ScalarProperty Name="RealiseDate" ColumnName="RealiseDate" />
+                <ScalarProperty Name="CommentaireEfficaciteVerification" ColumnName="CommentaireEfficaciteVerification" />
+                <ScalarProperty Name="CritereEfficaciteVerification" ColumnName="CritereEfficaciteVerification" />
+                <ScalarProperty Name="Avancement" ColumnName="Avancement" />
+                <ScalarProperty Name="VerificateurPrenom" ColumnName="VerificateurPrenom" />
+                <ScalarProperty Name="VerificateurNom" ColumnName="VerificateurNom" />
+                <ScalarProperty Name="ResponsablePrenom" ColumnName="ResponsablePrenom" />
+                <ScalarProperty Name="ResponsableNom" ColumnName="ResponsableNom" />
+                <ScalarProperty Name="DateButoireNouvelle" ColumnName="DateButoireNouvelle" />
+                <ScalarProperty Name="DateButoireInitiale" ColumnName="DateButoireInitiale" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Titre" ColumnName="Titre" />
+                <ScalarProperty Name="NonConformiteId" ColumnName="NonConformiteId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ImportNonConformites">
+            <EntityTypeMapping TypeName="AntelopeModel.ImportNonConformite">
+              <MappingFragment StoreEntitySet="ImportNonConformites">
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="SiteId" ColumnName="SiteId" />
+                <ScalarProperty Name="NonConformiteOrigineId" ColumnName="NonConformiteOrigineId" />
+                <ScalarProperty Name="NonConformiteGraviteId" ColumnName="NonConformiteGraviteId" />
+                <ScalarProperty Name="NonConformiteDomaineId" ColumnName="NonConformiteDomaineId" />
+                <ScalarProperty Name="Cause" ColumnName="Cause" />
+                <ScalarProperty Name="Attendu" ColumnName="Attendu" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FilePaths">
+            <EntityTypeMapping TypeName="AntelopeModel.FilePath">
+              <MappingFragment StoreEntitySet="FilePaths">
+                <ScalarProperty Name="Show" ColumnName="Show" />
+                <ScalarProperty Name="FicheSecuriteId" ColumnName="FicheSecuriteId" />
+                <ScalarProperty Name="NonConformiteId" ColumnName="NonConformiteId" />
+                <ScalarProperty Name="FileType" ColumnName="FileType" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="FilePathId" ColumnName="FilePathId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DialogueSecurites">
+            <EntityTypeMapping TypeName="AntelopeModel.DialogueSecurite">
+              <MappingFragment StoreEntitySet="DialogueSecurites">
+                <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
+                <ScalarProperty Name="ThematiqueId" ColumnName="ThematiqueId" />
+                <ScalarProperty Name="ServiceTypeEntretenu3Id" ColumnName="ServiceTypeEntretenu3Id" />
+                <ScalarProperty Name="ServiceTypeEntretenu2Id" ColumnName="ServiceTypeEntretenu2Id" />
+                <ScalarProperty Name="ServiceTypeEntretenu1Id" ColumnName="ServiceTypeEntretenu1Id" />
+                <ScalarProperty Name="ServiceTypeDialogueur3Id" ColumnName="ServiceTypeDialogueur3Id" />
+                <ScalarProperty Name="ServiceTypeDialogueur2Id" ColumnName="ServiceTypeDialogueur2Id" />
+                <ScalarProperty Name="ServiceTypeDialogueur1Id" ColumnName="ServiceTypeDialogueur1Id" />
+                <ScalarProperty Name="Entretenu3Id" ColumnName="Entretenu3Id" />
+                <ScalarProperty Name="Entretenu2Id" ColumnName="Entretenu2Id" />
+                <ScalarProperty Name="Entretenu1Id" ColumnName="Entretenu1Id" />
+                <ScalarProperty Name="Dialogueur3Id" ColumnName="Dialogueur3Id" />
+                <ScalarProperty Name="Dialogueur2Id" ColumnName="Dialogueur2Id" />
+                <ScalarProperty Name="Dialogueur1Id" ColumnName="Dialogueur1Id" />
+                <ScalarProperty Name="LieuId" ColumnName="LieuId" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="CompteurAnnuelSite" ColumnName="CompteurAnnuelSite" />
+                <ScalarProperty Name="SiteId" ColumnName="SiteId" />
+                <ScalarProperty Name="Atelier" ColumnName="Atelier" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="Reflexion" ColumnName="Reflexion" />
+                <ScalarProperty Name="Observation" ColumnName="Observation" />
+                <ScalarProperty Name="Contexte" ColumnName="Contexte" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Thematiques">
+            <EntityTypeMapping TypeName="AntelopeModel.Thematique">
+              <MappingFragment StoreEntitySet="Thematiques">
+                <ScalarProperty Name="Nom" ColumnName="Nom" />
+                <ScalarProperty Name="ThematiqueId" ColumnName="ThematiqueId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

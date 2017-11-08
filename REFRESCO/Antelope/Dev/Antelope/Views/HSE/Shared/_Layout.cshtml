@@ -1,0 +1,109 @@
+﻿@{
+    ViewBag.Title = "_HSELayout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<div class="navbar-xs">
+    <div class="navbar-primary">*@
+        <div class="navbar navbar-fixed-top navbar-default navbar-lower hidden-print" style="margin-top:28px;z-index:500;">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#secondNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("Sézar-SE", "Index", "HSEHome", null, new { @class = "navbar-brand" })
+                </div>
+                <div id="secondNavbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav" >    @*style="width:80%;"*@
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sécurité <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("Create","FicheSecurite")">Nouvelle Fiche</a></li>
+                                <li><a href="@Url.Action("Index","FicheSecurite")">Liste des Fiches Sécurité</a></li>
+                                <li class="dropdown-submenu">
+                                    <a href="@Url.Action("Index", "HSEStatistique")">Statistiques</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="@Url.Action("NbFSChrono","HSEStatistique")">Nombre de Fiches Sécurité</a></li>
+                                        <li><a href="@Url.Action("Pyramide","HSEStatistique")">Pyramide Sécurité</a></li>
+                                        <li><a href="@Url.Action("Detail", "HSEStatistique")">Statistiques détaillées</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dialogues <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("Create","DialogueSecurite")">Nouveau Dialogue</a></li>
+                                <li><a href="@Url.Action("Index", "DialogueSecurite")">Liste des Dialogues</a></li>
+                                <li><a href="@Url.Action("DialogueSecurite","HSEStatistique")">Statistiques</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Environnement <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">A venir</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Paramétrage<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("General", "HSEParametrage")">Général</a></li>
+                                <li><a href="@Url.Action("Changelog", "HSEParametrage")">Changelog</a></li>
+                            </ul>
+                        </li>
+                        @*<a href="/ServicesHome"><img alt="" width="129" src="~/Content/images/Services/ICONE_APPLI_SERVICES.png" /></a>*@
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a target="_blank"  href="~/Content/pdfs/Manual.pdf" style="padding:5px; margin-left:20px; margin-right:20px;"><img alt="" width="40" src="~/Content/images/user_manual_icon_300x300.png" /></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    @*</div>
+</div>*@
+
+<div class="navbar-xs hidden-print">
+    <div class="navbar-primary">
+        <div class="navbar navbar-fixed-top navbar-default navbar-lower" style="margin-top:79px;z-index:499;">
+            <div class="container-fluid">
+                <div class="alert alert-danger hidden" role="alert" style="margin: 0px; padding-top: 2px; padding-bottom: 2px; width: 100%;"><span class="glyphicon glyphicon-bullhorn"></span> ALERTE ! Nouvelle Alerte</div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/template" id="alerteTemplate">
+       <% if(alerteHidden === false){ %>
+        <div class="col-md-12">
+            <div class="<%= alerteClass %>" role="alert" style="text-align:center;margin:0px;padding-top:2px;padding-bottom:2px;width:100%;"><%= alerteMessage %></div>
+        </div>
+        <% } %>
+
+      
+    </script>
+
+    <div id="alerteDiv" class="hidden-print" style="margin-top:29px;position:fixed;z-index:499;width:100%">
+    </div>
+
+
+
+    @*<div class="col-md-12">
+            <div style="margin:43px;position:fixed;">
+                <div class="alert alert-danger" role="alert"> ALERTE ! Nouvelle Alerte</div>
+            </div>
+        </div>*@
+
+    @Scripts.Render("~/Scripts/jquery-ui-1.10.4.custom.min.js")
+    <script type="text/javascript" src="/Scripts/moment-with-langs.js"></script>
+    <script type="text/javascript" src="/Scripts/underscore.js"></script>
+    <script type="text/javascript" src="/Scripts/backbone.js"></script>
+
+    <div class="bodyAdjustForSecondNavBar">
+
+    @RenderBody()
+
+</div>

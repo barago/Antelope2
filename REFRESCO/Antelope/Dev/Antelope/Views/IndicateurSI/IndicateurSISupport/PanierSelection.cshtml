@@ -1,0 +1,270 @@
+﻿
+@{
+    ViewBag.Title = "PanierSelection";
+    Layout = "~/Views/IndicateurSI/Shared/_Layout.cshtml";
+}
+
+<h2>Sélection des éléments du panier</h2>
+
+
+<table class="table" id="panier"></table>
+<button style="margin: 15px" onclick="ajouterPage();">Ajouter une page</button>
+<div id="lien"></div>
+
+
+    <script>
+
+        $(document).ready(function () {
+
+            var moisCour;
+            date = new Date;
+            mois = date.getMonth();
+            moisLettre = new Array('Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre');
+            annee = date.getFullYear();
+            anneePrec = date.getFullYear() - 1;
+            numPage = 0;
+            nbPage = 0;
+            tabSelection = new Array();
+
+            var data = $.ajax({
+                url: "@Url.Action("recupNameSI", "SupportRepartitionTicket")",
+                data: {},
+                async: false,
+                dataType: "json",
+                type: "POST",
+                error: function () {
+                    alert("An error occurred.");
+                },
+                success: function (data) { }
+
+            });
+
+            jsonSelectSI = parseJSON(data.responseJSON);
+
+        });
+
+        function ajouterPage() {
+
+            numPage++;
+
+            var nouvellePage = '<tr id="row' + numPage + '">';
+            nouvellePage += "<td class=\"col-sm-3\"><div id='select0" + numPage + "'></div></td>"
+            nouvellePage += "<td class=\"col-sm-3\"><div id='select1" + numPage + "'></div></td>"
+            nouvellePage += "<td class=\"col-sm-3\"><div id='select2" + numPage + "'></div></td>"
+            nouvellePage += "<td class=\"col-sm-3\"><button onclick=\"supprimerPage(this.value)\" style=\"margin:25px\" value='" + numPage + "'>Suppr.</button></td>"
+            nouvellePage += '</tr>';
+
+            $('#panier').append(nouvellePage);
+            
+            valSelectType = '<h3 style="color:#7F7F7F; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection type</h3><select id="SelType' + numPage + '" name="' + numPage + '" onchange="afficherSelecteur(this.value, this.name);">'
+            valSelectType += '<option value="void">-- Type --</option>';
+            valSelectType += '<option value="repartition">Répartition tickets</option>';
+            valSelectType += '<option value="nombreTicket">Nombre tickets</option>';
+            valSelectType += '<option value="delaiMoyen">Délai moyen</option>';
+            valSelectType += '<option value="delaiCategorie">Délai catégorie</option>';
+            valSelectType += '<option value="degreSatisfaction">Dégré satisfaction</option>';
+            valSelectType += '<option value="projet">Projets</option>';
+            valSelectType += '</select>';
+
+            document.getElementById('select0' + numPage).innerHTML = valSelectType;
+
+            nbPage++;
+
+            tabSelection.push([numPage, "void", "void", "void"]);
+        }
+
+        function supprimerPage(numPage) {
+            $('#row' + numPage).remove();
+            nbPage--;
+            changeLien(-1, numPage);
+            if (nbPage < 1) { $('#lienPrint').remove(); }
+        }
+
+        function afficherSelecteur(type, numPage) {
+
+            changeLien(type, numPage);
+
+            if (type != "void") {
+
+                valSelect1 = "";
+
+                switch (type) {
+                    case "repartition":
+
+                        valSelect1 += '<div id="Sel1' + numPage + '"><h3 style="color:#7F7F7F; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection mois</h3>';
+                        valSelect1 += '<select name="' + numPage + '" onchange="changeLien(0,this.name, this.value);">'
+                        for (var i = 1; i < 6; i++) {
+                            valSelect1 += '<option ';
+                            if (i == 1) valSelect1 += 'selected ';
+                            valSelect1 += 'value=' + i + '>' + moisPrec(i) + '</option>';
+                        }
+                        valSelect1 += '</select></div>';
+
+                        break;
+
+                    case "nombreTicket":
+                    case "delaiMoyen":
+                    case "degreSatisfaction":
+                    case "delaiCategorie":
+
+                        valSelect1 += '<div id="Sel1' + numPage + '"><h3 style="color:#7F7F7F; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection granularité</h3>';
+                        valSelect1 += '<select name="' + numPage + '"onchange="changeLien(0,this.name, this.value);">';
+                        valSelect1 += '<option value=0>Jour</option>';
+                        valSelect1 += '<option value=1>Semaine</option>';
+                        valSelect1 += '<option value=2 selected>Mois</option>';
+                        valSelect1 += '<option value=3>Année</option>';
+                        valSelect1 += '</select></div>';
+
+                        break;
+                }
+
+                document.getElementById('select1' + numPage).innerHTML = valSelect1;
+
+                valSelect2 = '<div id="Sel2' + numPage + '"><h3 style="color:#7F7F7F; text-shadow: 0px 0px 12px #FFF; font-weight : bold">Sélection service SI</h3>';
+                valSelect2 += '<select name="' + numPage + '"onchange="changeLien(0,this.name, this.value);">'
+                for (var i = 0; i < jsonSelectSI.name.length; i++) {
+                    valSelect2 += '<option ';
+                    if (jsonSelectSI.name[i] == "SAP / Fonctionnel") valSelect2 += 'selected '
+                    valSelect2 += 'value="' + jsonSelectSI.name[i] + '">' + jsonSelectSI.name[i] + '</option>';
+                }
+                valSelect2 += '</select></div>';
+
+                document.getElementById('select2' + numPage).innerHTML = valSelect2;
+            }
+        }
+
+        function changeLien(type, numPage, val) {
+
+            if (type == "void") {
+                if (confirm('Voulez vous supprimer cette page ?')) {
+                    supprimerPage(numPage)
+                }
+                else {
+                    $('#Sel1' + numPage).remove();
+                    $('#Sel2' + numPage).remove();
+                    $('#select0' + numPage).append(' <span id="warning' + numPage + '" style="color:red" class="glyphicon glyphicon-warning-sign"></span>');
+                    for (var i = 0; i < tabSelection.length; i++) {
+                        if (tabSelection[i][0] == numPage) {
+                            tabSelection[i][1] = "erreur";
+                            tabSelection[i][2] = "erreur";
+                            tabSelection[i][3] = "erreur";
+                        }
+                    }
+                }
+            }
+            else if (type == -1) {
+                for (var i = 0; i < tabSelection.length; i++) {
+                    if (tabSelection[i][0] == numPage) {
+                        tabSelection.splice(i, 1)
+                    }
+                }
+            }
+            else if (type == 0) {
+                for (var i = 0; i < tabSelection.length; i++) {
+                    if (tabSelection[i][0] == numPage) {
+                        if (parseInt(val) == val) {
+                            tabSelection[i][2] = parseInt(val);
+                        }
+                        else {
+                            tabSelection[i][3] = val;
+                        }
+                        
+                    }
+                }
+            }
+            else {
+                for (var i = 0; i < tabSelection.length; i++) {
+                    if (tabSelection[i][0] == numPage) {
+                        tabSelection[i][1] = type;
+                        tabSelection[i][2] = valDefaut(2, type);
+                        tabSelection[i][3] = valDefaut(3, type);
+                    }
+                }
+                $('#warning' + numPage).remove()
+                
+            }
+
+            var data = genererData();
+
+            document.getElementById('lien').innerHTML = '<a href=\'/Panier/Print?data=' + data + '\' id="lienPrint">Téléchager au format PDF</a>'
+        }
+
+        function valDefaut(numSelect, type) {
+
+            switch (type) {
+                case "repartition":
+
+                    if (numSelect == 2) {
+                        return 1;
+                    }
+                    else {
+                        return "SAP / Fonctionnel";
+                    }
+
+                case "nombreTicket":
+                case "delaiMoyen":
+                case "degreSatisfaction":
+                case "delaiCategorie":
+
+                    if (numSelect == 2) {
+                        return 2;
+                    }
+                    else {
+                        return "SAP / Fonctionnel";
+                    }
+
+                case "projet":
+
+                    if (numSelect == 2) {
+                        return "void";
+                    }
+                    else {
+                        return "SAP / Fonctionnel";
+                    }
+
+                default:
+                    return "void";
+            }
+        }
+
+        function genererData() {
+
+            var jsonData = '{"Data":[';
+
+            for (var i = 0; i < tabSelection.length; i++) {
+
+                jsonData += '[';
+
+                for (var j = 0; j < tabSelection[i].length; j++) {
+
+                    if (parseInt(tabSelection[i][j]) == tabSelection[i][j]) {
+                        jsonData += tabSelection[i][j] + ',';
+                    }
+                    else {
+                        jsonData += '"' + tabSelection[i][j] + '",';
+                    }
+                    
+
+                }
+                jsonData= jsonData.substring(0, jsonData.length - 1);
+                jsonData += '],';
+            }
+            jsonData = jsonData.substring(0, jsonData.length - 1);
+            jsonData += "]}";
+
+            return jsonData;
+        }
+
+        function moisPrec(nbMois) {
+
+            if (mois >= nbMois)
+                return (moisLettre[mois - nbMois] + ' ' + annee);
+            else return (moisLettre[mois + (12 - nbMois)] + ' ' + anneePrec);
+        }
+
+        function parseJSON(data) {
+
+            return window.JSON && window.JSON.parse ? window.JSON.parse(data) : (new Function("return " + data))();
+        }
+
+    </script>

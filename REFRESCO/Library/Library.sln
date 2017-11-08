@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Library.Database", "Library.Database\Library.Database.sqlproj", "{C00B21E8-0001-48B1-8E91-1AC26DDA7E37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Infrastructure.EntityFramework", "Library.Infrastructure.EntityFramework\Library.Infrastructure.EntityFramework.csproj", "{B75ABDD1-A737-445C-B740-E150F7F253F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Domain.Models", "Library.Domain.Models\Library.Domain.Models.csproj", "{3E8D3BA3-D85A-445D-93D0-1FED66B59D98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Web", "Library.Web\Library.Web.csproj", "{B7518258-9FF2-4360-9ADD-1314F10D2BF6}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://srv-data:8080/tfs/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Library.Database\\Library.Database.sqlproj
+		SccProjectName1 = Library.Database
+		SccLocalPath1 = Library.Database
+		SccProjectUniqueName2 = Library.Infrastructure.EntityFramework\\Library.Infrastructure.EntityFramework.csproj
+		SccProjectName2 = Library.Infrastructure.EntityFramework
+		SccLocalPath2 = Library.Infrastructure.EntityFramework
+		SccProjectUniqueName3 = Library.Domain.Models\\Library.Domain.Models.csproj
+		SccProjectName3 = Library.Domain.Models
+		SccLocalPath3 = Library.Domain.Models
+		SccProjectUniqueName4 = Library.Web\\Library.Web.csproj
+		SccProjectName4 = Library.Web
+		SccLocalPath4 = Library.Web
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C00B21E8-0001-48B1-8E91-1AC26DDA7E37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C00B21E8-0001-48B1-8E91-1AC26DDA7E37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C00B21E8-0001-48B1-8E91-1AC26DDA7E37}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C00B21E8-0001-48B1-8E91-1AC26DDA7E37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C00B21E8-0001-48B1-8E91-1AC26DDA7E37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C00B21E8-0001-48B1-8E91-1AC26DDA7E37}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B75ABDD1-A737-445C-B740-E150F7F253F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B75ABDD1-A737-445C-B740-E150F7F253F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B75ABDD1-A737-445C-B740-E150F7F253F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B75ABDD1-A737-445C-B740-E150F7F253F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E8D3BA3-D85A-445D-93D0-1FED66B59D98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E8D3BA3-D85A-445D-93D0-1FED66B59D98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E8D3BA3-D85A-445D-93D0-1FED66B59D98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E8D3BA3-D85A-445D-93D0-1FED66B59D98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7518258-9FF2-4360-9ADD-1314F10D2BF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7518258-9FF2-4360-9ADD-1314F10D2BF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7518258-9FF2-4360-9ADD-1314F10D2BF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7518258-9FF2-4360-9ADD-1314F10D2BF6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
